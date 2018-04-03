@@ -18,7 +18,7 @@ function loadDatasetsList(cb) {
 				const profile = database.profiles[0]
 				return {
 					name: specie._.trim(),
-					count: profile.count[0],
+					count: parseInt(profile.count[0]),
                     url: profile.url[0],
                     loci: database.loci[0].locus.map(locus => {
                         return {
@@ -54,17 +54,17 @@ function parse(stream, cb) {
 	stream.pipe(csv.createStream({ delimiter: '\t' }))
 		.on('data', function (data) {
 			let id
-			const locis = []
+			const loci = []
 			for (const property in data) {
 				if (data.hasOwnProperty(property)) {
 					const element = data[property];
 					if (property === '\'ST\'' || property === 'ST')
-						id = element
+						id = parseInt(element)
 					else
-						locis.push(element)
+						loci.push(parseInt(element))
 				}
 			}
-			profiles[index++] = { id, locis }
+			profiles[index++] = { id, loci }
 		})
 		.on('error', function (err) {
 			cb(err);

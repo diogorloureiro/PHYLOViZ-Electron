@@ -26,8 +26,11 @@ function compare(p, q) {
 }
 
 // Generate a minimum spanning tree from an existing one using a different maximum distance
-function reprocess(mst, max, comparator) {
-
+function reprocess(mst, max) {
+    return {
+        vertices: Object.assign({ }, mst.vertices),
+        edges: mst.edges.filter(edge => egde.distance <= max)
+    }
 }
 
 // Generate a minimum spanning tree (edges and distance matrices?) with the given allelic profiles file and comparator
@@ -44,12 +47,12 @@ function generateGraph(profiles) {
     let index = 0
     const graph = { vertices: { }, edges: [ ] }
     for (let i = 0; i < profiles.length; i++)
-        graph.vertices[profiles[i].id] = { locis: profiles[i].locis, lvs: { } }
+        graph.vertices[profiles[i].id] = { loci: profiles[i].loci, lvs: { } }
     for (let i = 0; i < profiles.length - 1; i++) {
         const p = profiles[i]
         for (let j = i + 1; j < profiles.length; j++) {
             const q = profiles[j]
-            const diff = p.locis.filter((value, index) => value !== q.locis[index]).length // Hamming distance
+            const diff = p.loci.filter((value, index) => value !== q.loci[index]).length // Hamming distance
             const plvs = graph.vertices[p.id].lvs
             plvs[diff] = plvs[diff] ? plvs[diff] + 1 : 1
             const qlvs = graph.vertices[q.id].lvs
