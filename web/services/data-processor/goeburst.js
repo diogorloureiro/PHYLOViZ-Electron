@@ -1,8 +1,5 @@
 'use strict'
 
-const fs = require('fs')
-const csv = require('csv-stream')
-
 module.exports = { process, reprocess, compare }
 
 // Compare two edges ({ source: vertix, target: vertix, distance: 1 }) with the following tie-breaking rules:
@@ -34,39 +31,10 @@ function reprocess(mst, max, comparator) {
 }
 
 // Generate a minimum spanning tree (edges and distance matrices?) with the given allelic profiles file and comparator
-function process(file, comparator, cb) {
-    parse(file, function (err, profiles) {
-        let graph = generateGraph(profiles)
-        graph = sort(graph, comparator)
-        return generateMst(graph)
-    })
-}
-
-// Parse a .csv file into allelic profiles
-function parse(file, cb) {
-    let index = 0
-    const profiles = []
-    fs.createReadStream(file).pipe(csv.createStream({ delimiter: '\t' }))
-        .on('data', function (data) {
-            let id
-            const locis = []
-            for (const property in data) {
-                if (data.hasOwnProperty(property)) {
-                    const element = data[property];
-                    if (property === '\'ST\'')
-                        id = element
-                    else
-                        locis.push(element)
-                }
-            }
-            profiles[index++] = { id, locis }
-        })
-        .on('error', function (err) {
-            cb(err);
-        })
-        .on('end', function () {
-            cb(null, profiles)
-        })
+function process(profiles, comparator, cb) {
+    let graph = generateGraph(profiles)
+    graph = sort(graph, comparator)
+    return generateMst(graph)
 }
 
 // Generate a graph (with all edges and vertices) given the allelic profiles
