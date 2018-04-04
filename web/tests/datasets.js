@@ -1,12 +1,12 @@
 'use strict'
 
 const fs = require('fs')
-const datasetService = require('../services/data-manager')
+const datasets = require('../services/data-manager').datasets
 
 const results = {
-    
+
 }
 
 module.exports = {
-    
+
 }

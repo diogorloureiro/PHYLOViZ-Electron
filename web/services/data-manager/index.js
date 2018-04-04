@@ -1,6 +1,6 @@
 'use strict'
 
-const pouchdb = require('./pouchdb')
-const pubmlst = require('./pubmlst')
+const projects = require('./projects')
+const datasets = require('./datasets')
 
-module.exports = { pouchdb, pubmlst }
+module.exports = { projects, datasets }

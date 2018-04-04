@@ -37,7 +37,7 @@ function loadDatasetFromPubMLST(url, cb) {
 	request.get(url, function (err, res, body) {
 		const stream = new Readable() 
 		stream.push(body)
-		stream.push(null) // Represents end of file
+		stream.push(null) // Representation of end of file
 		parse(stream, cb)
 	})
 }

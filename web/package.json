@@ -7,6 +7,7 @@
     "test": "nodeunit"
   },
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "cookie-parser": "~1.4.3",
     "csv-stream": "^0.2.0",
