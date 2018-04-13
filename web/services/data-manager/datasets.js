@@ -14,18 +14,18 @@ function loadDatasetsList(cb) {
 	request.get('https://pubmlst.org/data/dbases.xml', function (err, res, body) {
 		parser.parseString(body, function (err, result) {
 			cb(result.data.species.map(specie => {
-                const database = specie.mlst[0].database[0]
+				const database = specie.mlst[0].database[0]
 				const profile = database.profiles[0]
 				return {
 					name: specie._.trim(),
 					count: parseInt(profile.count[0]),
-                    url: profile.url[0],
-                    loci: database.loci[0].locus.map(locus => {
-                        return {
-                            name: locus._.trim(),
-                            url: locus.url[0]
-                        }
-                    })
+					url: profile.url[0],
+					loci: database.loci[0].locus.map(locus => {
+						return {
+							name: locus._.trim(),
+							url: locus.url[0]
+						}
+					})
 				}
 			}))
 		})
@@ -35,7 +35,7 @@ function loadDatasetsList(cb) {
 // Retrieve dataset from given URL
 function loadDatasetFromPubMLST(url, cb) {
 	request.get(url, function (err, res, body) {
-		const stream = new Readable() 
+		const stream = new Readable()
 		stream.push(body)
 		stream.push(null) // Representation of end of file
 		parse(stream, cb)
@@ -44,7 +44,7 @@ function loadDatasetFromPubMLST(url, cb) {
 
 // Retrieve dataset from given file path
 function loadDatasetFromFile(path, cb) {
-    parse(fs.createStream(path), cb)
+	parse(fs.createReadStream(path), cb)
 }
 
 // Parse a .csv file into allelic profiles
@@ -60,16 +60,12 @@ function parse(stream, cb) {
 					const element = data[property];
 					if (property === '\'ST\'' || property === 'ST')
 						id = parseInt(element)
-					else
+					else if (property !== 'clonal_complex')
 						loci.push(parseInt(element))
 				}
 			}
 			profiles[index++] = { id, loci }
 		})
-		.on('error', function (err) {
-			cb(err);
-		})
-		.on('end', function () {
-			cb(null, profiles)
-		})
+		.on('error', cb)
+		.on('end', () => cb(null, profiles))
 }
