@@ -12,7 +12,9 @@ module.exports = { loadDatasetsList, loadDatasetFromPubMLST, loadDatasetFromFile
 // Retrieve all datasets (name, number of STs, profile URL, loci(name, locus URL)) from https://pubmlst.org/data/dbases.xml
 function loadDatasetsList(cb) {
 	request.get('https://pubmlst.org/data/dbases.xml', function (err, res, body) {
+		if (err) return cb(err)
 		parser.parseString(body, function (err, result) {
+			if (err) return cb(err)
 			cb(result.data.species.map(specie => {
 				const database = specie.mlst[0].database[0]
 				const profile = database.profiles[0]
@@ -20,12 +22,7 @@ function loadDatasetsList(cb) {
 					name: specie._.trim(),
 					count: parseInt(profile.count[0]),
 					url: profile.url[0],
-					loci: database.loci[0].locus.map(locus => {
-						return {
-							name: locus._.trim(),
-							url: locus.url[0]
-						}
-					})
+					loci: database.loci[0].locus.map(locus => ({ name: locus._.trim(), url: locus.url[0] }))
 				}
 			}))
 		})
@@ -35,6 +32,7 @@ function loadDatasetsList(cb) {
 // Retrieve dataset from given URL
 function loadDatasetFromPubMLST(url, cb) {
 	request.get(url, function (err, res, body) {
+		if (err) return cb(err)
 		const stream = new Readable()
 		stream.push(body)
 		stream.push(null) // Representation of end of file

@@ -1,18 +1,16 @@
 'use strict'
 
-module.exports = boruvka
+module.exports = process
 
-// Generate a minimum spanning tree (edges and vertices) and distance matrix from the given allelic profiles file and comparator using boruvka's algorithm
-function boruvka(profiles, comparator, lvs) {
+// Generate a minimum spanning tree (edges and vertices) and distance matrix from the given allelic profiles and comparator using boruvka's algorithm
+function process(profiles, comparator, lvs) {
 	const { vertices, matrix, forest, components } = generateGraph(profiles)
 	// Loop while the forest contains more than one component
 	while (forest.filter(component => component !== undefined).length > 1) {
 		const cheapest = findCheapestEdges(vertices, matrix, components, comparator, lvs)
 		addEdgesAndConnectToForest(forest, components, cheapest)
 	}
-	const edges = forest[0].map(edge => {
-		return { source: edge.source.id, target: edge.target.id, distance: edge.distance }
-	})
+	const edges = forest[0].map(edge => ({ source: edge.source.id, target: edge.target.id, distance: edge.distance }))
 	const graph = { vertices, edges }
 	return { graph, matrix }
 }
