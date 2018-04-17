@@ -1,0 +1,35 @@
+{
+    "name": "Achromobacter spp.",
+    "count": 416,
+    "url": "https://pubmlst.org/data/profiles/achromobacter.txt",
+    "loci": [
+        {
+            "name": "nusA",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/nusA.tfa"
+        },
+        {
+            "name": "rpoB",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/rpoB.tfa"
+        },
+        {
+            "name": "eno",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/eno.tfa"
+        },
+        {
+            "name": "gltB",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/gltB.tfa"
+        },
+        {
+            "name": "lepA",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/lepA.tfa"
+        },
+        {
+            "name": "nuoL",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/nuoL.tfa"
+        },
+        {
+            "name": "nrdA",
+            "url": "https://pubmlst.org/data/alleles/achromobacter/nrdA.tfa"
+        }
+    ]
+}

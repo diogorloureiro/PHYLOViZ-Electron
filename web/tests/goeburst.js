@@ -13,29 +13,20 @@ module.exports = {
 
 const edges = JSON.parse(fs.readFileSync('./tests/data/input/testgoeBurstComparator.json', 'utf8'))
 
-/**
- * Tests the tie break rule of ID
- * @param {*} test 
- */
+// Tests the tie break rule of ID
 function testgoeBurstComparator_withSmallestId(test) {
     test.equal(goeburst.comparator(edges.testgoeBurstComparator_withSmallestId[0], edges.testgoeBurstComparator_withSmallestId[1]), 4, '')
     test.done()
 }
 
-/**
- * Tests the tie break rule of hamming distance
- * @param {*} test 
- */
+// Tests the tie break rule of hamming distance
 function testgoeBurstComparator_withSmallestDistance(test) {
     test.equal(goeburst.comparator(edges.testgoeBurstComparator_withSmallestDistance[0], edges.testgoeBurstComparator_withSmallestDistance[1]), 2, '')
     test.done()
 }
 
-/**
- * Tests tie break rule of lvl count
- * First assertion is for SLV count, the second is for DLV and the third is for TLV
- * @param {*} test 
- */
+// Tests tie break rule of lvl count
+// First assertion is for SLV count, the second is for DLV and the third is for TLV
 function testgoeBurstComparator_withalllvls(test) {
     test.equal(goeburst.comparator(edges.testgoeBurstComparator_withalllvls[0], edges.testgoeBurstComparator_withalllvls[1]), -1, 'SLV test failed')
     test.equal(goeburst.comparator(edges.testgoeBurstComparator_withalllvls[2], edges.testgoeBurstComparator_withalllvls[3]), -1, 'DLV test failed')
@@ -43,10 +34,7 @@ function testgoeBurstComparator_withalllvls(test) {
     test.done()
 }
 
-/**
- * Tests the full process of goeBurst
- * @param {*} test 
- */
+// Tests the full process of goeBurst
 function testgoeBurstProcess(test) {
     //Database of Bacillus licheniformis that contains 27 profiles
     //Link https://pubmlst.org/data/profiles/blicheniformis.txt

@@ -15,7 +15,7 @@ function loadDatasetsList(cb) {
 		if (err) return cb(err)
 		parser.parseString(body, function (err, result) {
 			if (err) return cb(err)
-			cb(result.data.species.map(specie => {
+			cb(null, result.data.species.map(specie => {
 				const database = specie.mlst[0].database[0]
 				const profile = database.profiles[0]
 				return {
