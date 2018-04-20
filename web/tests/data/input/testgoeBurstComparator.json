@@ -1,5 +1,5 @@
 {
-    "testgoeBurstComparator_withalllvls": [
+    "testGoeBurstComparatorWithAllLvls": [
         {
             "source": {
                 "id": 10,
@@ -283,7 +283,7 @@
             "distance": 1
         }
     ],
-    "testgoeBurstComparator_withSmallestDistance": [
+    "testGoeBurstComparatorWithSmallestDistance": [
         {
             "source": {
                 "id": 10,
@@ -379,7 +379,7 @@
             "distance": 1
         }
     ],
-    "testgoeBurstComparator_withSmallestId": [
+    "testGoeBurstComparatorWithSmallestId": [
         {
             "source": {
                 "id": 10,

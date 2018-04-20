@@ -2,15 +2,7 @@
 
 const boruvka = require('./algorithms/boruvka')
 
-module.exports = { process: boruvka, reprocess, comparator }
-
-// Generate a minimum spanning tree from an existing one using a different maximum distance
-function reprocess(graph, max) {
-	return {
-		vertices: Object.assign({}, graph.vertices),
-		edges: graph.edges.filter(edge => edge.distance <= max)
-	}
-}
+module.exports = { process: boruvka, comparator }
 
 // Compare two edges ({ source: vertex, target: vertex, distance: 1 }) with the following tie-breaking rules:
 // 1. biggest distance

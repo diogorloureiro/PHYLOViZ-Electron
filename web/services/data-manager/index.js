@@ -1,6 +1,6 @@
 'use strict'
 
-const projects = require('./projects')
+const users = require('./users')
 const datasets = require('./datasets')
 
-module.exports = { projects, datasets }
+module.exports = { users, datasets }

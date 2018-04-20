@@ -11,12 +11,17 @@
   "dependencies": {
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.3",
     "csv-stream": "^0.2.0",
     "debug": "~2.6.9",
     "express": "^4.15.5",
+    "express-session": "^1.15.6",
+    "hbs": "^4.0.1",
     "kue": "^0.11.6",
     "morgan": "~1.9.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pouchdb": "^6.4.3",
     "request": "^2.85.0",
     "serve-favicon": "~2.4.5",
@@ -48,7 +53,7 @@
       "url": "https://github.com/DrLDiogo"
     }
   ],
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/isel-leic-ps/LI61D-LI61N-G7/issues"
   },

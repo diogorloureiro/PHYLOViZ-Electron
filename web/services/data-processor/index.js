@@ -1,5 +1,5 @@
 'use strict'
 
-const goeburst = require('./goeburst')
+const goeburst = require('./goeburst').default
 
 module.exports = { goeburst }

@@ -21,7 +21,7 @@ function authenticate(username, password, cb) {
 // Register user given a username and password
 function register(username, password, cb) {
 	db.get(username, function (err, user) {
-		if (!err) return cb(`User ${username} already exists.`)
+		if (!err) return cb(null, null, `User ${username} already exists.`)
 		const saltRounds = 10
 		bcrypt.hash(password, saltRounds, function (err, hash) {
 			if (err) return cb(err)
