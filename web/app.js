@@ -11,6 +11,8 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 //const cookieParser = require('cookie-parser')
 const userRoutes = require('./routes/users')
+const dataRoutes = require('./routes/datasets')
+const homepage = require('./routes/homepage')
 
 const app = express()
 
@@ -32,6 +34,8 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.use(userRoutes)
+app.use(dataRoutes)
+app.use(homepage)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

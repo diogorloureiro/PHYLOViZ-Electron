@@ -20,6 +20,7 @@
     "hbs": "^4.0.1",
     "kue": "^0.11.6",
     "morgan": "~1.9.0",
+    "multer": "^1.3.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pouchdb": "^6.4.3",
@@ -34,9 +35,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/isel-leic-ps/LI61D-LI61N-G7.git"
+    "url": "https://github.com/DrLDiogo/PHYLOViZ-Electron.git"
   },
   "contributors": [
+    {
+      "name": "Diogo Loureiro",
+      "email": "42392@alunos.isel.ipl.pt",
+      "url": "https://github.com/DrLDiogo"
+    },
     {
       "name": "Leonardo Alexandre",
       "email": "42932@alunos.isel.ipl.pt",
@@ -46,16 +52,11 @@
       "name": "Luana Silva",
       "email": "42189@alunos.isel.ipl.pt",
       "url": "https://github.com/Luanab"
-    },
-    {
-      "name": "Diogo Loureiro",
-      "email": "42392@alunos.isel.ipl.pt",
-      "url": "https://github.com/DrLDiogo"
     }
   ],
   "license": "GPL-3.0-only",
   "bugs": {
-    "url": "https://github.com/isel-leic-ps/LI61D-LI61N-G7/issues"
+    "url": "https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
   },
-  "homepage": "https://github.com/isel-leic-ps/LI61D-LI61N-G7"
+  "homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron"
 }

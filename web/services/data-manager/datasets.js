@@ -5,7 +5,9 @@ const xml2js = require('xml2js')
 const parser = new xml2js.Parser(xml2js.defaults["0.2"])
 const fs = require('fs')
 const csv = require('csv-stream')
-const Readable = require('stream').Readable
+const stream = require('stream')
+const Readable = stream.Readable
+const Duplex = stream.Duplex
 
 module.exports = { loadDatasetsList, loadDatasetFromPubMLST, loadDatasetFromFile }
 
@@ -41,8 +43,11 @@ function loadDatasetFromPubMLST(url, cb) {
 }
 
 // Retrieve dataset from given file path
-function loadDatasetFromFile(path, cb) {
-	parse(fs.createReadStream(path), cb)
+function loadDatasetFromFile(file, cb) {
+	const stream = new Duplex()
+	stream.push(file.buffer)
+	stream.push(null) // Representation of end of file
+	parse(stream, cb)
 }
 
 // Parse a .csv file into allelic profiles

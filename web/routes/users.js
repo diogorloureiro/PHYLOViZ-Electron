@@ -51,12 +51,21 @@ router.post('/users/:username/projects', (req, res, next) => {
 router.put('/users/:username/projects/:id', (req, res, next) => {
 	service.saveProject(req.path.username, req.body.project, err => {
 		if (err) return next(err)
-		req.flash('Project successfully saved.')
+		req.flash('info', 'Project successfully saved.')
 	})
 })
 
 router.post('/logout', (req, res) => {
 	req.logout()
+})
+
+
+router.post('/shareProject', (req, res, next) => {
+	const { contributor, project_id } = req.body
+	service.shareProject(req.user, contributor, project_id, err => {
+		if(err) return next(err)
+		req.flash('info', 'Project successfully shared.')
+	})
 })
 
 passport.serializeUser((user, cb) => {
