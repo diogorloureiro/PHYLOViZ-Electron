@@ -11,11 +11,14 @@ module.exports = {
 
 //Tests the parsing files method
 function testParsingFromFile(test) {
-    datasets.loadDatasetFromFile('./tests/data/input/mhaemolytica.txt', (err, profiles) => {
-        test.ok(!err, "failed to read from file")
-        test.deepEqual(profiles, JSON.parse(fs.readFileSync('./tests/data/input/testParsingFromFile.json', 'utf8')))
-        test.done()
+    fs.readFile('./tests/data/input/mhaemolytica.txt', (err, data) => {
+        datasets.loadDatasetFromFile({ 'buffer': data }, (err, profiles) => {
+            test.ok(!err, "failed to read from file")
+            test.deepEqual(profiles, JSON.parse(fs.readFileSync('./tests/data/input/testParsingFromFile.json', 'utf8')))
+            test.done()
+        })
     })
+
 }
 
 // Tests the get method for all datasets
