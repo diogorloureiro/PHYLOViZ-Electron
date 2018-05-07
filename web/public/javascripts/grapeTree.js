@@ -1,179 +1,117 @@
 'use strict'
 
-// graph { vertices [], edges []}
-
-// Generate directed graph
 function generateDirectedGraph(graph) {
-    let root = graph.vertices[0]
-    let new_graph = { vertices: [], edges: [] }
-    buildDirectedGraph(undefined, root, graph, new_graph)
-    //Order was reversed after build, last vertice was the root
+    const new_graph = { vertices: [], edges: [] }
+    buildDirectedGraph(undefined, graph.vertices[0], graph, new_graph)
+    // Order was reversed after build, last vertice was the root
     new_graph.vertices.reverse()
     return new_graph
 }
 
-/*
-node{
-    id,
-    children,
-    radius,
-    parent,
-    length_to_parent
-    'DCS' : 'radius' : ... , 'angle' : ....
-}
-*/
-
-// Recursivly builds a directed graph out of an MST
-function buildDirectedGraph(parent, child, graph, new_graph) {
-    //Insert the edges the child is either the source or the target into the new_graph
-    //Delete these from the old graph
+// Recursively builds a directed graph out of an MST
+function buildDirectedGraph(parent, node, graph, new_graph) {
+    // Insert the edges where the node is either the source or the target into the new_graph
+    // Delete these from the old graph due to reversing these when you are in the nodes children
     graph.edges.forEach((edge, index) => {
-        if (edge.source === child.id) {
+        if (edge.source === node.id) {
             new_graph.edges.push(edge)
             delete graph.edges[index]
-        }
-        if (edge.target === child.id) {
-            const new_source = edge.target
-            const new_target = edge.source
-            const dist = edge.distance
-            const new_edge = {
-                source: new_source,
-                target: new_target,
-                distance: dist
-            }
-            new_graph.edges.push(new_edge)
+        } else if (edge.target === node.id) {
+            new_graph.edges.push({
+                source: edge.target,
+                target: edge.source,
+                distance: edge.distance
+            })
             delete graph.edges[index]
         }
     })
-    //Retrieve from the new_graph the edges to the children
-    let edges_to_children = new_graph.edges.filter(edge => edge.source === child.id)
-    //Retrieve the edge that connects the child to the parent
-    let edge = new_graph.edges.filter(edge => (parent && edge.source === parent.id && edge.target === child.id))[0]
-    child = {
-        id: child.id,
-        children: [],
-        radius: 1,      //to be changed into an actual radius
-        parent: parent,
-        length_to_parent: edge === undefined ? 0 : edge.distance  //root node doesn't have parent
+    // Retrieve from the new_graph the edges to the children
+    const edges = new_graph.edges.filter(edge => edge.source === node.id)
+    // Retrieve the edge that connects the child to the parent
+    const edge = new_graph.edges.find(edge => parent && edge.source === parent.id && edge.target === node.id)
+    node = {
+        id: node.id,
+        children: edges.map(edge => ({ id: edge.target })),
+        circle_radius: 1, // to be changed into an actual radius
+        parent,
+        distance: edge ? edge.distance : 0 // root node doesn't have parent
     }
-    //Set up dummy children of child for recursive call
-    edges_to_children.forEach(edge => {
-        child.children.push({ id: edge.target })
-    })
-    //Recursive call and replace the dummy children with real ones
-    child.children.forEach((child_of_child, index) => {
-        child.children[index] = buildDirectedGraph(child, child_of_child, graph, new_graph)
-    })
-    //Can't push before or else dummy children are still there (can possibly improve)
-    new_graph.vertices.push(child)
-    return child
+    // Recursive call and replace the dummy children with real ones
+    node.children = node.children.map(child => buildDirectedGraph(node, child, graph, new_graph))
+    // Can't push before or else dummy children are still there (can possibly improve)
+    new_graph.vertices.push(node)
+    return node
 }
 
 // Algorithm following the Appendix of grapetree article
-function grapeTree(tree, trials) {
-    let s = []
-    s[0] = 2 * Math.PI / tree.vertices.length
-    let S = []
+function grapetree(vertices, trials) {
+    const gaps = []
+    gaps[0] = 2 * Math.PI / vertices.length
+    let best
     for (let i = 0; i < trials; ++i) {
-        // Mentions preordered nodes, still have doubts about that
-        tree.vertices.forEach(node => {
-            compute_descendents(node, s[i])
-        })
-        let all_a_DCS = []
-        tree.vertices.forEach((node, index) => {
-            all_a_DCS[index] = node.angle
-        })
-        let At = all_a_DCS.reduce((max, cur) => Math.max(max, cur), -Infinity)
-        if (At <= 2 * Math.PI) {
-            S.push({ St: s[i], At })
-        }
-        s[i + 1] = s[i] * 2 * Math.PI / At
+        vertices.forEach(node => node.DCS = { radius: descendentsRadius(node), angle: descendentsAngle(node, gaps[i]) })
+        const angle = vertices.map(node => node.DCS.angle).reduce(max, -Infinity)
+        if (angle <= 2 * Math.PI && (!best || best.angle < angle))
+            best = { gap: gaps[i], angle, vertices: Object.assign({}, vertices) }
+        gaps[i + 1] = gaps[i] * 2 * Math.PI / angle
     }
-    return S.reduce((max, cur) => Math.max(max, cur), -Infinity)
+    vertices = best.vertices
+    return best.gap
 }
 
-// Calculate radius and angle of descendents of node and inserts them into the node
-function compute_descendents(node, s) {
-    const r_DCS = compute_radius_of_descendents(node)
-    const a_DCS = compute_angle_of_descendents(node, s)
-    node.DCS = {
-        radius: r_DCS,
-        angle: a_DCS
-    }
+function max(u, v) {
+    return Math.max(u, v)
 }
 
 // Calculates radius of the direct descendents
-function compute_radius_of_children(child) {
-    const r_CS1 = child.length_to_parent + 2 * child.radius
-    if (child.children.length === 0) return r_CS1            // no need to compute CS2 as there are no children of child
-    const r_CS2 = child.length_to_parent + child.radius + compute_radius_of_descendents(child)
-    return Math.max(r_CS1, r_CS2)
+function childrenRadius(node) {
+    const radius1 = node.distance + 2 * node.circle_radius
+    if (!node.children.length)
+        return radius1
+    const radius2 = node.distance + node.circle_radius + descendentsRadius(node)
+    return Math.max(radius1, radius2)
 }
 
 // Calculates radius of all the descendents of node
-function compute_radius_of_descendents(n) {
-    let children_r_CCS = []
-    n.children.forEach((child, index) => {
-        children_r_CCS[index] = compute_radius_of_children(child)
-    })
-    //Due to the stacking limit of arguments in javascript
-    //spread operator can't be used for large amounts of data
-    return children_r_CCS.reduce((max, cur) => Math.max(max, cur), -Infinity)
+function descendentsRadius(node) {
+    return node.children.length ? node.children.map(childrenRadius).reduce(max, -Infinity) : node.distance + 2 * node.circle_radius
 }
 
 // Calculates angle of direct descendents of node
-function compute_angle_of_children(child, s) {
-    const a_CS1 = 2 * Math.asin((child.radius * s) / (child.length_to_parent + child.radius))
-    if (child.children.length === 0) return a_CS1            // no need to compute CS2 as there are no children of child
-    const r_DCS_child = compute_radius_of_descendents(child)
-    const a_DCS_child = compute_angle_of_descendents(child, s)
-    const arcsin = Math.asin(r_DCS_child / (child.length_to_parent + child.radius))
-    const angle_poleMove = poleMove(
-        {
-            radius: r_DCS_child,
-            angle: 0.5 * a_DCS_child
-        },
-        {
-            radius: (child.length_to_parent + child.radius),
-            angle: Math.PI
-        }
-    ).angle
-    const a_CS2 = 2 * Math.max(arcsin, angle_poleMove)
-    return Math.max(a_CS1, a_CS2)
+function childrenAngle(node, s) {
+    const angle1 = 2 * Math.asin(node.circle_radius * s / (node.distance + node.circle_radius))
+    if (!node.children.length)
+        return angle1
+    const radius = descendentsRadius(node)
+    const angle = descendentsAngle(node, s)
+    const arcsin = Math.asin(radius / (node.distance + node.circle_radius))    // Sometimes it's NaN, for example : 3/(1+1) 
+    const angle_poleMove = poleMove([radius, 0.5 * angle], [node.distance + node.circle_radius, Math.PI]).angle
+    const angle2 = 2 * (arcsin ? Math.max(arcsin, angle_poleMove) : angle_poleMove)
+    return Math.max(angle1, angle2)
 }
 
 // Calculates angle of all the descendents of node
-function compute_angle_of_descendents(n, s) {
-    let sum = 0
-    n.children.forEach((child) => {
-        sum += compute_angle_of_children(child, s) + (s / compute_radius_of_descendents(n))
-    })
-    return sum
+function descendentsAngle(node, s) {
+    if (!node.children.length)
+        return 2 * Math.asin(node.circle_radius * s / (node.distance + node.circle_radius))
+    const radius = s / descendentsRadius(node)
+    return node.children.reduce((sum, child) => sum + childrenAngle(child, s) + radius, 0)
 }
 
-function poleMove(p, pole) {
-    //converter para coordenadas cartesianas
-    const p_cart = [p.radius * Math.cos(p.angle), p.radius * Math.sin(p.angle)]
-    const pole_cart = [pole.radius * Math.cos(pole.angle), pole.radius * Math.sin(pole.angle)]
-    //compute new position
-    const new_position = [p_cart[0] - pole_cart[0], p_cart[1] - pole_cart[1]]
-    //convert back to polar
-    return {
-        radius: Math.sqrt((new_position[0] * new_position[0]) + (new_position[1] * new_position[1])),
-        angle: Math.atan(new_position[1] / new_position[0])
-    }
+function poleMove([rp, ap], [ro, ao]) {
+    const [xp, yp] = [rp * Math.cos(ap), rp * Math.sin(ap)]
+    const [xo, yo] = [ro * Math.cos(ao), ro * Math.sin(ao)]
+    const [x, y] = [xp - xo, yp - yo]
+    return { radius: Math.sqrt(x * x + y * y), angle: Math.atan(y / x) }
 }
 
 //////////////////////////////////////////////////////////////////////D3//////////////////////////////////////////////////////////////////////
 
-
 function createGrapeTree(graph) {
-
     var svgContainer = d3.select("body")
         .append("svg")
         .attr("width", 500)
         .attr("height", 500)
-
     var circles = svgContainer
         .selectAll("circle")
         .data(graph.vertices)
@@ -183,6 +121,4 @@ function createGrapeTree(graph) {
         .attr("cy", d => d.DCS.radius * Math.sin(d.DCS.angle))
         .attr("r", function (d) { return d.radius })
         .style("fill", "green");
-
 }
-
