@@ -6,9 +6,15 @@ const uuid = require('uuid/v4')
 const Project = require('../../model/Project')
 const fs = require('fs')
 
-module.exports = { authenticate, register, loadProject, createProject, saveProject }
-
+let db = 'y'
+module.exports = { authenticate, register, loadProject, createProject, saveProject, redefineDb, shareProject }
 //const db = JSON.parse(fs.readSync('../../config.json')).database === 'local' ? new PouchDB('projects') : 'database remota'
+
+function redefineDb(newDb) {
+	const oldDb = db
+	db = newDb
+	return oldDb
+}
 
 // Authenticate user given it's username and password
 function authenticate(username, password, cb) {
@@ -36,7 +42,7 @@ function register(username, password, cb) {
 function loadProject(user, _id, cb) {
 	if (!user.projects[_id]) return cb(new Error('Not Found'))
 	db.get(_id, function (err, project) {
-		cb(err, new Project(project._id, project._rev, project.name, project.users, project.dataset, project.computations))
+		cb(err, new Project(project._id, project.name, project.dataset, project.users, project._rev, project.computations))
 	})
 }
 
@@ -46,7 +52,7 @@ function createProject(user, name, dataset, cb) {
 	user.projects[_id] = name
 	db.put(user, function (err) {
 		if (err) return cb(err)
-		const project = new Project(_id, undefined, name, undefined, dataset)
+		const project = new Project(_id, name, dataset)
 		db.put(project, (err) => cb(err, user, project))
 	})
 }
@@ -54,7 +60,7 @@ function createProject(user, name, dataset, cb) {
 // Save user's project
 function saveProject(user, project, cb) {
 	if (!user.projects[project._id]) return cb(new Error('Not Found'))
-	db.put(project, cb)
+	db.put(project, (err) => cb(err))
 }
 
 // Share project
@@ -65,13 +71,16 @@ function shareProject(projectAdmin, contributor, project_id, cb) {
 		db.get(contributor, function (err, user) {
 			if (err) return cb(err)
 			user.shared[project_id] = project_id
-			db.put(user, (err) => { if (err) cb(err) })
+			db.put(user, (err) => {
+				if (err) return cb(err)
+				db.get(project_id, function (err, project) {
+					if (err) return cb(err)
+					project.users[contributor] = contributor
+					db.put(project, cb)
+				})
+			})
 		})
-		db.get(project_id, function (err, project) {
-			if (err) return cb(err)
-			project.users[contributor] = contributor
-			db.put(project, (err) => { if (err) cb(err) })
-		})
+
 	})
 }
 
