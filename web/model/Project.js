@@ -2,7 +2,7 @@
 
 module.exports = Project
 
-function Project(_id, _rev, name, users, dataset, computations = []) {
+function Project(_id, name, dataset, users = {}, _rev, computations = []) {
 	this._id = _id
 	if (_rev) this._rev = _rev
 	this.name = name
