@@ -1,47 +1,50 @@
 'use strict'
 
 function generateDirectedGraph(graph) {
-    const new_graph = { vertices: [], edges: [] }
-    buildDirectedGraph(undefined, graph.vertices[0], graph, new_graph)
-    // Order was reversed after build, last vertice was the root
-    new_graph.vertices.reverse()
-    return new_graph
+	const new_graph = { vertices: [], edges: [] }
+	buildDirectedGraph(undefined, graph.vertices[0], graph, new_graph)
+	// Order was reversed after build, last vertice was the root
+	new_graph.vertices.reverse()
+	return new_graph
 }
 
 // Recursively builds a directed graph out of an MST
 function buildDirectedGraph(parent, node, graph, new_graph) {
-    // Insert the edges where the node is either the source or the target into the new_graph
-    // Delete these from the old graph due to reversing these when you are in the nodes children
-    graph.edges.forEach((edge, index) => {
-        if (edge.source === node.id) {
-            new_graph.edges.push(edge)
-            delete graph.edges[index]
-        } else if (edge.target === node.id) {
-            new_graph.edges.push({
-                source: edge.target,
-                target: edge.source,
-                distance: edge.distance
-            })
-            delete graph.edges[index]
-        }
-    })
-    // Retrieve from the new_graph the edges to the children
-    const edges = new_graph.edges.filter(edge => edge.source === node.id)
-    // Retrieve the edge that connects the child to the parent
-    const edge = new_graph.edges.find(edge => parent && edge.source === parent.id && edge.target === node.id)
-    node = {
-        id: node.id,
-        children: edges.map(edge => ({ id: edge.target })),
-        size: 5, // to be changed into an actual radius
-        distance: edge ? edge.distance : 0 // root node doesn't have parent
-    }
-    // Recursive call and replace the dummy children with real ones
-    node.children = node.children.map(child => buildDirectedGraph(node, child, graph, new_graph))
-    // Can't push before or else dummy children are still there (can possibly improve)
-    new_graph.vertices.push(node)
-    return node
+	// Insert the edges where the node is either the source or the target into the new_graph
+	// Delete these from the old graph due to reversing these when you are in the nodes children
+	graph.edges.forEach((edge, index) => {
+		if (edge.source === node.id) {
+			new_graph.edges.push(edge)
+			delete graph.edges[index]
+		} else if (edge.target === node.id) {
+			new_graph.edges.push({
+				source: edge.target,
+				target: edge.source,
+				distance: edge.distance
+			})
+			delete graph.edges[index]
+		}
+	})
+	// Retrieve from the new_graph the edges to the children
+	const edges = new_graph.edges.filter(edge => edge.source === node.id)
+	// Retrieve the edge that connects the child to the parent
+	const edge = new_graph.edges.find(edge => parent && edge.source === parent.id && edge.target === node.id)
+	node = {
+		id: node.id,
+		children: edges.map(edge => ({ id: edge.target })),
+		size: 5, // to be changed into an actual radius
+		distance: edge ? edge.distance : 0 // root node doesn't have parent
+	}
+	// Recursive call and replace the dummy children with real ones
+	node.children = node.children.map(child => buildDirectedGraph(node, child, graph, new_graph))
+	// Can't push before or else dummy children are still there (can possibly improve)
+	new_graph.vertices.push(node)
+	return node
 }
 
+/////////////////////////////////////////////////////////////////////GRAPETREE/////////////////////////////////////////////////////////////////////
+
+const numberOfTrials = 10
 function grapetree(nodes, linkScale) {
 	let maxRadius = 0.0, minGap = 0.0
 	nodes.forEach(node => {
@@ -51,7 +54,7 @@ function grapetree(nodes, linkScale) {
 	})
 	const minRadius = (maxRadius / linkScale) * 2 * Math.pow(nodes[nodes.length - 1].size, 0.5)
 	minGap = minRadius * Math.PI / minGap
-	for (let trials = 0; trials < 20; trials++) {
+	for (let trials = 0; trials < numberOfTrials; trials++) {
 		const gaps = []
 		let maxSpan
 		for (let i = 0; i < 11; i++) {
@@ -68,7 +71,7 @@ function grapetree(nodes, linkScale) {
 			} else if (i < 9)
 				minGap = (Math.PI / maxSpan[1]) * minGap
 		}
-		if (trials == 19) maxSpan[0] = [0]
+		if (trials == numberOfTrials - 1) maxSpan[0] = [0]
 		maxSpan[0].forEach(index => setSpacing(nodes[index], minGap))
 		if (!maxSpan[0].length) break
 	}
@@ -126,7 +129,7 @@ function convertToCartesian(nodes, minRadius) {
 		coordinates[node.id] = node.coordinates
 		if (node.children) {
 			if (node.children.length > 2)
-				node.children.sort((c1, c2) => hashCode(c1.id) - hashCode(c2.id))
+				node.children.sort((c1, c2) => c1.id - c2.id)
 			node.children.forEach(child => {
 				const minAngle = node.spacing / child.selfSpan[0]
 				child.polar = [child.distance + selfRadial, initialAngle + child.selfSpan[1] + minAngle + node.polar[1]]
@@ -148,7 +151,7 @@ function setSpacing(node, minGap) {
 }
 
 function hashCode(s) {
-	return s.split("").reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0);
+	return s.reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0);
 }
 
 function toCartesian(coord, center) {
@@ -162,12 +165,48 @@ function toPolar(coord, center) {
 	return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-//////////////////////////////////////////////////////////////////////D3//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////RADIAL TREE//////////////////////////////////////////////////////////////////////
+
+function radialTree(r, edges, m_size) {
+    let list = []
+    list.push(r)
+    r.rightborder = 0
+    r.wedgesize = (2 * Math.PI)
+    r.x = 0
+    r.y = 0
+    while (list.length > 0) {
+        const v = list.pop()
+        let v_border = v.rightborder
+        v.children.forEach((w => {
+            list.push(w)
+            w.rightborder = v_border
+            w.wedgesize = (2 * Math.PI) * leafcount(w) / m_size
+            const w_alfa = w.rightborder + w.wedgesize / 2
+            const edge_distance = w.distance
+            let w_dist = edge_distance * 5 + 30
+            if (v == r) {
+                r.xp = v.x + Math.cos(w_alfa) * w_dist
+                r.yp = v.y + Math.sin(w_alfa) * w_dist
+            }
+            w.x = v.x + Math.cos(w_alfa) * w_dist
+            w.y = v.y + Math.sin(w_alfa) * w_dist
+            w.xp = v.x
+            w.yp = v.y
+            v_border += w.wedgesize
+        }))
+    }
+}
+
+function leafcount(node) {
+    return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
+}
+
+//////////////////////////////////////////////////////////////////////D3 RADIAL TREE//////////////////////////////////////////////////////////////////////
 
 
-function createGrapeTree(graph) {
+function createRadialTree(vertices) {
 
-    const width = 1000
+    const width = 1800
     const height = 1000
 
     const svg = d3.select('body')
@@ -183,23 +222,72 @@ function createGrapeTree(graph) {
     let node = svg.append('g')
         .attr('class', 'nodes')
         .selectAll('circle')
+
     const n = 1
-    link = link.data(graph.edges)
+
+    link = link
+        .data(vertices)
         .enter()
         .append('line')
-        .attr("x1", d => n * d.source.DCS.radius * Math.cos(d.source.DCS.angle) + width / 2)
-        .attr("y1", d => n * d.source.DCS.radius * Math.sin(d.source.DCS.angle) + height / 2)
-        .attr("x2", d => n * d.target.DCS.radius * Math.cos(d.target.DCS.angle) + width / 2)
-        .attr("y2", d => n * d.target.DCS.radius * Math.sin(d.target.DCS.angle) + height / 2)
+        .attr("x1", d => d.x + width / 2)
+        .attr("y1", d => d.y + height / 2)
+        .attr("x2", d => d.xp + width / 2)
+        .attr("y2", d => d.yp + height / 2)
         .attr('stroke-width', 1)
 
     let nodes = node
-        .data(graph.vertices)
+        .data(vertices)
         .enter()
         .append("circle")
-        .attr("cx", d => (d.DCS.radius * n) * Math.cos(d.DCS.angle) + width / 2)
-        .attr("cy", d => (d.DCS.radius * n) * Math.sin(d.DCS.angle) + height / 2)
-        .attr("r", function (d) { return d.circle_radius })
+        .attr("cx", d => d.x + width / 2)
+        .attr("cy", d => d.y + height / 2)
+        .attr("r", 5)
         .style("fill", "green");
+
+}
+
+
+//////////////////////////////////////////////////////////////////////D3 GRAPETREE//////////////////////////////////////////////////////////////////////
+
+
+function createGrapeTree(graph) {
+
+	const width = 1800
+	const height = 1000
+
+	const svg = d3.select('body')
+		.append('svg')
+		.attr("width", width)
+		.attr("height", height)
+		.call(d3.zoom().on("zoom", () => svg.attr("transform", d3.event.transform))).append('g')
+
+	let link = svg.append('g')
+		.attr('class', 'links')
+		.selectAll('line')
+
+	let node = svg.append('g')
+		.attr('class', 'nodes')
+		.selectAll('circle')
+
+	const n = 1
+
+	link = link
+		.data(graph.edges)
+		.enter()
+		.append('line')
+		.attr("x1", d => d.source.x + width / 2)
+		.attr("y1", d => d.source.y + height / 2)
+		.attr("x2", d => d.target.x + width / 2)
+		.attr("y2", d => d.target.y + height / 2)
+		.attr('stroke-width', 1)
+
+	let nodes = node
+		.data(graph.coordinates)
+		.enter()
+		.append("circle")
+		.attr("cx", d => d.x + width / 2)
+		.attr("cy", d => d.y + height / 2)
+		.attr("r", 5)
+		.style("fill", "green");
 
 }
