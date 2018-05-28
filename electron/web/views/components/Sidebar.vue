@@ -1,8 +1,8 @@
 <template>
     <div class="sidenav">
         <br>
-        <button type='button' class='btn btn-link'>Profile</button>
-        <br>
+        <!--button type='button' class='btn btn-link'>Profile</button-->
+        <!--br-->
         <!--a href='/upload-dataset'>Upload dataset</a-->
         <button class='btn btn-link' v-on:click='uploadDataset'>Upload dataset</button>
         <br>

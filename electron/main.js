@@ -2,10 +2,6 @@ const electron = require('electron')
 const dialog = electron.dialog
 const fs = require('fs')
 
-const { process, comparator } = require('./web/services/data-processor').goeburst
-const { loadDatasetFromPubMLST, loadDatasetsList } = require('./web/services/data-manager/datasets')
-
-
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
@@ -34,15 +30,6 @@ function createWindow() {
 
 	const Menu = electron.Menu
 	const menuTemplate = [
-		{
-			label: 'File',
-			submenu: [
-				{
-					label: 'Load Dataset From MLST DBs',
-					click: () => loadDataset()
-				}
-			]
-		},
 		{
 			label: 'Settings',
 			submenu: [
@@ -93,20 +80,3 @@ app.on('activate', function () {
 		createWindow()
 	}
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-
-
-function loadDataset() {
-	loadDatasetFromPubMLST('https://pubmlst.org/data/profiles/bhenselae.txt', (err, profiles) => {
-
-		//console.log(profiles)
-		process(profiles, comparator).then(({ graph, matrix }) => {
-			//console.log(graph)
-			mainWindow.webContents.send('graph-data', graph)
-		})
-
-	})
-}

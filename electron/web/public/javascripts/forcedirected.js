@@ -112,7 +112,7 @@ function updateSpeed(value) {
 
 let oldSearch = undefined
 function search(id) {
-    if (oldSearch) oldSearch.attr('fill', '#6699ff')
+    if (oldSearch) oldSearch.attr('fill', '#00549f')
     const searched = d3.select(`#node${id}`)
     if (searched.empty()) return
     oldSearch = searched

@@ -292,7 +292,7 @@ function createGrapeTree(graph) {
         .attr('cx', d => d.x + width / 2)
         .attr('cy', d => d.y + height / 2)
         .attr('r', 5)
-        .style('fill', '#17A32F')
+        .style('fill', '#00549f')
 }
 
 export { generateDirectedGraph, grapetree, createGrapeTree, radialTree, createRadialTree }
