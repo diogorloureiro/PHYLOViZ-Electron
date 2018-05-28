@@ -1,7 +1,8 @@
 <template>
     <div>
-        <div class='loading' v-if='loading'>Loading...</div>
-        <div class='error' v-if='error'>An error has occurred</div>
+        <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
+        <b-alert :show='error' variant='danger' dismissible>An error has occurred</b-alert>
+        <br>
         <b-card title=''>
             <b-card-body>
                 <p>Select the algorithm to process the dataset's profiles</p>
@@ -18,16 +19,15 @@
     export default {
         data () {
             return {
-                selected: null,
+                selected: 'goeburst',
                 selectedRender: 'layout',
                 options: [
-                    { value: null, text: 'Select the algorithm', disabled: true },
                     { value: 'goeburst', text: 'GoeBURST' }
                 ],
                 renderOptions: [
                     { value: 'layout', text: 'Force-Directed Layout' },
                     { value: 'grapetree', text: 'GrapeTree Layout' },
-                    { value: 'radial', text: 'Radial Layout' }
+                    { value: 'radial', text: 'Radial Static Layout' }
                 ],
                 info: undefined,
                 loading: false,

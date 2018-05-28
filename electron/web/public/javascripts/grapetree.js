@@ -208,14 +208,14 @@ function leafcount(node) {
 
 function createRadialTree(vertices) {
 
-    const height = 750
+    const height = 1100
     const width = 1800
 
     const svg = d3.select('body')
         .append('svg')
-        .attr("width", width)
-        .attr("height", height)
-        .call(d3.zoom().on("zoom", () => svg.attr("transform", d3.event.transform))).append('g')
+        .attr('width', width)
+        .attr('height', height)
+        .call(d3.zoom().on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
 
     let link = svg.append('g')
         .attr('class', 'links')
@@ -231,21 +231,22 @@ function createRadialTree(vertices) {
         .data(vertices)
         .enter()
         .append('line')
-        .attr("x1", d => d.x + width / 2)
-        .attr("y1", d => d.y + height / 2)
-        .attr("x2", d => d.xp + width / 2)
-        .attr("y2", d => d.yp + height / 2)
+        .attr('x1', d => d.x + width / 2)
+        .attr('y1', d => d.y + height / 2)
+        .attr('x2', d => d.xp + width / 2)
+        .attr('y2', d => d.yp + height / 2)
         .style('stroke', '#000000')
         .attr('stroke-width', 1)
 
     let nodes = node
         .data(vertices)
         .enter()
-        .append("circle")
-        .attr("cx", d => d.x + width / 2)
-        .attr("cy", d => d.y + height / 2)
-        .attr("r", 5)
-        .style("fill", "#6699ff")
+        .append('circle')
+        .attr('id', d => 'node' + d.id)
+        .attr('cx', d => d.x + width / 2)
+        .attr('cy', d => d.y + height / 2)
+        .attr('r', 5)
+        .style('fill', '#17A32F')
 }
 
 
@@ -253,14 +254,14 @@ function createRadialTree(vertices) {
 
 function createGrapeTree(graph) {
 
-    const height = 750
+    const height = 1100
     const width = 1800
 
     const svg = d3.select('body')
         .append('svg')
-        .attr("width", width)
-        .attr("height", height)
-        .call(d3.zoom().on("zoom", () => svg.attr("transform", d3.event.transform))).append('g')
+        .attr('width', width)
+        .attr('height', height)
+        .call(d3.zoom().on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
 
     let link = svg.append('g')
         .attr('class', 'links')
@@ -276,21 +277,22 @@ function createGrapeTree(graph) {
         .data(graph.edges)
         .enter()
         .append('line')
-        .attr("x1", d => d.source.x + width / 2)
-        .attr("y1", d => d.source.y + height / 2)
-        .attr("x2", d => d.target.x + width / 2)
-        .attr("y2", d => d.target.y + height / 2)
+        .attr('x1', d => d.source.x + width / 2)
+        .attr('y1', d => d.source.y + height / 2)
+        .attr('x2', d => d.target.x + width / 2)
+        .attr('y2', d => d.target.y + height / 2)
         .style('stroke', '#000000')
         .attr('stroke-width', 1)
 
     let nodes = node
         .data(graph.coordinates)
         .enter()
-        .append("circle")
-        .attr("cx", d => d.x + width / 2)
-        .attr("cy", d => d.y + height / 2)
-        .attr("r", 5)
-        .style("fill", "#6699ff");
+        .append('circle')
+        .attr('id', d => 'node' + d.id)
+        .attr('cx', d => d.x + width / 2)
+        .attr('cy', d => d.y + height / 2)
+        .attr('r', 5)
+        .style('fill', '#17A32F')
 }
 
 export { generateDirectedGraph, grapetree, createGrapeTree, radialTree, createRadialTree }

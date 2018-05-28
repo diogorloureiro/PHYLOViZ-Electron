@@ -1,9 +1,9 @@
 <template>
         <div>
-            <div class='loading' v-if='loading'>Loading...</div>
-            <div class='error' v-if='error'>An error has occurred while rendering the graph</div>
+            <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
+            <b-alert :show='error' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
             <!--svg id='canvas' width='500' height='400' style='border:1px solid black'></svg-->
-            <div>
+            <div v-if='forceOptions'>
                 <br>
                 <label for='cut-value'>Tree cut-off</label>
                 <input id='cut-value' type='number' v-model='cut' min='0' v-bind:max='maxCut'>
@@ -27,6 +27,7 @@
                 cut: 0,
                 maxCut: 0,
                 nodeId: '',
+                forceOptions: false,
                 graph: undefined,
                 loading: false,
                 error: null
@@ -45,8 +46,10 @@
                 const graph = JSON.parse(window.sessionStorage.getItem('graph'))
                 this.graph = graph
                 const render = JSON.parse(window.sessionStorage.getItem('render-algorithm'))
-                if(render === 'layout')
+                if(render === 'layout') {
+                    this.forceOptions = true
                     this.renderLayout(graph)
+                }
                 else if(render === 'grapetree')
                     this.renderGrapeTree(graph)
                 else if(render === 'radial')

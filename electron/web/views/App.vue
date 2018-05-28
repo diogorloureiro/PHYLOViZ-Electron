@@ -1,19 +1,16 @@
 <template>
 <div id='app'>
 	<Navbar/>
-    <div class='row-offcanvas'>
+    <div class='container'>
         <Sidebar/>
         <div id='main'>
-            <div class='col-md-12'>
-                <router-view></router-view>
-            </div>
+            <router-view></router-view>
         </div>
     </div>
 </div>
 </template>
 
 <script>
-    // row-offcanvas-left
     export default {
         data() {
             return {

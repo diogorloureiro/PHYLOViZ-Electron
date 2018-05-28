@@ -9,7 +9,7 @@ const size = {
 
 import * as d3 from 'd3'
 
-const height = 750
+const height = 1100
 const width = 1800
 const zoom = d3.zoom()
 let firstTime = true
@@ -60,7 +60,7 @@ function createForceDirected(graph, cut, speed = 0.5) {
         .append('g')
         .append('circle')
         .attr('r', width * 0.01)
-        .attr('fill', '#6699ff')
+        .attr('fill', '#00549f')
         .attr('id', d => 'node' + d.id)
         .call(d3.drag()
             .on('start', dragstarted)
