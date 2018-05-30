@@ -39,13 +39,15 @@ function testGoeBurstProcess(test) {
     //Link https://pubmlst.org/data/profiles/blicheniformis.txt
     const profiles = JSON.parse(fs.readFileSync('./tests/data/input/testGoeBurstProcess.json', 'utf8'))
     const output = JSON.parse(fs.readFileSync('./tests/data/output/testGoeBurstProcess.json', 'utf8'))
-    const { graph, matrix } = goeburst.process(profiles, goeburst.comparator)
-    test.deepEqual(matrix, output.matrix, 'Test of matrix failed')
-    test.deepEqual(graph.edges.length, output.edges.length, 'Length didn\'t match')
-    for (let index = 0; index < output.edges.length; index++) {
-        test.ok(graph.edges.some(edge => JSON.stringify(edge) === JSON.stringify(output.edges[index])))
-    }
-    test.done()
+    goeburst.process(profiles, goeburst.comparator).then(function({ graph, matrix }){
+        test.deepEqual(matrix, output.matrix, 'Test of matrix failed')
+        test.deepEqual(graph.edges.length, output.edges.length, 'Length didn\'t match')
+        for (let index = 0; index < output.edges.length; index++) {
+            test.ok(graph.edges.some(edge => JSON.stringify(edge) === JSON.stringify(output.edges[index])))
+        }
+        test.done()
+    })
+    
 
 
 }

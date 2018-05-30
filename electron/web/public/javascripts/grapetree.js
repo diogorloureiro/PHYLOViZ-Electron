@@ -44,9 +44,10 @@ function buildDirectedGraph(parent, node, graph, new_graph) {
     return node
 }
 
-/////////////////////////////////////////////////////////////////////GRAPETREE/////////////////////////////////////////////////////////////////////
-
+//Number of runs grapetree static layout algortihm will be done
 const numberOfTrials = 10
+
+//Grapetree static layout algorithm
 function grapetree(nodes, linkScale) {
     let maxRadius = 0.0, minGap = 0.0
     nodes.forEach(node => {
@@ -77,7 +78,7 @@ function grapetree(nodes, linkScale) {
         maxSpan[0].forEach(index => setSpacing(nodes[index], minGap))
         if (!maxSpan[0].length) break
     }
-    return convertToCartesian(nodes, minRadius)
+    convertToCartesian(nodes, minRadius)
 }
 
 function descendentsRadius(node, minRadius, minGap, maxSpan, index) {
@@ -114,8 +115,8 @@ function descendentsRadius(node, minRadius, minGap, maxSpan, index) {
     return maxSpan
 }
 
+//Converts nodes data into cartesian coordinates
 function convertToCartesian(nodes, minRadius) {
-    const coordinates = {}
     nodes.forEach((node, index) => {
         let initialAngle, gap
         if (index > 0) {
@@ -128,7 +129,6 @@ function convertToCartesian(nodes, minRadius) {
             node.coordinates = [0, 0]
         }
         const selfRadial = minRadius * Math.sqrt(node.size)
-        coordinates[node.id] = node.coordinates
         if (node.children) {
             if (node.children.length > 2)
                 node.children.sort((c1, c2) => c1.id - c2.id)
@@ -141,11 +141,11 @@ function convertToCartesian(nodes, minRadius) {
                 child.coordinates[1] += node.coordinates[1]
             })
         }
-        delete node.spacing, delete node.descendentsAngle, delete node.descendentsSpan, delete node.polar, delete node.coordinates
+        delete node.spacing, delete node.descendentsAngle, delete node.descendentsSpan, delete node.polar
     })
-    return coordinates
 }
 
+//Sets up the minimum gap for each node
 function setSpacing(node, minGap) {
     node.spacing = minGap
     if (node.children)
@@ -167,132 +167,51 @@ function toPolar(coord, center) {
     return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-//////////////////////////////////////////////////////////////////////RADIAL TREE//////////////////////////////////////////////////////////////////////
+//D3 fields
+let svg
+let link
+let node
+const height = 1100
+const width = 1800
 
-function radialTree(r, edges) {
-    const rootLeafCount = leafcount(r)
-    let list = []
-    list.push(r)
-    r.rightborder = 0
-    r.wedgesize = (2 * Math.PI)
-    r.x = 0
-    r.y = 0
-    while (list.length > 0) {
-        const v = list.pop()
-        let v_border = v.rightborder
-        v.children.forEach((w => {
-            list.push(w)
-            w.rightborder = v_border
-            w.wedgesize = (2 * Math.PI) * leafcount(w) / rootLeafCount
-            const w_alfa = w.rightborder + w.wedgesize / 2
-            const edge_distance = w.distance
-            let w_dist = edge_distance * 5 + 30
-            if (v == r) {
-                r.xp = v.x + Math.cos(w_alfa) * w_dist
-                r.yp = v.y + Math.sin(w_alfa) * w_dist
-            }
-            w.x = v.x + Math.cos(w_alfa) * w_dist
-            w.y = v.y + Math.sin(w_alfa) * w_dist
-            w.xp = v.x
-            w.yp = v.y
-            v_border += w.wedgesize
-        }))
-    }
-}
-
-function leafcount(node) {
-    return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
-}
-
-//////////////////////////////////////////////////////////////////////D3 RADIAL TREE//////////////////////////////////////////////////////////////////////
-
-function createRadialTree(vertices) {
-
-    const height = 1100
-    const width = 1800
-
-    const svg = d3.select('body')
-        .append('svg')
+//Initializer of D3 fields
+function init(canvas) {
+    svg = canvas
         .attr('width', width)
         .attr('height', height)
         .call(d3.zoom().on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
 
-    let link = svg.append('g')
+    link = svg.append('g')
         .attr('class', 'links')
         .selectAll('line')
 
-    let node = svg.append('g')
+    node = svg.append('g')
         .attr('class', 'nodes')
         .selectAll('circle')
-
-    const n = 1
-
-    link = link
-        .data(vertices)
-        .enter()
-        .append('line')
-        .attr('x1', d => d.x + width / 2)
-        .attr('y1', d => d.y + height / 2)
-        .attr('x2', d => d.xp + width / 2)
-        .attr('y2', d => d.yp + height / 2)
-        .style('stroke', '#000000')
-        .attr('stroke-width', 1)
-
-    let nodes = node
-        .data(vertices)
-        .enter()
-        .append('circle')
-        .attr('id', d => 'node' + d.id)
-        .attr('cx', d => d.x + width / 2)
-        .attr('cy', d => d.y + height / 2)
-        .attr('r', 5)
-        .style('fill', '#17A32F')
 }
 
-
-//////////////////////////////////////////////////////////////////////D3 GRAPETREE//////////////////////////////////////////////////////////////////////
-
+//Builds, using D3, a static representation of grapetree
 function createGrapeTree(graph) {
-
-    const height = 1100
-    const width = 1800
-
-    const svg = d3.select('body')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .call(d3.zoom().on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
-
-    let link = svg.append('g')
-        .attr('class', 'links')
-        .selectAll('line')
-
-    let node = svg.append('g')
-        .attr('class', 'nodes')
-        .selectAll('circle')
-
-    const n = 1
-
     link = link
         .data(graph.edges)
         .enter()
         .append('line')
-        .attr('x1', d => d.source.x + width / 2)
-        .attr('y1', d => d.source.y + height / 2)
-        .attr('x2', d => d.target.x + width / 2)
-        .attr('y2', d => d.target.y + height / 2)
+        .attr('x1', d => d.source.coordinates[0] + width / 2)
+        .attr('y1', d => d.source.coordinates[1] + height / 2)
+        .attr('x2', d => d.target.coordinates[0] + width / 2)
+        .attr('y2', d => d.target.coordinates[1] + height / 2)
         .style('stroke', '#000000')
         .attr('stroke-width', 1)
 
     let nodes = node
-        .data(graph.coordinates)
+        .data(graph.vertices)
         .enter()
         .append('circle')
         .attr('id', d => 'node' + d.id)
-        .attr('cx', d => d.x + width / 2)
-        .attr('cy', d => d.y + height / 2)
+        .attr('cx', d => d.coordinates[0] + width / 2)
+        .attr('cy', d => d.coordinates[1] + height / 2)
         .attr('r', 5)
         .style('fill', '#00549f')
 }
 
-export { generateDirectedGraph, grapetree, createGrapeTree, radialTree, createRadialTree }
+export { generateDirectedGraph, grapetree, createGrapeTree, init }
