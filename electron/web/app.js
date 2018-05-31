@@ -1,36 +1,15 @@
 'use strict'
 
-const hbs = require('hbs')
 const express = require('express')
-const path = require('path')
 const passport = require('passport')
 const flash = require('connect-flash')
-//const favicon = require('serve-favicon')
-//const logger = require('morgan')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-//const cookieParser = require('cookie-parser')
-const userRoutes = require('./routes/users')
-const dataRoutes = require('./routes/datasets')
-const process = require('./routes/process')
+const routes = require('./routes')
 
 const app = express()
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'hbs')
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
-//app.use(logger('dev'))
-
 app.use(bodyParser.json({ limit: '50mb' }))
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-
-//app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
-//app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: true }))
 app.use(flash())
@@ -43,9 +22,7 @@ app.use((req, res, next) => {
 	next()
 })
 
-app.use(userRoutes)
-app.use(dataRoutes)
-app.use(process)
+app.use(...routes)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -59,9 +36,8 @@ app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
 	res.locals.message = err.message
 	res.locals.error = req.app.get('env') === 'development' ? err : {}
-	// render the error page
 	res.status(err.status || 500)
-	res.render('error')
+	res.send(err.message)
 })
 
 module.exports = app

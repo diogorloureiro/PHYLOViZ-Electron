@@ -1,79 +1,68 @@
 'use strict'
 
+const router = require('express').Router()
 const passport = require('passport')
 const Strategy = require('passport-local').Strategy
-const service = require('../services/data-manager/users')
-const router = require('express').Router()
+const services = require('../services/data-manager').users
 
-passport.use(new Strategy((username, password, cb) => {
-	service.authenticate(username, password, cb)
-}))
+passport.use(new Strategy((username, password, done) =>
+	services.authenticate(username, password)
+		.then(user => done(null, user))
+		.catch(done)))
+
+passport.serializeUser((user, done) => done(null, user._id))
+
+passport.deserializeUser((username, done) =>
+	services.loadUser(username)
+		.then(user => done(null, user))
+		.catch(done))
 
 // Authenticate user
 router.post('/login', passport.authenticate('local', {
 	successFlash: 'Welcome!',
-	failureFlash: 'Invalid username or password.'
+	failureFlash: 'Invalid username or password...'
 }))
 
-// Register a new user
-router.post('/register', (req, res, next) => {
+// Register user
+router.post('/register', respond(req => {
 	const { username, password } = req.body
-	service.register(username, password, (err, user, info) => {
-		if (err) return next(err)
-		if (info) {
-			req.flash('error', info)
-			return next(new Error(info))
-		}
-		req.flash('info', 'Successfully registered.')
-		res.sendStatus(200)
-	})
-})
+	return services.register(username, password)
+}))
 
-// Get a user's project
-router.get('/users/:username/projects/:id', (req, res, next) => {
-	const { username, id } = req.path
-	service.loadProject(username, id, (err, project) => {
-		if (err) return next(err)
-		res.send(project)
-	})
-})
+// Check if user is authenticated in order to reach the endpoints below
+router.use((req, res, next) => req.isAuthenticated() ? next() : next(new Error('Unauthorized')))
 
-// Create a new project
-router.post('/users/:username/projects', (req, res, next) => {
+// Log out user
+router.post('/logout', req => req.logout())
+
+// Create project
+router.post('/projects', respond(req => {
 	const { name, dataset } = req.body
-	service.createProject(req.path.username, name, dataset, (err, user, project) => {
-		if (err) return next(err)
-		res.send(project)
-	})
-})
+	return services.createProject(req.user, name, dataset)
+}))
 
-// Edit an existing project
-router.put('/users/:username/projects/:id', (req, res, next) => {
-	service.saveProject(req.path.username, req.body.project, err => {
-		if (err) return next(err)
-		req.flash('info', 'Project successfully saved.')
-	})
-})
+// Load project
+router.get('/projects/:id', respond(req => {
+	const { id } = req.path
+	services.loadProject(req.user, id)
+}))
 
-router.post('/logout', (req, res) => {
-	req.logout()
-})
+// Save project
+router.put('/projects/:id', respond(req => {
+	const { project } = req.body
+	return services.saveProject(req.user, project)
+}))
 
+// Share project
+router.post('/projects/:id/share/:contributor', respond(req => {
+	const { id, contributor } = req.path
+	return services.shareProject(req.user, contributor, id)
+}))
 
-router.post('/shareProject', (req, res, next) => {
-	const { contributor, project_id } = req.body
-	service.shareProject(req.user, contributor, project_id, err => {
-		if(err) return next(err)
-		req.flash('info', 'Project successfully shared.')
-	})
-})
-
-passport.serializeUser((user, cb) => {
-	cb(null, user._id)
-})
-
-passport.deserializeUser((username, cb) => {
-	service.getUser(username, cb)
-})
+function respond(service) {
+	return (req, res, next) => service(req)
+		.then(result => res.send(result))
+		.catch(err => next(err))
+}
 
 module.exports = router

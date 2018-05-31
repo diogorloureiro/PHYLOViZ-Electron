@@ -19,10 +19,7 @@ function process(profiles, comparator, lvs) {
 // The edges will contain the ids of the vertices they connect as well as the Hamming distance
 // The vertices will contain the id and the count of locus variants of the allelic profile
 function generateGraph(profiles) {
-	const vertices = []
-	const matrix = []
-	const forest = []
-	const components = []
+	const vertices = [], matrix = [], forest = [], components = []
 	for (let i = 0; i < profiles.length; i++) {
 		const { id, loci } = profiles[i]
 		vertices[i] = { id, loci, lvs: [] }
@@ -30,14 +27,12 @@ function generateGraph(profiles) {
 		forest[i] = []
 	}
 	for (let i = 0; i < profiles.length - 1; i++) {
-		const ploci = profiles[i].loci
+		const ploci = profiles[i].loci, plvs = vertices[i].lvs
 		matrix[i] = []
 		for (let j = i + 1; j < profiles.length; j++) {
-			const qloci = profiles[j].loci
+			const qloci = profiles[j].loci, qlvs = vertices[j].lvs
 			const diff = ploci.filter((value, index) => value !== qloci[index]).length // Hamming distance
-			const plvs = vertices[i].lvs
 			plvs[diff] = plvs[diff] ? plvs[diff] + 1 : 1
-			const qlvs = vertices[j].lvs
 			qlvs[diff] = qlvs[diff] ? qlvs[diff] + 1 : 1
 			matrix[i][j - i - 1] = diff
 		}
@@ -53,8 +48,7 @@ function findCheapestEdges(vertices, matrix, components, comparator, lvs) {
 		for (let j = 0; j < matrix[i].length; j++) {
 			const target = vertices[j + i + 1]
 			const distance = matrix[i][j]
-			const sc = components[source.id]
-			const tc = components[target.id]
+			const sc = components[source.id], tc = components[target.id]
 			if (sc !== tc) {
 				const edge = { source, target, distance }
 				if (!cheapest[sc] || comparator(cheapest[sc], edge, lvs) > 0)
@@ -70,10 +64,8 @@ function findCheapestEdges(vertices, matrix, components, comparator, lvs) {
 // Add the cheapest edges of this iteration to the forest
 function addEdgesAndConnectToForest(forest, components, cheapest) {
 	cheapest.forEach(edge => {
-		const source = edge.source.id
-		const target = edge.target.id
-		const sc = components[source]
-		const tc = components[target]
+		const source = edge.source.id, sc = components[source]
+		const target = edge.target.id, tc = components[target]
 		if (sc !== tc) {
 			const src = Math.max(sc, tc), dst = Math.min(sc, tc)
 			forest[dst].push(edge)

@@ -2,7 +2,9 @@
         <div>
             <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
             <b-alert :show='error' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
-            <!--svg id='canvas' width='500' height='400' style='border:1px solid black'></svg-->
+            <br>
+            <strong>{{this.dataset.name}}</strong>
+            <svg id='canvas' width='500' height='400' style='border:1px solid black'></svg>
             <div v-if='forceOptions'>
                 <br>
                 <label for='cut-value'>Tree cut-off</label>
@@ -18,23 +20,29 @@
 </template>
 
 <script>
-    import { init, createForceDirected, updateSpeed, search } from '../../public/javascripts/forcedirected.js'
-    import { generateDirectedGraph, grapetree, createGrapeTree, radialTree, createRadialTree } from '../../public/javascripts/grapetree.js'
+    import { initForceDirected, createForceDirected, updateSpeed, search } from '../../public/javascripts/forcedirected.js'
+    import { initGrapeTree, generateDirectedGraph, grapetree, createGrapeTree } from '../../public/javascripts/grapetree.js'
+    import { initRadial, radialTree, createRadialTree } from '../../public/javascripts/radialtree.js'
+    import * as d3 from 'd3'
     export default {
         data() {
             return {
+                dataset: undefined,
                 speed: 50,
                 cut: 0,
                 maxCut: 0,
                 nodeId: '',
                 forceOptions: false,
-                graph: undefined,
                 loading: false,
                 error: null
             }
         },
-        created() {
+        mounted() {
+            this.canvas = d3.select('svg')
             this.renderGraph()
+        },
+        created() {
+            this.dataset = JSON.parse(window.sessionStorage.getItem('dataset'))
         },
         watch: {
             // call again the method if the route changes
@@ -43,30 +51,30 @@
         methods: {
             renderGraph() {
                 this.loading = true
-                const graph = JSON.parse(window.sessionStorage.getItem('graph'))
-                this.graph = graph
+                const graph = this.dataset.graph
                 const render = JSON.parse(window.sessionStorage.getItem('render-algorithm'))
                 if(render === 'layout') {
                     this.forceOptions = true
-                    this.renderLayout(graph)
+                    this.renderLayout(graph, this.canvas)
                 }
                 else if(render === 'grapetree')
-                    this.renderGrapeTree(graph)
+                    this.renderGrapeTree(graph, this.canvas)
                 else if(render === 'radial')
-                    this.renderRadial(graph)
+                    this.renderRadial(graph, this.canvas)
                 this.loading = false
             },
             sliderChange() {
                 updateSpeed(this.speed / 100)
             },
             cutFunc() {
-                createForceDirected(this.graph, this.cut, this.speed / 100)
+                createForceDirected(this.dataset.graph, this.cut, this.speed / 100)
             },
             search() {
                 search(this.nodeId)
             },
-            renderLayout(graph) {
+            renderLayout(graph, canvas) {
                 this.loading = true
+                initForceDirected(canvas)
                 let maxCut = -1
                 graph.edges.forEach(e => {
                     if (e.distance > maxCut) maxCut = e.distance
@@ -76,26 +84,23 @@
                 createForceDirected(graph, maxCut)
                 this.loading = false
             },
-            renderGrapeTree(graph) {
+            renderGrapeTree(graph, canvas) {
                 this.loading = true
+                initGrapeTree(canvas)
                 const new_graph = generateDirectedGraph(graph)
-                const coordinates = grapetree(new_graph.vertices, 1)
-                new_graph.edges.forEach(edge => {
-                    const [sx, sy] = coordinates[edge.source]
-                    const [tx, ty] = coordinates[edge.target]
-                    edge.source = { id: edge.source, x: sx, y: sy }
-                    edge.target = { id: edge.target, x: tx, y: ty }
+                grapetree(new_graph.vertices, 1)
+                new_graph.vertices.forEach(vertice =>{
+                    new_graph.edges.forEach(edge => {
+                        if(edge.source === vertice.id) edge.source = {coordinates:vertice.coordinates, id : vertice.id}
+                        else if(edge.target === vertice.id) edge.target = {coordinates:vertice.coordinates, id : vertice.id}
+                    })
                 })
-                const data = []
-                for (const id in coordinates) {
-                    data.push({ id, x: coordinates[id][0], y: coordinates[id][1] })
-                }
-                new_graph.coordinates = data
                 createGrapeTree(new_graph)
                 this.loading = false
             },
-            renderRadial(graph) {
+            renderRadial(graph, canvas) {
                 this.loading = true
+                initRadial(canvas)
                 const new_graph = generateDirectedGraph(graph)
                 radialTree(new_graph.vertices[0], new_graph.vertices)
                 createRadialTree(new_graph.vertices)

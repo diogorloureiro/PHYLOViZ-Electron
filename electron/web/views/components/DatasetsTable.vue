@@ -34,7 +34,7 @@
                 @filtered='onFiltered'>
 
                 <template slot='name' slot-scope='data'>
-                    <button class='btn btn-link' v-on:click='fetchDataset(data.item.url)'>{{data.item.name}}</button>
+                    <button class='btn btn-link' v-on:click='fetchDataset(data.item.url, data.item)'>{{data.item.name}}</button>
                 </template>
                 <template slot='loci' slot-scope='loci'>
                     {{ loci.unformatted }}
@@ -91,7 +91,7 @@
             fetchData() {
 
                 this.loading = true
-                fetch('http://localhost:3000/datasets').then(res => res.json()).then(datasets => {
+                fetch('http://localhost:3000/datasets/pubmlst').then(res => res.json()).then(datasets => {
 
                     this.totalRows = datasets.length
 
@@ -105,12 +105,13 @@
                     this.error = true
                 })
             },
-            fetchDataset(url) {
-
+            fetchDataset(url, dataset) {
                 this.loading = true
-                fetch(`http://localhost:3000/pubmlst-datasets?url=${url}`).then(res => res.json()).then(profiles => {
+                fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(profiles => {
 
-                    this.$store.commit('setProfiles', profiles)
+                    dataset['profiles'] = profiles
+
+                    this.$store.commit('setDataset', dataset)
                     this.loading = false
                     this.$router.push('/algorithms')
                 })

@@ -29,18 +29,23 @@
         },
         methods: {
             uploadFile() {
-
                 this.loading = true
+                window.sessionStorage.clear()
                 const formData = new FormData()
                 formData.append('file', this.file)
                 const options = {
                     method: 'POST',
                     body: formData
                 }
-
-                fetch('http://localhost:3000/file-datasets', options).then(res => res.json()).then(profiles => {
-                    
-                    this.$store.commit('setProfiles', profiles)
+                fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(profiles => {
+                    const dataset = {
+                        name: this.file.name,
+                        count: 'Unknown',       // ????
+                        loci: 'Unknown',
+                        url: 'Unknown',
+                        profiles
+                    }
+                    this.$store.commit('setDataset', dataset)
                     this.loading = false
                     this.$router.push('/algorithms')
                 }).catch(error => this.error = error)

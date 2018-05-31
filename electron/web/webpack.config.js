@@ -3,6 +3,10 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
     entry: './views/index.js',
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    },
     module: {
         rules: [
             {

@@ -1,30 +1,22 @@
 'use strict'
 
 const router = require('express').Router()
-const multer = require('multer')
-const upload = multer()
-const service = require('../services/data-manager/datasets')
+const upload = require('multer')()
+const services = require('../services/data-manager').datasets
 
-router.get('/datasets', (req, res, next) => {
-    service.loadDatasetsList((err, datasets) => {
-        if (err) return next(err)
-        res.send(datasets)
-    })
-})
+// Load datasets list from PubMLST
+router.get('/datasets/pubmlst', respond(req => services.loadDatasetsList()))
 
-router.get('/pubmlst-datasets', (req, res, next) => {
-    const url = req.query.url
-    service.loadDatasetFromPubMLST(url, (err, profiles) => {
-        if (err) return next(err)
-        res.send(profiles)
-    })
-})
+// Load dataset from PubMLST
+router.get('/datasets/:url', respond(req => services.loadDatasetFromUrl(req.params.url)))
 
-router.post('/file-datasets', upload.single('file'), (req, res, next) => {
-    service.loadDatasetFromFile(req.file, (err, profiles) => {
-        if (err) return next(err)
-        res.send(profiles)
-    })
-})
+// Load dataset from file
+router.post('/datasets/file', upload.single('file'), respond(req => services.loadDatasetFromFile(req.file)))
+
+function respond(service) {
+	return (req, res, next) => service(req)
+		.then(result => res.send(result))
+		.catch(err => next(err))
+}
 
 module.exports = router

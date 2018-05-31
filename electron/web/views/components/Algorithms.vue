@@ -5,9 +5,14 @@
         <br>
         <b-card title=''>
             <b-card-body>
-                <p>Select the algorithm to process the dataset's profiles</p>
+                <p><strong>Dataset name: </strong>{{this.dataset.name}}</p>
+                <p><strong>Count: </strong>{{this.dataset.count}}</p>
+                <p><strong>Loci: </strong>{{this.dataset.loci}}</p>
+                <p><strong>URL: </strong>{{this.dataset.url}}</p>
+                <hr>
+                <p>Select the algorithm to process the dataset's profiles:</p>
                 <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
-                <p>Select the rendering algorithm</p>
+                <p>Select the rendering algorithm:</p>
                 <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
                 <button class='btn btn-outline-success' v-on:click='process'>Render</button>
             </b-card-body>
@@ -19,6 +24,7 @@
     export default {
         data () {
             return {
+                dataset: this.$store.state.dataset,
                 selected: 'goeburst',
                 selectedRender: 'layout',
                 options: [
@@ -29,28 +35,24 @@
                     { value: 'grapetree', text: 'GrapeTree Layout' },
                     { value: 'radial', text: 'Radial Static Layout' }
                 ],
-                info: undefined,
                 loading: false,
                 error: undefined,
-                reqOptions: {
-                    method: 'POST',
-                    body: JSON.stringify(this.$store.state.profiles),
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                }
             }
         },
         methods: {
             process() {
                 this.loading = true
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify(this.dataset.profiles),
+                    headers: { 'content-type': 'application/json' }
+                }
+                fetch(`http://localhost:3000/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
 
-                fetch(`http://localhost:3000/goeburst`, this.reqOptions).then(res => res.json()).then(({ graph, matrix }) => {
-
-                    window.sessionStorage.setItem('graph', JSON.stringify(graph))
+                    this.dataset['graph'] = graph
+                    window.sessionStorage.setItem('dataset', JSON.stringify(this.dataset))
                     window.sessionStorage.setItem('render-algorithm', JSON.stringify(this.selectedRender))
                     this.loading = false
-                    this.info = true
                     this.$router.push('/canvas')
                 })
             }

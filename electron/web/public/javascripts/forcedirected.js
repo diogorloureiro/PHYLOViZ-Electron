@@ -9,18 +9,16 @@ const size = {
 
 import * as d3 from 'd3'
 
-const height = 1100
-const width = 1800
+const height = 700
+const width = 1400
 const zoom = d3.zoom()
-let firstTime = true
 let svg
 let link
 let node
 let simulation
 
-function init() {
-
-    svg = d3.select('body').append('svg').attr('width', width).attr('height', height)
+function initForceDirected(canvas) {
+    svg = canvas.attr('width', width).attr('height', height)
         .call(zoom.on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
 
     link = svg.append('g')
@@ -38,11 +36,6 @@ function init() {
 }
 
 function createForceDirected(graph, cut, speed = 0.5) {
-
-    if(firstTime) {
-        init()
-        firstTime = false
-    }
 
     const edges = graph.edges.filter(e => e.distance <= cut)
 
@@ -129,4 +122,4 @@ function search(id) {
         .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
 }
 
-export { init, createForceDirected, updateSpeed, search }
+export { initForceDirected, createForceDirected, updateSpeed, search }

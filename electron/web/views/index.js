@@ -25,14 +25,11 @@ Vue.use(BootstrapVue)
 
 const store = new Vuex.Store({
     state: {
-        graph: undefined
+        dataset: undefined
     },
     mutations: {
-        setGraph(state, g) {
-            state.graph = g
-        },
-        setProfiles(state, p) {
-            state.profiles = p
+        setDataset(state, data) {
+            state.dataset = data
         }
     }
 })
