@@ -171,11 +171,11 @@ function toPolar(coord, center) {
 let svg
 let link
 let node
-const height = 1100
-const width = 1800
+const height = 700
+const width = 1400
 
 //Initializer of D3 fields
-function init(canvas) {
+function initGrapeTree(canvas) {
     svg = canvas
         .attr('width', width)
         .attr('height', height)
@@ -192,9 +192,16 @@ function init(canvas) {
 
 //Builds, using D3, a static representation of grapetree
 function createGrapeTree(graph) {
+
     link = link
         .data(graph.edges)
+
+    let edgeEnter = link
         .enter()
+        .append('g')
+        .attr('transform', d => 'rotate(0)')
+
+    let line = edgeEnter
         .append('line')
         .attr('x1', d => d.source.coordinates[0] + width / 2)
         .attr('y1', d => d.source.coordinates[1] + height / 2)
@@ -205,13 +212,30 @@ function createGrapeTree(graph) {
 
     let nodes = node
         .data(graph.vertices)
+
+    let elemEnter = nodes
         .enter()
+        .append('g')
+        .attr('classe','node')
+        .attr('transform', d => 'rotate(0)')
+
+    let circle = elemEnter
         .append('circle')
         .attr('id', d => 'node' + d.id)
         .attr('cx', d => d.coordinates[0] + width / 2)
         .attr('cy', d => d.coordinates[1] + height / 2)
         .attr('r', 5)
         .style('fill', '#00549f')
+
+    elemEnter
+        .append('text')
+        .style('visibility', 'visible')
+        .attr('dx',-1)
+        .attr('dy', 1)
+        .attr('x', d => d.coordinates[0] + width / 2)
+        .attr('y', d => d.coordinates[1] + height / 2)
+        .text(d => d.id)
+        .style('font-size', d => d.size / 3 + 'px')
 }
 
-export { generateDirectedGraph, grapetree, createGrapeTree, init }
+export { generateDirectedGraph, grapetree, createGrapeTree, initGrapeTree }

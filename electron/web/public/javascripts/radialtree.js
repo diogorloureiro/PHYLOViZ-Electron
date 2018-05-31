@@ -2,6 +2,9 @@
 
 import * as d3 from 'd3'
 
+const defaultDistanceMultiplier = 100
+const defaultZeroDistanceValue = 10
+
 //Calculates the coordinates for each node 
 //to represent a radial tree given a directed graph
 function radialTree(r, edges) {
@@ -21,7 +24,7 @@ function radialTree(r, edges) {
             w.wedgesize = (2 * Math.PI) * leafcount(w) / rootLeafCount
             const w_alfa = w.rightborder + w.wedgesize / 2
             const edge_distance = w.distance
-            let w_dist = edge_distance * 5 + 30
+            let w_dist = edge_distance * defaultDistanceMultiplier + defaultZeroDistanceValue
             if (v == r) {
                 r.xp = v.x + Math.cos(w_alfa) * w_dist
                 r.yp = v.y + Math.sin(w_alfa) * w_dist
@@ -44,11 +47,11 @@ function leafcount(node) {
 let svg
 let link
 let node
-const height = 1100
-const width = 1800
+const height = 700
+const width = 1400
 
 //Initializer of D3 fields
-function init(canvas) {
+function initRadial(canvas) {
     svg = canvas
         .attr('width', width)
         .attr('height', height)
@@ -68,7 +71,13 @@ function init(canvas) {
 function createRadialTree(vertices) {
     link = link
         .data(vertices)
+
+    let edgeEnter = link
         .enter()
+        .append('g')
+        .attr('transform', d => 'rotate(0)')
+
+    let line = edgeEnter
         .append('line')
         .attr('x1', d => d.x + width / 2)
         .attr('y1', d => d.y + height / 2)
@@ -79,13 +88,30 @@ function createRadialTree(vertices) {
 
     let nodes = node
         .data(vertices)
+
+    let nodeEnter = nodes
         .enter()
+        .append('g')
+        .attr('classe','node')
+        .attr('transform', d => 'rotate(0)')
+
+    let circle = nodeEnter
         .append('circle')
-        .attr('id', d => 'node' + d.id)
+        .attr('id', d => d.id)
         .attr('cx', d => d.x + width / 2)
         .attr('cy', d => d.y + height / 2)
         .attr('r', 5)
-        .style('fill', '#17A32F')
+        .style('fill', '#00549f')
+
+    nodeEnter
+        .append('text')
+        .style('visibility', 'visible')
+        .attr('dx',-1)
+        .attr('dy', 0)
+        .attr('x', d => d.x + width / 2)
+        .attr('y', d => d.y + height / 2)
+        .text(d => d.id)
+        .style('font-size', d => d.size / 3 + 'px')
 }
 
-export { radialTree, createRadialTree, init }
+export { radialTree, createRadialTree, initRadial }
