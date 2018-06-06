@@ -5,7 +5,7 @@
             <b-card-body>
                 <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt'></b-form-file>
                 <div class='mt-3'>Selected file: {{file && file.name}}</div>
-                <button class='btn btn-outline-success' v-on:click='uploadFile'>Upload</button>
+                <button class='btn btn-outline-success' @click='uploadFile'>Upload</button>
             </b-card-body>
         </b-card>
     </div>

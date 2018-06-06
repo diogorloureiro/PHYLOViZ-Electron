@@ -8,27 +8,29 @@
             <div v-if='forceOptions'>
                 <br>
                 <label for='cut-value'>Tree cut-off</label>
-                <input id='cut-value' type='number' v-model='cut' min='0' v-bind:max='maxCut'>
-                <button class='btn btn-outline-success' id='cut-button' v-on:click='cutFunc'>Apply</button>
+                <input id='cut-value' type='number' v-model='cut' min='0' :max='maxCut'>
+                <button class='btn btn-outline-success' id='cut-button' @click='cut'>Apply</button>
                 <label for='search-input'>Search: </label>
                 <input id='search-input' type='text' name='Search' v-model='nodeId'>
-                <button class='btn btn-outline-success' id='search-button' v-on:click='search'>Search</button>
+                <button class='btn btn-outline-success' id='search-button' @click='search'>Search</button>
                 <p>Animation speed</p>
-                <input id='slider' type='range' min='0' max='100' v-model='speed' v-on:change='sliderChange'>
+                <input id='slider' type='range' min='0' max='1' v-model='speed' @change='sliderChange'>
             </div>
         </div>
 </template>
 
 <script>
-    import { initForceDirected, createForceDirected, updateSpeed, search } from '../../public/javascripts/forcedirected.js'
-    import { initGrapeTree, generateDirectedGraph, grapetree, createGrapeTree } from '../../public/javascripts/grapetree.js'
-    import { initRadial, radialTree, createRadialTree } from '../../public/javascripts/radialtree.js'
+    import init from '../../public/javascripts'
     import * as d3 from 'd3'
+
     export default {
         data() {
             return {
+                canvas: undefined,
+                functions: undefined,
                 dataset: undefined,
-                speed: 50,
+                graph: undefined,
+                speed: 0.5,
                 cut: 0,
                 maxCut: 0,
                 nodeId: '',
@@ -39,72 +41,36 @@
         },
         mounted() {
             this.canvas = d3.select('svg')
-            this.renderGraph()
+            this.functions = init(this.canvas)
+            this.render()
         },
         created() {
             this.dataset = JSON.parse(window.sessionStorage.getItem('dataset'))
         },
         watch: {
             // call again the method if the route changes
-            '$route': 'renderGraph'
+            '$route': 'render'
         },
         methods: {
-            renderGraph() {
+            render() {
                 this.loading = true
-                const graph = this.dataset.graph
+                this.cut = this.maxCut = Math.max(...this.graph.edges.map(e => e.distance))
                 const render = JSON.parse(window.sessionStorage.getItem('render-algorithm'))
-                if(render === 'layout') {
+                this.graph = this.functions.direct(this.dataset.graph)
+                this.graph.root = this.function.flatten(this.graph.root)
+                if(render === 'forcedirected')
                     this.forceOptions = true
-                    this.renderLayout(graph, this.canvas)
-                }
-                else if(render === 'grapetree')
-                    this.renderGrapeTree(graph, this.canvas)
-                else if(render === 'radial')
-                    this.renderRadial(graph, this.canvas)
+                this.functions[render].render(this.graph, this.cut)
                 this.loading = false
             },
             sliderChange() {
-                updateSpeed(this.speed / 100)
+                this.functions['forcedirected'].updateSpeed(this.speed)
             },
-            cutFunc() {
-                createForceDirected(this.dataset.graph, this.cut, this.speed / 100)
+            cut() {
+                this.functions['forcedirected'].render(this.graph, this.cut, this.speed)
             },
             search() {
                 search(this.nodeId)
-            },
-            renderLayout(graph, canvas) {
-                this.loading = true
-                initForceDirected(canvas)
-                let maxCut = -1
-                graph.edges.forEach(e => {
-                    if (e.distance > maxCut) maxCut = e.distance
-                })
-                this.cut = maxCut
-                this.maxCut = maxCut
-                createForceDirected(graph, maxCut)
-                this.loading = false
-            },
-            renderGrapeTree(graph, canvas) {
-                this.loading = true
-                initGrapeTree(canvas)
-                const new_graph = generateDirectedGraph(graph)
-                grapetree(new_graph.vertices, 1)
-                new_graph.vertices.forEach(vertice =>{
-                    new_graph.edges.forEach(edge => {
-                        if(edge.source === vertice.id) edge.source = {coordinates:vertice.coordinates, id : vertice.id}
-                        else if(edge.target === vertice.id) edge.target = {coordinates:vertice.coordinates, id : vertice.id}
-                    })
-                })
-                createGrapeTree(new_graph)
-                this.loading = false
-            },
-            renderRadial(graph, canvas) {
-                this.loading = true
-                initRadial(canvas)
-                const new_graph = generateDirectedGraph(graph)
-                radialTree(new_graph.vertices[0], new_graph.vertices)
-                createRadialTree(new_graph.vertices)
-                this.loading = false
             }
         }
     }

@@ -1,7 +1,5 @@
 'use strict'
 
-module.exports = { parseNewick }
-
 function parseNewick(a, taxa_map) {
     const e = [], r = {}
     const s = a.split(/\s*(;|\(|\)|,|:)\s*/)
@@ -34,3 +32,5 @@ function parseNewick(a, taxa_map) {
     }
     return r
 }
+
+export default parseNewick

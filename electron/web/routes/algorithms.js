@@ -1,17 +1,10 @@
 'use strict'
 
 const router = require('express').Router()
-const { process, comparator } = require('../services/data-processor').goeburst
+const response = require('./response')
+const { goeburst } = require('../services/data-processor')
 
-router.post('/goeburst', respond(req => {
-    const profiles = req.body
-    return process(profiles, comparator)
-}))
-
-function respond(service) {
-	return (req, res, next) => service(req)
-		.then(result => res.send(result))
-		.catch(err => next(err))
-}
+// Process profiles using goeburst algorithm and comparator
+router.post('/algorithms/goeburst', response(req => goeburst.process(req.body, goeburst.comparator)))
 
 module.exports = router

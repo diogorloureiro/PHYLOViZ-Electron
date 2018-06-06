@@ -34,7 +34,7 @@
                 @filtered='onFiltered'>
 
                 <template slot='name' slot-scope='data'>
-                    <button class='btn btn-link' v-on:click='fetchDataset(data.item.url, data.item)'>{{data.item.name}}</button>
+                    <button class='btn btn-link' @click='fetchDataset(data.item.url, data.item)'>{{data.item.name}}</button>
                 </template>
                 <template slot='loci' slot-scope='loci'>
                     {{ loci.unformatted }}

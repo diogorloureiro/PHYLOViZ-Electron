@@ -4,10 +4,10 @@
         <!--button type='button' class='btn btn-link'>Profile</button-->
         <!--br-->
         <!--a href='/upload-dataset'>Upload dataset</a-->
-        <button class='btn btn-link' v-on:click='uploadDataset'>Upload dataset</button>
+        <button class='btn btn-link' @click='uploadDataset'>Upload dataset</button>
         <br>
         <!--a href='/public-datasets'>Public datasets</a-->
-        <button class='btn btn-link' v-on:click='publicDatasets'>Public datasets</button>
+        <button class='btn btn-link' @click='publicDatasets'>Public datasets</button>
     </div>
 </template>
 

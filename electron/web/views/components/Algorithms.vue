@@ -14,7 +14,7 @@
                 <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
                 <p>Select the rendering algorithm:</p>
                 <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
-                <button class='btn btn-outline-success' v-on:click='process'>Render</button>
+                <button class='btn btn-outline-success' @click='process'>Render</button>
             </b-card-body>
         </b-card>
     </div>
