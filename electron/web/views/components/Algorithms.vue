@@ -26,12 +26,12 @@
             return {
                 dataset: this.$store.state.dataset,
                 selected: 'goeburst',
-                selectedRender: 'layout',
+                selectedRender: 'forcedirected',
                 options: [
                     { value: 'goeburst', text: 'GoeBURST' }
                 ],
                 renderOptions: [
-                    { value: 'layout', text: 'Force-Directed Layout' },
+                    { value: 'forcedirected', text: 'Force-Directed Layout' },
                     { value: 'grapetree', text: 'GrapeTree Layout' },
                     { value: 'radial', text: 'Radial Static Layout' }
                 ],
@@ -47,7 +47,7 @@
                     body: JSON.stringify(this.dataset.profiles),
                     headers: { 'content-type': 'application/json' }
                 }
-                fetch(`http://localhost:3000/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
+                fetch(`http://localhost:3000/algorithms/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
 
                     this.dataset['graph'] = graph
                     window.sessionStorage.setItem('dataset', JSON.stringify(this.dataset))

@@ -2,7 +2,7 @@
 
 import * as d3 from 'd3'
 
-function grapetree(nodes, linkScale = 1, trials = 10) {
+function grapetree(nodes, linkScale = 0.5, trials = 10) {
     let maxRadius = 0.0, minWedge = 0.0
     nodes.forEach(node => {
         if (!node.size)
@@ -119,84 +119,63 @@ function toPolar(coord, center = [0, 0]) {
     return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-function init(canvas) {
-    const height = 700
-    const width = 1400
+function render(graph, conf) {
+    grapetree(graph.vertices)
 
-    const svg = canvas
-        .attr('width', width)
-        .attr('height', height)
-        .call(d3.zoom().on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
-
-    let link = svg.append('g')
-        .attr('class', 'links')
-        .selectAll('line')
-
-    const node = svg.append('g')
-        .attr('class', 'nodes')
-        .selectAll('circle')
-
-    function render(graph) {
-        graph.vertices.forEach(vertex => {
-            graph.edges.forEach(edge => {
-                const id = vertex.id
-                const [x, y] = vertex.coordinates
-                if (id === edge.source)
-                    edge.source = { x, y, id }
-                else if (id === edge.target)
-                    edge.target = { x, y, id }
-            })
+    graph.vertices.forEach(vertex => {
+        graph.edges.forEach(edge => {
+            const id = vertex.id
+            const [x, y] = vertex.coordinates
+            if (id === edge.source)
+                edge.source = { x, y, id }
+            else if (id === edge.target)
+                edge.target = { x, y, id }
         })
-        grapetree(graph.vertices)
+    })
 
-        link = link
-            .data(graph.edges)
+    conf.link = conf.link
+        .data(graph.edges)
 
-        let edgeEnter = link
-            .enter()
-            .append('g')
-            .attr('transform', d => 'rotate(0)')
+    let edgeEnter = conf.link
+        .enter()
+        .append('g')
+        .attr('transform', d => 'rotate(0)')
 
-        let line = edgeEnter
-            .append('line')
-            .attr('x1', d => d.source.x + width / 2)
-            .attr('y1', d => d.source.y + height / 2)
-            .attr('x2', d => d.target.x + width / 2)
-            .attr('y2', d => d.target.y + height / 2)
-            .style('stroke', '#000000')
-            .attr('stroke-width', 1)
+    let line = edgeEnter
+        .append('line')
+        .attr('x1', d => d.source.x + conf.width / 2)
+        .attr('y1', d => d.source.y + conf.height / 2)
+        .attr('x2', d => d.target.x + conf.width / 2)
+        .attr('y2', d => d.target.y + conf.height / 2)
+        .style('stroke', '#000000')
+        .attr('stroke-width', 1)
 
-        let nodes = node
-            .data(graph.vertices)
+    let nodes = conf.node
+        .data(graph.vertices)
 
-        let elemEnter = nodes
-            .enter()
-            .append('g')
-            .attr('class', 'node')
-            .attr('transform', d => 'rotate(0)')
+    let elemEnter = nodes
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .attr('transform', d => 'rotate(0)')
 
-        let circle = elemEnter
-            .append('circle')
-            .attr('id', d => 'node' + d.id)
-            .attr('cx', d => d.coordinates[0] + width / 2)
-            .attr('cy', d => d.coordinates[1] + height / 2)
-            .attr('r', 5)
-            .style('fill', '#00549f')
+    let circle = elemEnter
+        .append('circle')
+        .attr('id', d => 'node' + d.id)
+        .attr('cx', d => d.coordinates[0] + conf.width / 2)
+        .attr('cy', d => d.coordinates[1] + conf.height / 2)
+        .attr('r', 5)
+        .style('fill', '#00549f')
 
-        elemEnter
-            .append('text')
-            .style('visibility', 'visible')
-            .attr('dx', -1)
-            .attr('dy', 1)
-            .attr('x', d => d.coordinates[0] + width / 2)
-            .attr('y', d => d.coordinates[1] + height / 2)
-            .text(d => d.id)
-            .style('font-size', d => d.size / 3 + 'px')
-    }
-
-    return {
-        render
-    }
+    elemEnter
+        .append('text')
+        .style('visibility', 'visible')
+        .attr('dx', -1)
+        .attr('dy', 1)
+        .attr('x', d => d.coordinates[0] + conf.width / 2)
+        .attr('y', d => d.coordinates[1] + conf.height / 2)
+        .text(d => d.id)
+        .style('font-size', d => d.size / 3 + 'px')
 }
 
-export default init
+export default render
