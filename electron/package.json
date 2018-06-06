@@ -1,7 +1,7 @@
 {
 	"name": "electron-quick-start",
 	"version": "1.0.0",
-	"description": "A minimal Electron application",
+	"description": "Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
 	"main": "main.js",
 	"scripts": {
 		"start": "electron ."

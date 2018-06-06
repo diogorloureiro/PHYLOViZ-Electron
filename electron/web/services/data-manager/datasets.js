@@ -5,8 +5,7 @@ const xml2js = require('xml2js')
 const fs = require('fs')
 const csv = require('csv-stream')
 const stream = require('stream')
-
-module.exports = { loadDatasetsList, loadDatasetFromUrl, loadDatasetFromFile }
+const RequestError = require('../RequestError')
 
 const parser = new xml2js.Parser(xml2js.defaults["0.2"])
 const Readable = stream.Readable
@@ -14,7 +13,8 @@ const Duplex = stream.Duplex
 
 // Retrieve all datasets (name, number of STs, profile URL, loci(name, locus URL)) from https://pubmlst.org/data/dbases.xml
 function loadDatasetsList() {
-	return fetch('https://pubmlst.org/data/dbases.xml').then(res => res.text())
+	return fetch('https://pubmlst.org/data/dbases.xml')
+		.then(res => res.text())
 		.then(body => new Promise((resolve, reject) =>
 			parser.parseString(body, (err, result) => err ? reject(err) : resolve(result))))
 		.then(result => result.data.species.map(specie => {
@@ -31,7 +31,8 @@ function loadDatasetsList() {
 
 // Retrieve dataset from given URL
 function loadDatasetFromUrl(url) {
-	return fetch(url).then(res => res.text())
+	return fetch(url)
+		.then(res => res.text())
 		.then(body => {
 			const stream = new Readable()
 			stream.push(body)
@@ -67,7 +68,13 @@ function parse(stream) {
 				}
 				profiles.push({ id, loci })
 			})
-			.on('error', reject)
+			.on('error', () => reject(new RequestError('Corrupt file', 400)))
 			.on('end', () => resolve(profiles))
 	})
+}
+
+module.exports = {
+	loadDatasetsList,
+	loadDatasetFromUrl,
+	loadDatasetFromFile
 }

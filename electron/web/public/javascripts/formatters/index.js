@@ -1,6 +1,6 @@
 'use strict'
 
-const newick = require('./newick')
-const nexus = require('./nexus')
+import newick from './newick'
+import nexus from './nexus'
 
-module.exports = { newick, nexus }
+export { newick, nexus }

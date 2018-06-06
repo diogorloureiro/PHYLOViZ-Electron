@@ -1,7 +1,5 @@
 'use strict'
 
-module.exports = process
-
 // Generate a minimum spanning tree (edges and vertices) and distance matrix from the given allelic profiles and comparator using boruvka's algorithm
 function process(profiles, comparator, lvs) {
 	const { vertices, matrix, forest, components } = generateGraph(profiles)
@@ -78,3 +76,5 @@ function addEdgesAndConnectToForest(forest, components, cheapest) {
 		}
 	})
 }
+
+module.exports = process

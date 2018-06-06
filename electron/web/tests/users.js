@@ -2,17 +2,7 @@
 
 const fs = require('fs')
 const PouchDB = require('pouchdb')
-const users = require('../services/data-manager/users').init('./tests/mockdatabase')
-const newDb = users.db
-
-//Tests register method
-function testRegister(test) {
-    users.register('Bruno', '123')
-        .then(user => {
-            test.equal(user._id, 'Bruno')
-            newDb.get('Bruno').then((res) => newDb.remove(res).then(() => test.done()))
-        })
-}
+const users = require('../services/data-manager/users')('./tests/mockdatabase')
 
 function testAuthenticate(test) {
     users.register('Luana', '123')
@@ -21,6 +11,14 @@ function testAuthenticate(test) {
                 test.equal('Luana', user._id)
                 newDb.get('Luana').then((res) => newDb.remove(res).then(() => test.done()))
             })
+        })
+}
+
+function testRegister(test) {
+    users.register('Bruno', '123')
+        .then(user => {
+            test.equal(user._id, 'Bruno')
+            newDb.get('Bruno').then((res) => newDb.remove(res).then(() => test.done()))
         })
 }
 
@@ -64,23 +62,21 @@ function testSaveProject(test) {
     let dataset = fs.readFileSync('./tests/data/input/spneumoniaeClean.txt', 'utf8')
     users.register('Leonardo', '123')
         .then(() => newDb.get('Leonardo'))
-        .then(user => {
-            users.createProject(user, 'Estirpe da Banana', dataset)
-                .then(doc => newDb.get(doc.project._id))
-                .then(respProject =>
-                    newDb.get('Leonardo')
-                        .then(respUser => {
-                            respProject.dataset = ' '
-                            users.saveProject(respUser, respProject)
-                                .then(() => newDb.get(respProject._id))
-                                .then((savedProj) => test.equal(savedProj.dataset, ' '))
-                                .then(() => newDb.get(respProject._id))
-                                .then((prj) => newDb.remove(prj))
-                                .then(() => newDb.remove(respUser))
-                                .then(() => test.done())
-                        })
-                )
-        })
+        .then(user => users.createProject(user, 'Estirpe da Banana', dataset))
+        .then(doc => newDb.get(doc.project._id))
+        .then(project =>
+            newDb.get('Leonardo')
+                .then(user => {
+                    project.dataset = ' '
+                    users.saveProject(user, project)
+                        .then(() => newDb.get(project._id))
+                        .then((savedProj) => test.equal(savedProj.dataset, ' '))
+                        .then(() => newDb.get(project._id))
+                        .then((prj) => newDb.remove(prj))
+                        .then(() => newDb.remove(user))
+                        .then(() => test.done())
+                })
+        )
 }
 
 function testShareProject(test) {
@@ -104,4 +100,11 @@ function testShareProject(test) {
         )
 }
 
-module.exports = { testRegister, testAuthenticate, testCreateProject, testSaveProject, testShareProject, testLoadProject }
+module.exports = {
+    testAuthenticate,
+    testRegister,
+    testCreateProject,
+    testLoadProject,
+    testSaveProject,
+    testShareProject
+}

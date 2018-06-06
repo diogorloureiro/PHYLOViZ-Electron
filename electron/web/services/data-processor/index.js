@@ -2,4 +2,6 @@
 
 const goeburst = require('./goeburst')
 
-module.exports = { goeburst }
+module.exports = {
+    goeburst
+}
