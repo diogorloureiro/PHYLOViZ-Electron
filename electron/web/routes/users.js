@@ -8,20 +8,20 @@ const services = require('../services/data-manager').users
 passport.use(new Strategy((username, password, done) =>
 	services.authenticate(username, password)
 		.then(user => done(null, user))
-		.catch(done)))
+		.catch(err => done(err))))
 
 passport.serializeUser((user, done) => done(null, user._id))
 
 passport.deserializeUser((username, done) =>
 	services.loadUser(username)
 		.then(user => done(null, user))
-		.catch(done))
+		.catch(err => done(err)))
 
 // Authenticate user
 router.post('/login', passport.authenticate('local', {
 	successFlash: 'Welcome!',
 	failureFlash: 'Invalid username or password...'
-}))
+}), (req, res) => res.send(req.user))
 
 // Register user
 router.post('/register', respond(req => {
