@@ -15,7 +15,7 @@ function direct(graph) {
     while (neighbours.length) {
         const neighbour = neighbours.shift()
         const id = neighbour.id
-        neighbour.circle_radius = 1
+        neighbour.size = 5
         neighbour.children = []
         edges.forEach((edge, index) => {
             let { source, target, distance } = edge

@@ -2,7 +2,7 @@
 
 import * as d3 from 'd3'
 
-function grapetree(nodes, linkScale = 0.5, trials = 10) {
+function grapetree(nodes, linkScale = 0.3, trials = 10) {
     let maxRadius = 0.0, minWedge = 0.0
     nodes.forEach(node => {
         if (!node.size)
@@ -139,6 +139,7 @@ function render(graph, conf) {
     let edgeEnter = conf.link
         .enter()
         .append('g')
+        .attr('class', 'link')
         .attr('transform', d => 'rotate(0)')
 
     let line = edgeEnter
@@ -162,6 +163,12 @@ function render(graph, conf) {
     let circle = elemEnter
         .append('circle')
         .attr('id', d => 'node' + d.id)
+        .on("click", d => {
+            let active = d.active ? false : true
+            let visibility = active ? 'hidden' : 'visible'
+            d3.select('#text' + d.id).style('visibility', visibility)
+            d.active = active;
+        })
         .attr('cx', d => d.coordinates[0] + conf.width / 2)
         .attr('cy', d => d.coordinates[1] + conf.height / 2)
         .attr('r', 5)
@@ -169,13 +176,14 @@ function render(graph, conf) {
 
     elemEnter
         .append('text')
-        .style('visibility', 'visible')
+        .attr('id', d => 'text' + d.id)
+        .style('visibility', 'hidden')
         .attr('dx', -1)
         .attr('dy', 1)
         .attr('x', d => d.coordinates[0] + conf.width / 2)
         .attr('y', d => d.coordinates[1] + conf.height / 2)
         .text(d => d.id)
-        .style('font-size', d => d.size / 3 + 'px')
+        .style('font-size', d => (d.size / (d.id+'').length) + 'px')
 }
 
 export default render

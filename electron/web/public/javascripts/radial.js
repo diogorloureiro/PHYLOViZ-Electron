@@ -72,6 +72,12 @@ function render(graph, conf) {
     let circle = nodeEnter
         .append('circle')
         .attr('id', d => d.id)
+        .on("click", d => {
+            let active = d.active ? false : true
+            let visibility = active ? 'hidden' : 'visible'
+            d3.select('#text' + d.id).style('visibility', visibility)
+            d.active = active;
+        })
         .attr('cx', d => d.x + conf.width / 2)
         .attr('cy', d => d.y + conf.height / 2)
         .attr('r', 5)
@@ -79,13 +85,14 @@ function render(graph, conf) {
 
     nodeEnter
         .append('text')
-        .style('visibility', 'visible')
+        .attr('id', d => 'text' + d.id)
+        .style('visibility', 'hidden')
         .attr('dx', -1)
         .attr('dy', 0)
         .attr('x', d => d.x + conf.width / 2)
         .attr('y', d => d.y + conf.height / 2)
         .text(d => d.id)
-        .style('font-size', d => d.size / 3 + 'px')
+        .style('font-size', d => (d.size / (d.id + '').length) + 'px')
 }
 
 export default render
