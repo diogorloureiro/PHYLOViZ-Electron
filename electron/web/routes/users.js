@@ -19,10 +19,7 @@ passport.deserializeUser((username, done) =>
 		.catch(done))
 
 // Authenticate user
-router.post('/login', passport.authenticate('local', {
-	successFlash: 'Welcome!',
-	failureFlash: 'Invalid username or password...'
-}))
+router.post('/login', passport.authenticate('local'), (req, res) => res.status(200).send())
 
 // Register user
 router.post('/register', response(req => services.register(req.body.username, req.body.password)))
