@@ -1,5 +1,5 @@
 <template>
-    <div class="sidenav">
+    <div :class="$style.sidenav">
         <br>
         <!--button type='button' class='btn btn-link'>Profile</button-->
         <!--br-->
@@ -23,3 +23,14 @@
         }
     }
 </script>
+
+<style module>
+    .sidenav {
+        height: 100%;
+        width: 180px;
+        position: fixed;
+        left: 0;
+        background-color: #f5f5f5;
+        overflow-x: hidden;
+    }
+</style>

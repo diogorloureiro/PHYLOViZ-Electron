@@ -20,7 +20,7 @@
 </template>
 
 <script>
-    import init from '../../public/javascripts'
+    import init from '../javascripts'
     import * as d3 from 'd3'
 
     export default {

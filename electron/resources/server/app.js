@@ -6,6 +6,7 @@ const flash = require('connect-flash')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const routes = require('./routes')
+const RequestError = require('./services/RequestError')
 
 const app = express()
 
@@ -16,7 +17,7 @@ app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use((req, res, next) => {
+app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*')
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 	if (req.method === 'OPTIONS')
@@ -29,9 +30,7 @@ app.use(...routes)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-	const err = new Error('Not Found')
-	err.status = 404
-	next(err)
+	next(new RequestError('Not Found', 404))
 })
 
 // error handler

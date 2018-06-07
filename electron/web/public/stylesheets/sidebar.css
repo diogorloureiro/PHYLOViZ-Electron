@@ -1,9 +1,0 @@
-/* The sidebar menu */
-.sidenav {
-    height: 100%;
-    width: 180px;
-    position: fixed;
-    left: 0;
-    background-color: #f5f5f5;
-    overflow-x: hidden;
-}

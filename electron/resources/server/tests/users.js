@@ -101,8 +101,8 @@ function testShareProject(test) {
 }
 
 module.exports = {
-    testAuthenticate,
     testRegister,
+    testAuthenticate,
     testCreateProject,
     testLoadProject,
     testSaveProject,
