@@ -10,11 +10,12 @@ import * as d3 from 'd3'
 function init(canvas, algorithm) {
     const height = 700
     const width = 1400
+    const zoom = d3.zoom()
 
     const svg = canvas
         .attr('width', width)
         .attr('height', height)
-        .call(d3.zoom().on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
+        .call(zoom.on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
 
     const link = svg.append('g')
         .attr('class', 'links')

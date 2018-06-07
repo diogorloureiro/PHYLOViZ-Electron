@@ -4,19 +4,19 @@ const router = require('express').Router()
 const passport = require('passport')
 const Strategy = require('passport-local').Strategy
 const response = require('./response')
-const services = require('../services/data-manager').users
+const services = require('../services/data-manager').users()
 
 passport.use(new Strategy((username, password, done) =>
 	services.authenticate(username, password)
 		.then(user => done(null, user))
-		.catch(done)))
+		.catch(err => done(err))))
 
 passport.serializeUser((user, done) => done(null, user._id))
 
 passport.deserializeUser((username, done) =>
 	services.loadUser(username)
 		.then(user => done(null, user))
-		.catch(done))
+		.catch(err => done(err)))
 
 // Authenticate user
 router.post('/login', passport.authenticate('local'), (req, res) => res.status(200).send())

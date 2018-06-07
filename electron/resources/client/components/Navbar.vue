@@ -7,18 +7,13 @@
         </ul>
         <div style='float:right'>
             <ul class='navbar-nav mr-auto'>
-                <!--li class='nav-item'>
-                    <a class='nav-link' onClick='showRegisterLogin()'>Register</a>
+                <li class='nav-item'>
+                    <a class='nav-link' href='/register'>Register</a>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' onClick='showRegisterLogin()'>Login</a>
-                </li-->
+                    <a class='nav-link' href='/login'>Login</a>
+                </li>
             </ul>
         </div>
     </nav>
 </template>
-
-<script>
-    //import { mapGetters } from 'vuex'
-    export default { }
-</script>

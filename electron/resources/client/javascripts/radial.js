@@ -71,7 +71,7 @@ function render(graph, conf) {
 
     let circle = nodeEnter
         .append('circle')
-        .attr('id', d => d.id)
+        .attr('id', d => 'node'+d.id)
         .on("click", d => {
             let active = d.active ? false : true
             let visibility = active ? 'hidden' : 'visible'
