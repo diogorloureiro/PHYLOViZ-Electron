@@ -5,7 +5,7 @@ const xml2js = require('xml2js')
 const fs = require('fs')
 const csv = require('csv-stream')
 const stream = require('stream')
-const RequestError = require('../RequestError')
+const RequestError = require('../../RequestError')
 
 const parser = new xml2js.Parser(xml2js.defaults["0.2"])
 const Readable = stream.Readable

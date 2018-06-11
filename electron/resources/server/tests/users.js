@@ -1,110 +1,173 @@
 'use strict'
 
-const fs = require('fs')
 const PouchDB = require('pouchdb')
-const users = require('../services/data-manager/users')('./tests/mockdatabase')
+let services = require('../services/data-manager/users')
+let db = new PouchDB('./tests/mockdatabase')
 
-function testAuthenticate(test) {
-    users.register('Luana', '123')
+function before(test) {
+    test.expect(0)
+    db.destroy()
         .then(() => {
-            users.authenticate('Luana', '123').then(user => {
-                test.equal('Luana', user._id)
-                newDb.get('Luana').then((res) => newDb.remove(res).then(() => test.done()))
-            })
+            db = new PouchDB('./tests/mockdatabase')
+            services = services(db)
+            test.done()
         })
 }
 
 function testRegister(test) {
-    users.register('Bruno', '123')
+    test.expect(3)
+    services.register('User', 'Password')
+        .then(() => services.loadUser('User'))
         .then(user => {
-            test.equal(user._id, 'Bruno')
-            newDb.get('Bruno').then((res) => newDb.remove(res).then(() => test.done()))
+            test.strictEqual(user._id, 'User')
+            test.deepEqual(user.projects, [])
+            test.deepEqual(user.shared, [])
+            test.done()
+        })
+}
+
+function testRegisterDuplicated(test) {
+    test.expect(0)
+    services.register('User', 'Password')
+        .catch(() => test.done())
+}
+
+function testAuthenticate(test) {
+    test.expect(3)
+    services.authenticate('User', 'Password')
+        .then(user => {
+            test.strictEqual(user._id, 'User')
+            test.deepEqual(user.projects, [])
+            test.deepEqual(user.shared, [])
+            test.done()
+        })
+}
+
+function testAuthenticateUnauthorized(test) {
+    test.expect(0)
+    services.authenticate('User', 'Error')
+        .catch(() => test.done())
+}
+
+function testLoadUser(test) {
+    test.expect(3)
+    services.loadUser('User')
+        .then(user => {
+            test.strictEqual(user._id, 'User')
+            test.deepEqual(user.projects, [])
+            test.deepEqual(user.shared, [])
+            test.done()
         })
 }
 
 function testCreateProject(test) {
-    const dataset = fs.readFileSync('./tests/data/input/spneumoniaeClean.txt', 'utf8')
-    users.register('Diogo', '123')
-        .then(() =>
-            newDb.get('Diogo')
-                .then(user =>
-                    users.createProject(user, 'Estirpe da Banana', dataset))
-                .then(doc => newDb.get(doc.project._id))
-                .then(respProject => {
-                    newDb.get('Diogo').then(respUser => {
-                        test.equal(respUser.projects[respProject._id], respProject.name) //Check project name
-                        test.strictEqual(dataset, respProject.dataset) //check dataset data
-                        newDb.remove(respUser).then(() => newDb.remove(respProject).then(() => test.done()))
-                    })
+    test.expect(8)
+    services.loadUser('User')
+        .then(user => services.createProject(user, 'Project', {}))
+        .then(project => {
+            test.strictEqual(project.name, 'Project')
+            test.strictEqual(project.owner, 'User')
+            test.deepEqual(project.contributors, [])
+            test.deepEqual(project.dataset, {})
+            test.deepEqual(project.computations, {})
+            return services.loadUser('User')
+                .then(user => {
+                    test.strictEqual(user.projects.length, 1)
+                    test.strictEqual(user.projects[0]._id, project._id)
+                    test.strictEqual(user.projects[0].name, project.name)
+                    test.done()
                 })
-        )
+        })
 }
 
 function testLoadProject(test) {
-    users.register('Tiago', '123')
-        .then(() =>
-            newDb.get('Tiago')
-                .then(user =>
-                    users.createProject(user, 'Estirpe da Banana', ' ')
-                        .then(doc => users.loadProject(user, doc.project._id)))
-                .then(project => {
-                    test.equal(project.dataset, ' ')
-                    newDb.remove(project)
-                })
-                .then(() => newDb.get('Tiago'))
-                .then(leonardo => newDb.remove(leonardo))
-                .then(() => test.done())
-        )
-
+    test.expect(5)
+    services.loadUser('User')
+        .then(user => services.loadProject(user, user.projects[0]._id))
+        .then(project => {
+            test.strictEqual(project.name, 'Project')
+            test.strictEqual(project.owner, 'User')
+            test.deepEqual(project.contributors, [])
+            test.deepEqual(project.dataset, {})
+            test.deepEqual(project.computations, {})
+            test.done()
+        })
 }
 
 function testSaveProject(test) {
-    let dataset = fs.readFileSync('./tests/data/input/spneumoniaeClean.txt', 'utf8')
-    users.register('Leonardo', '123')
-        .then(() => newDb.get('Leonardo'))
-        .then(user => users.createProject(user, 'Estirpe da Banana', dataset))
-        .then(doc => newDb.get(doc.project._id))
-        .then(project =>
-            newDb.get('Leonardo')
-                .then(user => {
-                    project.dataset = ' '
-                    users.saveProject(user, project)
-                        .then(() => newDb.get(project._id))
-                        .then((savedProj) => test.equal(savedProj.dataset, ' '))
-                        .then(() => newDb.get(project._id))
-                        .then((prj) => newDb.remove(prj))
-                        .then(() => newDb.remove(user))
-                        .then(() => test.done())
+    test.expect(5)
+    services.loadUser('User')
+        .then(user => {
+            const _id = user.projects[0]._id
+            services.loadProject(user, _id)
+                .then(project => {
+                    project.name = 'Error'
+                    project.owner = 'Error'
+                    project.contributors = 'Error'
+                    project.dataset = 'Error'
+                    project.computations.goeburst = {}
+                    return services.saveProject(user, _id, project)
                 })
-        )
+                .then(project => {
+                    test.strictEqual(project.name, 'Project')
+                    test.strictEqual(project.owner, 'User')
+                    test.deepEqual(project.contributors, [])
+                    test.deepEqual(project.dataset, {})
+                    test.deepEqual(project.computations, { goeburst: {} })
+                    test.done()
+                })
+        })
 }
 
 function testShareProject(test) {
-    users.register('Diogo', '123')
-        .then(() => users.register('Leonardo', '123'))
-        .then(() => newDb.get('Leonardo'))
-        .then(user => users.createProject(user, 'Estirpe da Banana', ' '))
-        .then(doc =>
-            newDb.get('Leonardo')
-                .then(leo => users.shareProject(leo, 'Diogo', doc.project._id, 'Estirpe da Banana'))
-                .then(() => newDb.get('Diogo'))
-                .then(diogo => {
-                    test.equal(diogo.shared[doc.project._id], doc.project.name)
-                    newDb.remove(diogo)
+    test.expect(5)
+    services.register('Contributor', 'Password')
+        .then(() => services.loadUser('User'))
+        .then(user => {
+            const { _id, name } = user.projects[0]
+            return services.shareProject(user, 'Contributor', _id, name)
+        })
+        .then(project => {
+            test.strictEqual(project.contributors.length, 1)
+            test.strictEqual(project.contributors[0], 'Contributor')
+            return services.loadUser('Contributor')
+                .then(user => {
+                    test.strictEqual(user.shared.length, 1)
+                    test.strictEqual(user.shared[0]._id, project._id)
+                    test.strictEqual(user.shared[0].name, project.name)
+                    test.done()
                 })
-                .then(() => newDb.get(doc.project._id))
-                .then(project => newDb.remove(project))
-                .then(() => newDb.get('Leonardo'))
-                .then(leonardo => newDb.remove(leonardo))
-                .then(() => test.done())
-        )
+        })
+}
+
+function testDeleteProject(test) {
+    test.expect(0)
+    services.loadUser('User')
+        .then(user => {
+            const _id = user.projects[0]._id
+            services.deleteProject(user, _id)
+                .then(() => services.loadProject(user, _id))
+                .catch(() => test.done())
+        })
+}
+
+function after(test) {
+    test.expect(0)
+    db.destroy()
+        .then(() => test.done())
 }
 
 module.exports = {
+    before,
     testRegister,
+    testRegisterDuplicated,
     testAuthenticate,
+    testAuthenticateUnauthorized,
+    testLoadUser,
     testCreateProject,
     testLoadProject,
     testSaveProject,
-    testShareProject
+    testShareProject,
+    testDeleteProject,
+    after
 }

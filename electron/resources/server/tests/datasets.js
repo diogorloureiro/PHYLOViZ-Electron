@@ -1,33 +1,46 @@
 'use strict'
 
-const fs = require('fs')
-const datasets = require('../services/data-manager').datasets
+const fs = require('../fspromises')
+const services = require('../services/data-manager/datasets')
 
 function testLoadDatasetsList(test) {
-    datasets.loadDatasetsList((err, data) => {
-        const single_dataset = JSON.parse(fs.readFileSync('./tests/data/output/testLoadDatasetsList.json', 'utf8'))
-        const achromobacter = data.filter(node => node.name == 'Achromobacter spp.')[0]
-        test.deepEqual(single_dataset, achromobacter)
-        test.done()
-    })
+    test.expect(5)
+    services.loadDatasetsList()
+        .then(datasets => {
+            test.ok(typeof datasets[0].name === 'string')
+            test.ok(typeof datasets[0].count === 'number')
+            test.ok(typeof datasets[0].url === 'string')
+            test.ok(typeof datasets[0].loci[0].name === 'string')
+            test.ok(typeof datasets[0].loci[0].url === 'string')
+            test.done()
+        })
 }
 
 function testLoadDatasetFromUrl(test) {
-    datasets.loadDatasetFromUrl('https://pubmlst.org/data/profiles/bbacilliformis.txt', (err, profiles) => {
-        const expected = JSON.parse(fs.readFileSync('./tests/data/output/testLoadDatasetFromUrl.json', 'utf8'))
-        test.deepEqual(profiles, expected)
-        test.done()
-    })
+    test.expect(2)
+    services.loadDatasetFromUrl('https://pubmlst.org/data/profiles/bbacilliformis.txt')
+        .then(profiles => {
+            test.ok(typeof profiles[0].id === 'number')
+            test.ok(typeof profiles[0].loci[0] === 'number')
+            test.done()
+        })
 }
 
 function testLoadDatasetFromFile(test) {
-    fs.readFile('./tests/data/input/mhaemolytica.txt', (err, data) => {
-        datasets.loadDatasetFromFile({ buffer: data }, (err, profiles) => {
-            test.ok(!err, 'failed to read from file')
-            test.deepEqual(profiles, JSON.parse(fs.readFileSync('./tests/data/input/testLoadDatasetFromFile.json', 'utf8')))
+    test.expect(1)
+    fs.readFile('./tests/inputs/testLoadDatasetFromFile.txt')
+        .then(data => services.loadDatasetFromFile({ buffer: data }))
+        .then(profiles => {
+            const expected = [
+                { id: 1, loci: [1, 2, 1, 2, 1, 2, 1] },
+                { id: 2, loci: [2, 1, 1, 1, 2, 1, 2] },
+                { id: 3, loci: [2, 1, 1, 3, 2, 1, 3] },
+                { id: 4, loci: [2, 1, 1, 3, 2, 1, 2] },
+                { id: 5, loci: [3, 1, 2, 2, 2, 1, 1] }
+            ]
+            test.deepEqual(profiles, expected)
             test.done()
         })
-    })
 }
 
 module.exports = {

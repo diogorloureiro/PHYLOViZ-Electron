@@ -1,49 +1,97 @@
 'use strict'
 
-const fs = require('fs')
-const goeburst = require('../services/data-processor').goeburst
+const goeburst = require('../services/data-processor/goeburst')
 
-const edges = JSON.parse(fs.readFileSync('./tests/data/input/testGoeburstComparator.json', 'utf8'))
-
-// Tests the tie break rule of ID
-function testGoeburstComparatorWithSmallestId(test) {
-    test.equal(goeburst.comparator(edges.testGoeBurstComparatorWithSmallestId[0], edges.testGoeBurstComparatorWithSmallestId[1]), 4, '')
+function testComparatorDistanceRule(test) {
+    const p = { distance: 1 }
+    const q = { distance: 10 }
+    test.strictEqual(goeburst.comparator(p, q), -9)
     test.done()
 }
 
-// Tests the tie break rule of hamming distance
-function testGoeburstComparatorWithSmallestDistance(test) {
-    test.equal(goeburst.comparator(edges.testGoeBurstComparatorWithSmallestDistance[0], edges.testGoeBurstComparatorWithSmallestDistance[1]), 2, '')
+function testComparatorLvCountRule(test) {
+    const p = {
+        distance: 1,
+        source: { lvs: [, 1, 1, 3] },
+        target: { lvs: [, 1, 1, 1] }
+    }
+    const q = {
+        distance: 1,
+        source: { lvs: [, 1, 1, 1] },
+        target: { lvs: [, 1, 1, 1] }
+    }
+    test.equal(goeburst.comparator(p, q, 3), -2)
     test.done()
 }
 
-// Tests tie break rule of lvl count
-// First assertion is for SLV count, the second is for DLV and the third is for TLV
-function testGoeburstComparatorWithAllLvls(test) {
-    test.equal(goeburst.comparator(edges.testGoeBurstComparatorWithAllLvls[0], edges.testGoeBurstComparatorWithAllLvls[1]), -1, 'SLV test failed')
-    test.equal(goeburst.comparator(edges.testGoeBurstComparatorWithAllLvls[2], edges.testGoeBurstComparatorWithAllLvls[3]), -1, 'DLV test failed')
-    test.equal(goeburst.comparator(edges.testGoeBurstComparatorWithAllLvls[4], edges.testGoeBurstComparatorWithAllLvls[5]), -3, 'TLV test failed')
+function testComparatorIdRule(test) {
+    const p = {
+        distance: 1,
+        source: { id: 1, lvs: [, 1] },
+        target: { id: 2, lvs: [, 1] }
+    }
+    const q = {
+        distance: 1,
+        source: { id: 10, lvs: [, 1] },
+        target: { id: 20, lvs: [, 1] }
+    }
+    test.strictEqual(goeburst.comparator(p, q, 1), -9)
     test.done()
 }
 
-// Tests the full process of goeBurst
-function testGoeburstProcess(test) {
-    //Database of Bacillus licheniformis that contains 27 profiles
-    //Link https://pubmlst.org/data/profiles/blicheniformis.txt
-    const profiles = JSON.parse(fs.readFileSync('./tests/data/input/testGoeburstProcess.json', 'utf8'))
-    const output = JSON.parse(fs.readFileSync('./tests/data/output/testGoeburstProcess.json', 'utf8'))
-    goeburst.process(profiles, goeburst.comparator).then(function ({ graph, matrix }) {
-        test.deepEqual(matrix, output.matrix, 'Test of matrix failed')
-        test.deepEqual(graph.edges.length, output.edges.length, 'Length didn\'t match')
-        for (let index = 0; index < output.edges.length; index++)
-            test.ok(graph.edges.some(edge => JSON.stringify(edge) === JSON.stringify(output.edges[index])))
-        test.done()
-    })
+function testProcess(test) {
+    const profiles = [
+        { id: 1, loci: [1, 1, 1, 1, 1, 1, 1] },
+        { id: 2, loci: [2, 1, 1, 2, 2, 2, 2] },
+        { id: 3, loci: [2, 1, 2, 1, 3, 3, 2] },
+        { id: 4, loci: [3, 2, 1, 3, 4, 2, 2] },
+        { id: 5, loci: [4, 1, 1, 1, 5, 1, 1] },
+        { id: 6, loci: [5, 3, 3, 3, 6, 4, 2] },
+        { id: 7, loci: [6, 4, 4, 1, 7, 2, 1] },
+        { id: 8, loci: [7, 5, 5, 4, 8, 5, 2] },
+        { id: 9, loci: [7, 6, 6, 1, 9, 6, 2] }
+    ]
+    const result = goeburst.process(profiles, goeburst.comparator)
+    const vertices = [
+        { id: 1, loci: [1, 1, 1, 1, 1, 1, 1], lvs: [, , 1, , , 3, 2, 2] },
+        { id: 2, loci: [2, 1, 1, 2, 2, 2, 2], lvs: [, , , , 2, 2, 4] },
+        { id: 3, loci: [2, 1, 2, 1, 3, 3, 2], lvs: [, , , , 1, 3, 4] },
+        { id: 4, loci: [3, 2, 1, 3, 4, 2, 2], lvs: [, , , , 1, 1, 6] },
+        { id: 5, loci: [4, 1, 1, 1, 5, 1, 1], lvs: [, , 1, , , 3, 2, 2] },
+        { id: 6, loci: [5, 3, 3, 3, 6, 4, 2], lvs: [, , , , , 1, 4, 3] },
+        { id: 7, loci: [6, 4, 4, 1, 7, 2, 1], lvs: [, , , , , 2, 4, 2] },
+        { id: 8, loci: [7, 5, 5, 4, 8, 5, 2], lvs: [, , , , , 1, 4, 3] },
+        { id: 9, loci: [7, 6, 6, 1, 9, 6, 2], lvs: [, , , , , 2, 6] }
+    ]
+    const edges = [
+        { source: 1, target: 5, distance: 2 },
+        { source: 1, target: 7, distance: 5 },
+        { source: 1, target: 2, distance: 5 },
+        { source: 2, target: 3, distance: 4 },
+        { source: 2, target: 4, distance: 4 },
+        { source: 4, target: 6, distance: 5 },
+        { source: 3, target: 9, distance: 5 },
+        { source: 8, target: 9, distance: 5 }
+    ]
+    const matrix = [
+        [5, 5, 6, 2, 7, 5, 7, 6],
+        [4, 4, 5, 6, 6, 6, 6],
+        [6, 5, 6, 6, 6, 5],
+        [6, 5, 6, 6, 6],
+        [7, 5, 7, 6],
+        [7, 6, 6],
+        [7, 6],
+        [5]
+    ]
+    test.deepEqual(result.graph.vertices, vertices)
+    test.deepEqual(result.graph.edges, edges)
+    test.deepEqual(result.matrix, matrix)
+    test.done()
 }
 
 module.exports = {
-    testGoeburstComparatorWithSmallestId,
-    testGoeburstComparatorWithSmallestDistance,
-    testGoeburstComparatorWithAllLvls,
-    testGoeburstProcess
+    testComparatorDistanceRule,
+    testComparatorLvCountRule,
+    testComparatorIdRule,
+    testProcess
 }

@@ -30,8 +30,8 @@ function generateGraph(profiles) {
 		for (let j = i + 1; j < profiles.length; j++) {
 			const qloci = profiles[j].loci, qlvs = vertices[j].lvs
 			const diff = ploci.filter((value, index) => value !== qloci[index]).length // Hamming distance
-			plvs[diff] = plvs[diff] ? plvs[diff] + 1 : 1
-			qlvs[diff] = qlvs[diff] ? qlvs[diff] + 1 : 1
+			plvs[diff] = (plvs[diff] || 0) + 1
+			qlvs[diff] = (qlvs[diff] || 0) + 1
 			matrix[i][j - i - 1] = diff
 		}
 	}

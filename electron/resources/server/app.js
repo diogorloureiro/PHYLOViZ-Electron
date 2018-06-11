@@ -1,30 +1,20 @@
 'use strict'
 
 const express = require('express')
-const passport = require('passport')
-const flash = require('connect-flash')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const passport = require('passport')
+const cors = require('cors')
 const routes = require('./routes')
-const RequestError = require('./services/RequestError')
+const RequestError = require('./RequestError')
 
 const app = express()
 
 app.use(bodyParser.json({ limit: '50mb' }))
-
 app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: true }))
-app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
-
-app.use(function (req, res, next) {
-	res.header('Access-Control-Allow-Origin', '*')
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-	if (req.method === 'OPTIONS')
-		res.sendStatus(200)
-	else
-		next()
-})
+app.use(cors())
 
 app.use(...routes)
 

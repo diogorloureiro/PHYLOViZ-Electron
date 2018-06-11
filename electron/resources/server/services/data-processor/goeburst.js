@@ -2,16 +2,11 @@
 
 const boruvka = require('./algorithms/boruvka')
 
-// Generate a minimum spanning tree (edges and vertices) and distance matrix from the given allelic profiles and comparator using boruvka's algorithm
-function process(profiles, comparator, lvs) {
-	return new Promise(resolve => resolve(boruvka(profiles, comparator, lvs)))
-}
-
 // Compare two edges ({ source: vertex, target: vertex, distance: 1 }) with the following tie-breaking rules:
 // 1. biggest distance
 // 2. smallest LV count up to lvs
 // 3. youngest (= biggest id)
-function comparator(p, q, lvs = 3) {
+function comparator(p, q, lvs) {
 	let diff = p.distance - q.distance
 	if (diff !== 0)
 		return diff
@@ -30,6 +25,6 @@ function comparator(p, q, lvs = 3) {
 }
 
 module.exports = {
-	process,
+	process: boruvka,
 	comparator
 }
