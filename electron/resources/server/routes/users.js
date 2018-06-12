@@ -4,7 +4,7 @@ const router = require('express').Router()
 const passport = require('passport')
 const Strategy = require('passport-local').Strategy
 const response = require('./response')
-const RequestError = require('../services/RequestError')
+const RequestError = require('../RequestError')
 const services = require('../services/data-manager').users()
 
 passport.use(new Strategy((username, password, done) =>

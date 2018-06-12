@@ -1,7 +1,7 @@
 'use strict'
 
 const PouchDB = require('pouchdb')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const uuid = require('uuid/v4')
 const RequestError = require('../../RequestError')
 
