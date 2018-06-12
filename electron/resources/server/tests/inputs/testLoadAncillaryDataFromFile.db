@@ -1,0 +1,6 @@
+'id'	'strain'	'st'	'country'	'yeaR'	'age_yR'	'sex'	'diagnosis1'	'diagnosis2'	'diagnosis3'	'source'
+1	'NCTC11906-19F'	1	'UK'	'1978'	'nd'	'unspecified'	'unspecified'	'unspecified'	'unspecified'	'unspecified'
+2	'SAF-17244-19'	52	'South Africa'	'unspecified'	'nd'	'unspecified'	'unspecified'	'unspecified'	'unspecified'
+3	'PJ23/1'	300	'Sweden'	'1992'	'nd'	'unspecified'	'unspecified'	'unspecified'	'unspecified'	'blood'
+4	'SP264-23F'	81	'Spain'	'1984'	'67'	'unspecified'	'pneumonia'	'unspecified'	'unspecified'	'blood'
+5	'87-029044-14'	20	'Slovakia'	'1987'	'nd'	'unspecified'	'unspecified'	'unspecified'	'unspecified'	'unspecified'

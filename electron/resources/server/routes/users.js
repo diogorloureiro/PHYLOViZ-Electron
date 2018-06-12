@@ -34,6 +34,9 @@ router.post('/logout', (req, res) => {
 	res.sendStatus(200)
 })
 
+// Load user
+router.get('/user', (req, res) => res.send(req.user))
+
 // Create project
 router.post('/projects', response(req => services.createProject(req.user, req.body.name, req.body.dataset)))
 

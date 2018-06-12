@@ -2,14 +2,10 @@
 
 const fetch = require('isomorphic-fetch')
 const xml2js = require('xml2js')
-const fs = require('fs')
-const csv = require('csv-stream')
-const stream = require('stream')
+const papaparse = require('papaparse')
 const RequestError = require('../../RequestError')
 
 const parser = new xml2js.Parser(xml2js.defaults["0.2"])
-const Readable = stream.Readable
-const Duplex = stream.Duplex
 
 // Retrieve all datasets (name, number of STs, profile URL, loci(name, locus URL)) from https://pubmlst.org/data/dbases.xml
 function loadDatasetsList() {
@@ -33,48 +29,69 @@ function loadDatasetsList() {
 function loadDatasetFromUrl(url) {
 	return fetch(url)
 		.then(res => res.text())
-		.then(body => {
-			const stream = new Readable()
-			stream.push(body)
-			stream.push(null) // Representation of end of file
-			return parse(stream)
-		})
+		.then(body => parseDataset(body))
 }
 
 // Retrieve dataset from given file
 function loadDatasetFromFile(file) {
-	const stream = new Duplex()
-	stream.push(file.buffer)
-	stream.push(null) // Representation of end of file
-	return parse(stream)
+	return parseDataset(file.buffer.toString())
 }
 
 // Parse a .csv or .txt file into allelic profiles
-function parse(stream) {
+function parseDataset(body) {
 	return new Promise((resolve, reject) => {
-		const profiles = []
-		stream.pipe(csv.createStream({ delimiter: '\t' }))
-			.on('data', function (data) {
-				let id
-				const loci = []
-				for (const property in data) {
-					if (data.hasOwnProperty(property)) {
-						const element = data[property]
-						if (property === '\'ST\'' || property === 'ST')
-							id = parseInt(element)
-						else if (property !== 'clonal_complex')
-							loci.push(parseInt(element))
-					}
-				}
-				profiles.push({ id, loci })
-			})
-			.on('error', () => reject(new RequestError('Corrupt file', 400)))
-			.on('end', () => resolve(profiles))
+		papaparse.parse(body, {
+			dynamicTyping: true,
+			skipEmptyLines: true,
+			quoteChar: '\'',
+			complete: results => {
+				const rows = results.data
+				const head = rows.shift()
+				head.shift()
+				const clonal_complex = head[head.length - 1] === 'clonal_complex'
+				const body = rows.map(columns => {
+					const id = columns.shift()
+					if (clonal_complex)
+						columns.pop()
+					return { id, loci: columns }
+				})
+				resolve({ head, body })
+			},
+			error: err => reject(new RequestError(`Corrupt file: ${err}`, 400))
+		})
+	})
+}
+
+// Retrieve ancillary data from given file
+function loadAncillaryDataFromFile(file) {
+	return parseAncillaryData(file.buffer.toString())
+}
+
+// Parse a .csv or .txt file into ancillary data
+function parseAncillaryData(body) {
+	return new Promise((resolve, reject) => {
+		papaparse.parse(body, {
+			dynamicTyping: true,
+			skipEmptyLines: true,
+			quoteChar: '\'',
+			header: true,
+			trimHeaders: true,
+			complete: results => {
+				results.data.forEach(row => {
+					for (const key in row)
+						if (row.hasOwnProperty(key) && (row[key] === 'unspecified' || row[key] === 'nd'))
+							delete row[key]
+				})
+				resolve({ head: results.meta.fields, body: results.data })
+			},
+			error: err => reject(new RequestError(`Corrupt file: ${err}`, 400))
+		})
 	})
 }
 
 module.exports = {
 	loadDatasetsList,
 	loadDatasetFromUrl,
-	loadDatasetFromFile
+	loadDatasetFromFile,
+	loadAncillaryDataFromFile
 }

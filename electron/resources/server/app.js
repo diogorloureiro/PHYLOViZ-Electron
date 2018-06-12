@@ -14,7 +14,7 @@ app.use(bodyParser.json({ limit: '50mb' }))
 app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: true }))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(cors())
+app.use(cors({ credentials: true, origin: 'http://localhost:8080' }))
 
 app.use(...routes)
 
