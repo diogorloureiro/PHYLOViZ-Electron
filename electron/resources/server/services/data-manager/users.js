@@ -52,7 +52,7 @@ function init(db = new PouchDB('database')) {
 		return db.put(user)
 			.then(() => db.put(project))
 			.then(res => {
-				project._rev = res._rev
+				project._rev = res.rev
 				return project
 			})
 	}
@@ -73,7 +73,7 @@ function init(db = new PouchDB('database')) {
 				old.computations = project.computations
 				return db.put(old)
 					.then(res => {
-						old._rev = res._rev
+						old._rev = res.rev
 						return old
 					})
 			})
@@ -112,7 +112,7 @@ function init(db = new PouchDB('database')) {
 						return db.put(project)
 					})
 					.then(res => {
-						project._rev = res._rev
+						project._rev = res.rev
 						return project
 					})
 			})
