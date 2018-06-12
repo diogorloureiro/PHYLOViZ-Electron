@@ -1,7 +1,7 @@
 <template>
     <div>
         <br>
-        <b-card title=''>
+        <b-card>
             <b-card-body>
                 <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt'></b-form-file>
                 <div class='mt-3'>Selected file: {{file && file.name}}</div>
@@ -20,11 +20,7 @@
                 error: undefined
             }
         },
-        created() {
-            //this.uploadFile()
-        },
         watch: {
-            // call again the method if the route changes
             '$route': 'fetchData'
         },
         methods: {
@@ -40,14 +36,17 @@
                 fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(profiles => {
                     const dataset = {
                         name: this.file.name,
-                        count: 'Unknown',       // ????
+                        count: 'Unknown',
                         loci: 'Unknown',
                         url: 'Unknown',
                         profiles
                     }
-                    this.$store.commit('setDataset', dataset)
+                    this.$store.commit('setProject', { dataset, computations: [] })
                     this.loading = false
-                    this.$router.push('/algorithms')
+                    if(this.$store.state.username)
+                        this.$router.push('/projects/create')
+                    else
+                        this.$router.push('/algorithms')
                 }).catch(error => this.error = error)
             }
         }

@@ -1,13 +1,11 @@
 <template>
-    <div :class="$style.sidenav">
+    <div :class='$style.sidebar'>
         <br>
-        <!--button type='button' class='btn btn-link'>Profile</button-->
-        <!--br-->
-        <!--a href='/upload-dataset'>Upload dataset</a-->
         <button class='btn btn-link' @click='uploadDataset'>Upload dataset</button>
         <br>
-        <!--a href='/public-datasets'>Public datasets</a-->
         <button class='btn btn-link' @click='publicDatasets'>Public datasets</button>
+        <br>
+        <button v-if='this.$store.state.username' class='btn btn-link' @click='projects'>Projects</button>
     </div>
 </template>
 
@@ -19,13 +17,16 @@
             },
             publicDatasets() {
                 this.$router.push('/public-datasets')
+            },
+            projects() {
+                this.$router.push('/projects')
             }
         }
     }
 </script>
 
 <style module>
-    .sidenav {
+    .sidebar {
         height: 100%;
         width: 180px;
         position: fixed;

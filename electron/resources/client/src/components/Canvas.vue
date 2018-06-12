@@ -3,7 +3,7 @@
             <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
             <b-alert :show='error' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
             <br>
-            <strong>{{this.dataset.name}}</strong>
+            <strong>{{this.project.name}}</strong>
             <svg id='canvas' width='500' height='400' style='border:1px solid black'></svg>
             <div>
                 <br>
@@ -28,7 +28,7 @@
             return {
                 canvas: undefined,
                 functions: undefined,
-                dataset: undefined,
+                project: undefined,
                 graph: undefined,
                 algorithm: undefined,
                 speed: 50,
@@ -41,14 +41,14 @@
         },
         mounted() {
             this.canvas = d3.select('svg')
-            this.algorithm = JSON.parse(window.sessionStorage.getItem('render-algorithm'))
+            this.algorithm = this.project.render
             this.functions = init(this.canvas, this.algorithm)
-            this.cut = this.maxCut = Math.max(...this.dataset.graph.edges.map(e => e.distance))
-            this.graph = this.functions.direct(this.dataset.graph)
+            this.cut = this.maxCut = Math.max(...this.project.graph.edges.map(e => e.distance))
+            this.graph = this.functions.direct(this.project.graph)
             this.render()
         },
         created() {
-            this.dataset = JSON.parse(window.sessionStorage.getItem('dataset'))
+            this.project = JSON.parse(window.sessionStorage.getItem('project'))
         },
         watch: {
             // call again the method if the route changes
