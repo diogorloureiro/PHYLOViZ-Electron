@@ -111,9 +111,12 @@
 
                     dataset['profiles'] = profiles
 
-                    this.$store.commit('setDataset', dataset)
+                    this.$store.commit('setProject', { dataset, computations: [] })
                     this.loading = false
-                    this.$router.push('/algorithms')
+                    if(this.$store.state.username)
+                        this.$router.push('/projects/create')
+                    else
+                        this.$router.push('/algorithms')
                 })
             },
             onFiltered (filteredItems) {

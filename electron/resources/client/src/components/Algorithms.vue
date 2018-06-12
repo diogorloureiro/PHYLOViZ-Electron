@@ -5,10 +5,10 @@
         <br>
         <b-card title=''>
             <b-card-body>
-                <p><strong>Dataset name: </strong>{{this.dataset.name}}</p>
-                <p><strong>Count: </strong>{{this.dataset.count}}</p>
-                <p><strong>Loci: </strong>{{this.dataset.loci}}</p>
-                <p><strong>URL: </strong>{{this.dataset.url}}</p>
+                <p><strong>Dataset name: </strong>{{this.project.dataset.name}}</p>
+                <p><strong>Count: </strong>{{this.project.dataset.count}}</p>
+                <p><strong>Loci: </strong>{{this.project.dataset.loci}}</p>
+                <p><strong>URL: </strong>{{this.project.dataset.url}}</p>
                 <hr>
                 <p>Select the algorithm to process the dataset's profiles:</p>
                 <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
@@ -24,7 +24,7 @@
     export default {
         data () {
             return {
-                dataset: this.$store.state.dataset,
+                project: this.$store.state.project,
                 selected: 'goeburst',
                 selectedRender: 'forcedirected',
                 options: [
@@ -44,14 +44,19 @@
                 this.loading = true
                 const options = {
                     method: 'POST',
-                    body: JSON.stringify(this.dataset.profiles),
+                    body: JSON.stringify(this.project.dataset.profiles),
                     headers: { 'content-type': 'application/json' }
                 }
                 fetch(`http://localhost:3000/algorithms/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
 
-                    this.dataset['graph'] = graph
-                    window.sessionStorage.setItem('dataset', JSON.stringify(this.dataset))
-                    window.sessionStorage.setItem('render-algorithm', JSON.stringify(this.selectedRender))
+                    this.project.computations.push({ algorithm: this.selected, graph, matrix })
+                    const info = {
+                        name: this.project.dataset.name,
+                        graph: this.project.computations[0].graph,
+                        render: this.selectedRender
+                    }
+                    console.log(info)
+                    window.sessionStorage.setItem('project', JSON.stringify(info))
                     this.loading = false
                     this.$router.push('/canvas')
                 })

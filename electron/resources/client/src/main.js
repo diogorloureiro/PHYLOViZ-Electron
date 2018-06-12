@@ -15,6 +15,9 @@ import FileUpload from './components/FileUpload.vue'
 import Algorithms from './components/Algorithms.vue'
 import Register from './components/Register.vue'
 import Login from './components/Login.vue'
+import Projects from './components/Projects.vue'
+import CreateProject from './components/CreateProject.vue'
+import Project from './components/Project.vue'
 Vue.component('Navbar', Navbar)
 Vue.component('Sidebar', Sidebar)
 Vue.component('Canvas', Canvas)
@@ -22,6 +25,9 @@ Vue.component('DatasetsTable', DatasetsTable)
 Vue.component('Algorithms', Algorithms)
 Vue.component('Register', Register)
 Vue.component('Login', Login)
+Vue.component('Projects', Projects)
+Vue.component('CreateProject', CreateProject)
+Vue.component('Project', Project)
 
 Vue.use(Router)
 Vue.use(Vuex)
@@ -29,15 +35,15 @@ Vue.use(BootstrapVue)
 
 const store = new Vuex.Store({
     state: {
-        dataset: undefined,
-        auth: false
+        project: undefined,
+        username: undefined
     },
     mutations: {
-        setDataset(state, data) {
-            state.dataset = data
+        setProject(state, project) {
+            state.project = project
         },
-        setAuth(state, auth) {
-            state.auth = auth
+        setUsername(state, username) {
+            state.username = username
         }
     }
 })
@@ -66,6 +72,18 @@ const routes = [
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/projects',
+        component: Projects
+    },
+    {
+        path: '/projects/create',
+        component: CreateProject
+    },
+    {
+        path: '/project',
+        component: Project
     }
 ]
 

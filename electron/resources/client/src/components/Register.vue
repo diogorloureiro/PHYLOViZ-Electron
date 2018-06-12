@@ -8,7 +8,7 @@
         <label for='inputPassword' class='sr-only'>Password</label>
         <input v-model='password' type='password' id='inputPassword' class='form-control' placeholder='Password' required>
         <br>
-        <button class='btn btn-lg btn-outline-success btn-block' v-on:click='register'>Register</button>
+        <button class='btn btn-lg btn-outline-success btn-block' @click='register'>Register</button>
     </div>
 </template>
 
@@ -28,14 +28,10 @@
                         username: this.username,
                         password: this.password
                     }),
-                    headers: { 'content-type': 'application/json' }
+                    headers: { 'content-type': 'application/json' },
+                    credentials: 'include'
                 }
-                console.log(options.body)
-                fetch('http://localhost:3000/register', options).then(res => {
-                    
-                    console.log(res)
-                    this.$router.push('/')
-                })
+                fetch('http://localhost:3000/register', options).then(res => this.$router.push('/'))
             }
         }
     }
