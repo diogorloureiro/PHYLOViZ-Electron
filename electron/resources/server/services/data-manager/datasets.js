@@ -46,16 +46,16 @@ function parseDataset(body) {
 			quoteChar: '\'',
 			complete: results => {
 				const rows = results.data
-				const head = rows.shift()
-				head.shift()
-				const clonal_complex = head[head.length - 1] === 'clonal_complex'
-				const body = rows.map(columns => {
+				const loci = rows.shift()
+				loci.shift()
+				const clonal_complex = loci[loci.length - 1] === 'clonal_complex'
+				const profiles = rows.map(columns => {
 					const id = columns.shift()
 					if (clonal_complex)
 						columns.pop()
 					return { id, loci: columns }
 				})
-				resolve({ head, body })
+				resolve({ loci, profiles })
 			},
 			error: err => reject(new RequestError(`Corrupt file: ${err}`, 400))
 		})

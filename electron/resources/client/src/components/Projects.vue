@@ -80,8 +80,8 @@
                     credentials: 'include'
                 }
                 fetch(`http://localhost:3000/user`, options).then(res => res.json()).then(user => {
+                    console.log(user)
                     this.projects = user.projects.concat(user.shared)
-                    console.log(this.projects)
                     this.totalRows = this.projects.length
                     this.loading = false
                 }).catch(error => {

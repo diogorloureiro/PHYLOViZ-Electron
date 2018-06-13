@@ -26,6 +26,9 @@
                 <br>
                 <button class='btn btn-outline-success' @click='saveProject'>Save Project</button>
                 <button class='btn btn-outline-danger' @click='deleteProject'>Delete Project</button>
+                <br>
+                <b-form-input v-model='contributor' type='text' placeholder='Enter the persons username'></b-form-input>
+                <button class='btn btn-outline-success' @click='shareProject'>Share Project</button>
             </b-card-body>
         </b-card>
     </div>
@@ -48,6 +51,7 @@
                     { value: 'grapetree', text: 'GrapeTree Layout' },
                     { value: 'radial', text: 'Radial Static Layout' }
                 ],
+                contributor: undefined,
                 loading: false,
                 error: undefined,
             }
@@ -108,6 +112,23 @@
                     this.$router.push('/projects')
                     this.loading = false
                 })
+            },
+            shareProject(contributor) {
+                this.loading = true
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify({ name: this.project.name }),
+                    headers: { 'content-type': 'application/json' },
+                    credentials: 'include'
+                }
+                console.log(options)
+                fetch(`http://localhost:3000/projects/${this.project._id}/share/${this.contributor}`, options).then(res => {
+                    
+                    console.log(res)
+                    this.project.contributors.push(this.contributor)
+                    this.loading = false
+                })
+
             }
         }
     }

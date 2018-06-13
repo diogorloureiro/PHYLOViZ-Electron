@@ -33,13 +33,12 @@
                     method: 'POST',
                     body: formData
                 }
-                fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(profiles => {
+                fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(obj => {
                     const dataset = {
                         name: this.file.name,
-                        count: 'Unknown',
-                        loci: 'Unknown',
-                        url: 'Unknown',
-                        profiles
+                        count: obj.profiles.length,
+                        loci: obj.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2),
+                        profiles: obj.profiles
                     }
                     this.$store.commit('setProject', { dataset, computations: [] })
                     this.loading = false

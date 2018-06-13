@@ -8,7 +8,7 @@
                 <p><strong>Dataset name: </strong>{{this.project.dataset.name}}</p>
                 <p><strong>Count: </strong>{{this.project.dataset.count}}</p>
                 <p><strong>Loci: </strong>{{this.project.dataset.loci}}</p>
-                <p><strong>URL: </strong>{{this.project.dataset.url}}</p>
+                <p v-show='this.project.dataset.url'><strong>URL: </strong>{{this.project.dataset.url}}</p>
                 <hr>
                 <p>Select the algorithm to process the dataset's profiles:</p>
                 <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>

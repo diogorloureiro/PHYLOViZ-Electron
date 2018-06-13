@@ -61,7 +61,7 @@ function init(db = new PouchDB('database')) {
 		return db.get(_id)
 			.catch(() => { throw new RequestError('Project not found', 404) })
 			.then(project => {
-				if (project.owner !== user._id && !project.users[user._id])
+				if (project.owner !== user._id && !project.contributors.includes(user._id))
 					throw new RequestError('Project not found', 404)
 				return project
 			})

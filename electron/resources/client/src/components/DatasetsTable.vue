@@ -107,9 +107,9 @@
             },
             fetchDataset(url, dataset) {
                 this.loading = true
-                fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(profiles => {
+                fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(obj => {
 
-                    dataset['profiles'] = profiles
+                    dataset['profiles'] = obj.profiles
 
                     this.$store.commit('setProject', { dataset, computations: [] })
                     this.loading = false

@@ -50,6 +50,6 @@ router.put('/projects/:id', response(req => services.saveProject(req.user, req.p
 router.delete('/projects/:id', response(req => services.deleteProject(req.user, req.params.id)))
 
 // Share project
-router.post('/projects/:id/share/:contributor', response(req => services.shareProject(req.user, req.params.contributor, req.params.id, req.body)))
+router.post('/projects/:id/share/:contributor', response(req => services.shareProject(req.user, req.params.contributor, req.params.id, req.body.name)))
 
 module.exports = router
