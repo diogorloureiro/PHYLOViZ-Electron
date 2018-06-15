@@ -21,8 +21,8 @@ function testLoadDatasetFromUrl(test) {
     test.expect(3)
     services.loadDatasetFromUrl('https://pubmlst.org/data/profiles/bbacilliformis.txt')
         .then(profiles => {
-            const profile = profiles.body[0]
-            test.ok(typeof profiles.head[0] === 'string')
+            const profile = profiles.profiles[0]
+            test.ok(typeof profiles.loci[0] === 'string')
             test.ok(typeof profile.id === 'number')
             test.ok(typeof profile.loci[0] === 'number')
             test.done()
@@ -35,8 +35,8 @@ function testLoadDatasetFromFile(test) {
         .then(data => services.loadDatasetFromFile({ buffer: data }))
         .then(profiles => {
             const expected = {
-                head: ['adk', 'aroE', 'deoD', 'gapDH', 'gnd', 'mdh', 'zwf', 'clonal_complex'],
-                body: [
+                loci: ['adk', 'aroE', 'deoD', 'gapDH', 'gnd', 'mdh', 'zwf', 'clonal_complex'],
+                profiles: [
                     { id: 1, loci: [1, 2, 1, 2, 1, 2, 1] },
                     { id: 2, loci: [2, 1, 1, 1, 2, 1, 2] },
                     { id: 3, loci: [2, 1, 1, 3, 2, 1, 3] },
