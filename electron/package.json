@@ -1,42 +1,42 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-	"build": "electron-packager . PHYLOViZ-Electron --all"
-  },
-  "devDependencies": {
-    "debug": "~2.6.9",
-    "electron": "~1.8.2",
-    "electron-packager": "^12.1.0",
-    "electron-rebuild": "^1.7.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DrLDiogo/PHYLOViZ-Electron.git"
-  },
-  "contributors": [
-    {
-      "name": "Diogo Loureiro",
-      "email": "42392@alunos.isel.ipl.pt",
-      "url": "https://github.com/DrLDiogo"
-    },
-    {
-      "name": "Leonardo Alexandre",
-      "email": "42932@alunos.isel.ipl.pt",
-      "url": "https://github.com/JupitersMight"
-    },
-    {
-      "name": "Luana Silva",
-      "email": "42189@alunos.isel.ipl.pt",
-      "url": "https://github.com/Luanab"
-    }
-  ],
-  "license": "GPL-3.0-only",
-  "bugs": {
-    "url": "https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
-  },
-  "homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron"
+	"name": "phyloviz-electron-desktop",
+	"version": "1.0.0",
+	"description": "PHYLOViZ-Electron - Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron .",
+		"build": "electron-packager . PHYLOViZ-Electron --all"
+	},
+	"devDependencies": {
+		"debug": "~2.6.9",
+		"electron": "~1.8.2",
+		"electron-packager": "^12.1.0",
+		"electron-rebuild": "^1.7.3"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/DrLDiogo/PHYLOViZ-Electron.git"
+	},
+	"contributors": [
+		{
+			"name": "Diogo Loureiro",
+			"email": "42392@alunos.isel.ipl.pt",
+			"url": "https://github.com/DrLDiogo"
+		},
+		{
+			"name": "Leonardo Alexandre",
+			"email": "42932@alunos.isel.ipl.pt",
+			"url": "https://github.com/JupitersMight"
+		},
+		{
+			"name": "Luana Silva",
+			"email": "42189@alunos.isel.ipl.pt",
+			"url": "https://github.com/Luanab"
+		}
+	],
+	"license": "GPL-3.0-only",
+	"bugs": {
+		"url": "https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
+	},
+	"homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron"
 }

@@ -12,8 +12,8 @@ const url = require('url')
 
 const child_process = require('child_process')
 
-child_process.fork('./resources/app/resources/client/server')
-child_process.fork('./resources/app/resources/server/bin/www')
+child_process.fork('./resources/client/server')
+child_process.fork('./resources/server/bin/www')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
