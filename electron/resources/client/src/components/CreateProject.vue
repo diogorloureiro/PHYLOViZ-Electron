@@ -25,24 +25,38 @@
             return {
                 dataset: this.$store.state.project.dataset,
                 projectName: undefined,
+                ancillary: undefined,
                 loading: false,
                 error: undefined,
             }
         },
         methods: {
+            processAncillary() {
+                this.loading = true
+                const formData = new FormData()
+                formData.append('file', this.ancillary)
+                const options = {
+                    method: 'POST',
+                    body: formData
+                }
+                fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(obj => {
+                    this.ancillary = obj
+                    this.loading = false
+                }).catch(error => this.error = error)
+            },
             process() {
                 this.loading = true
                 const options = {
                     method: 'POST',
                     body: JSON.stringify({
                         name: this.projectName,
-                        dataset: this.dataset
+                        dataset: this.dataset,
+                        ancillary: this.ancillary
                     }),
                     headers: { 'content-type': 'application/json' },
                     credentials: 'include'
                 }
                 fetch(`http://localhost:3000/projects`, options).then(res => {
-                    
                     this.loading = false
                     this.$router.push('/projects')
                 })

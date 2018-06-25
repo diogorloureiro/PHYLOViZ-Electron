@@ -142,7 +142,7 @@ function render(graph, conf) {
         .attr('class', 'link')
         .attr('transform', d => 'rotate(0)')
 
-    let line = edgeEnter
+    edgeEnter
         .append('line')
         .attr('x1', d => d.source.x + conf.width / 2)
         .attr('y1', d => d.source.y + conf.height / 2)
@@ -160,10 +160,10 @@ function render(graph, conf) {
         .attr('class', 'node')
         .attr('transform', d => 'rotate(0)')
 
-    let circle = elemEnter
+    elemEnter
         .append('circle')
         .attr('id', d => 'node' + d.id)
-        .on("click", d => {
+        .on('click', d => {
             let active = d.active ? false : true
             let visibility = active ? 'hidden' : 'visible'
             d3.select('#text' + d.id).style('visibility', visibility)
@@ -171,7 +171,7 @@ function render(graph, conf) {
         })
         .attr('cx', d => d.coordinates[0] + conf.width / 2)
         .attr('cy', d => d.coordinates[1] + conf.height / 2)
-        .attr('r', 5)
+        .attr('r', d => d.size)
         .style('fill', '#00549f')
 
     elemEnter

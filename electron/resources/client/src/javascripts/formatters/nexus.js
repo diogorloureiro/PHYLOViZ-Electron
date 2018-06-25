@@ -3,7 +3,7 @@
 import parseNewick from "./newick"
 
 function parseNexus(tree) {
-    const a1 = tre.split(/begin trees;\s+/)[1]
+    const a1 = tree.split(/begin trees;\s+/)[1]
     const taxa_map = {}
     let a2, a3
     if (a1.search('translate') >= 0) {

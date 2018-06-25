@@ -14,4 +14,7 @@ router.get('/datasets/:url', response(req => services.loadDatasetFromUrl(req.par
 // Load dataset from file
 router.post('/datasets/file', upload.single('file'), response(req => services.loadDatasetFromFile(req.file)))
 
+// Load ancillary data from file
+router.post('/ancillary/file', upload.single('file'), response(req => services.loadAncillaryDataFromFile(req.file)))
+
 module.exports = router

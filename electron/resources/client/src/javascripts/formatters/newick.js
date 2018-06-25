@@ -11,7 +11,7 @@ function parseNewick(a, taxa_map) {
                 r.children = [c]
                 e.push(r)
                 r = c
-                break;
+                break
             case ",":
                 const c = {}
                 e[e.length - 1].children.push(c)

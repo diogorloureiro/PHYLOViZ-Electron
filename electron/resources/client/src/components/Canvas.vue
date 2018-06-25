@@ -30,6 +30,7 @@
                 functions: undefined,
                 project: undefined,
                 graph: undefined,
+                ancillary: undefined,
                 algorithm: undefined,
                 speed: 50,
                 cut: 0,
@@ -45,6 +46,8 @@
             this.functions = init(this.canvas, this.algorithm)
             this.cut = this.maxCut = Math.max(...this.project.graph.edges.map(e => e.distance))
             this.graph = this.functions.direct(this.project.graph)
+            this.ancillary = this.project.ancillary.head
+            this.functions.ancillary(this.graph, this.project.ancillary.body)
             this.render()
         },
         created() {

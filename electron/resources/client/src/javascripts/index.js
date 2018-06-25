@@ -1,6 +1,6 @@
 'use strict'
 
-import { flatten, direct } from './graph-handler'
+import { flatten, direct, ancillary } from './graph-handler'
 import forcedirected from './forcedirected'
 import grapetree from './grapetree'
 import radial from './radial'
@@ -61,6 +61,7 @@ function init(canvas, algorithm) {
     return {
         flatten,
         direct,
+        ancillary,
         render: graph => renders[algorithm](graph, conf),
         updateSpeed,
         search

@@ -15,7 +15,6 @@ function direct(graph) {
     while (neighbours.length) {
         const neighbour = neighbours.shift()
         const id = neighbour.id
-        neighbour.size = 5
         neighbour.children = []
         edges.forEach((edge, index) => {
             let { source, target, distance } = edge
@@ -37,7 +36,15 @@ function direct(graph) {
     return { root, edges: visited }
 }
 
+function ancillary(graph, ancillary = [], minimum = 5) {
+    graph.vertices.forEach(vertex => {
+        vertex.ancillary = ancillary.filter(row => id === row.st)
+        vertex.size = vertex.ancillary.length + minimum
+    })
+}
+
 export {
     flatten,
-    direct
+    direct,
+    ancillary
 }
