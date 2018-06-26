@@ -30,6 +30,7 @@
                 functions: undefined,
                 project: undefined,
                 graph: undefined,
+                flattenGraph: undefined,
                 ancillary: undefined,
                 algorithm: undefined,
                 speed: 50,
@@ -46,12 +47,17 @@
             this.functions = init(this.canvas, this.algorithm)
             this.cut = this.maxCut = Math.max(...this.project.graph.edges.map(e => e.distance))
             this.graph = this.functions.direct(this.project.graph)
-            this.ancillary = this.project.ancillary.head
-            this.functions.ancillary(this.graph, this.project.ancillary.body)
+            this.flattenGraph = {
+                    vertices: this.functions.flatten(this.graph.root),
+                    edges: this.graph.edges
+            }
+            this.ancillary = this.project.ancillary.head || []
+            this.functions.ancillary(this.flattenGraph, this.project.ancillary.body)
             this.render()
         },
         created() {
             this.project = JSON.parse(window.sessionStorage.getItem('project'))
+            console.log('project : '+this.project)
         },
         watch: {
             // call again the method if the route changes
@@ -60,10 +66,8 @@
         methods: {
             render() {
                 this.loading = true
-                const graph = {
-                    vertices: this.functions.flatten(this.graph.root),
-                    edges: this.graph.edges.filter(e => e.distance <= this.cut)
-                }
+                const graph = this.flattenGraph
+                graph.edges = this.flattenGraph.edges.filter(e => e.distance <= this.cut)
                 this.functions.render(graph)
                 this.loading = false
             },

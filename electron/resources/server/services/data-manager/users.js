@@ -38,7 +38,7 @@ function init(db = new PouchDB('database')) {
 			.catch(() => { throw new RequestError('User not found', 404) })
 	}
 
-	function createProject(user, name, dataset) {
+	function createProject(user, name, dataset, ancillary) {
 		const _id = uuid()
 		user.projects.push({ _id, name })
 		const project = {
@@ -47,6 +47,7 @@ function init(db = new PouchDB('database')) {
 			owner: user._id,
 			contributors: [],
 			dataset,
+			ancillary,
 			computations: {}
 		}
 		return db.put(user)

@@ -53,6 +53,7 @@
                     const info = {
                         name: this.project.dataset.name,
                         graph: this.project.computations[0].graph,
+                        ancillary: {},
                         render: this.selectedRender
                     }
                     console.log(info)

@@ -111,7 +111,7 @@
 
                     dataset['profiles'] = obj.profiles
 
-                    this.$store.commit('setProject', { dataset, computations: [] })
+                    this.$store.commit('setProject', { dataset, computations: [], ancillary :{} })
                     this.loading = false
                     if(this.$store.state.username)
                         this.$router.push('/projects/create')

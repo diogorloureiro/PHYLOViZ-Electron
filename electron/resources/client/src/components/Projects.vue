@@ -97,7 +97,7 @@
                 }
                 fetch(`http://localhost:3000/projects/${id}`, options).then(res => res.json()).then(project => {
 
-                    console.log(project)
+                    console.log(project.ancillary)
                     this.$store.commit('setProject', project)
                     this.$router.push(`/project`)
                     this.loading = false

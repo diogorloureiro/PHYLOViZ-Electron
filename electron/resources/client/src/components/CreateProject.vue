@@ -51,7 +51,7 @@
                     body: JSON.stringify({
                         name: this.projectName,
                         dataset: this.dataset,
-                        ancillary: this.ancillary
+                        ancillary: this.ancillary || {}
                     }),
                     headers: { 'content-type': 'application/json' },
                     credentials: 'include'

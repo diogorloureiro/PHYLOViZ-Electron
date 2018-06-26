@@ -32,6 +32,6 @@
         position: fixed;
         left: 0;
         background-color: #f5f5f5;
-        overflow-x: hidden;
+        overflow-x: scroll;
     }
 </style>

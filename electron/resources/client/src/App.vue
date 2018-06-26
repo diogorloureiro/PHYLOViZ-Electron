@@ -1,7 +1,7 @@
 <template>
-<div id='app'>
-	<Navbar/>
-    <div class='container'>
+<div id='app' style= 'overflow: hidden'>
+    <div class='container' style='margin-left: 180px; margin-top: 50px; overflow: auto'>
+        <Navbar/>
         <Sidebar/>
         <div id='main'>
             <router-view></router-view>

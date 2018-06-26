@@ -38,7 +38,7 @@ router.post('/logout', (req, res) => {
 router.get('/user', (req, res) => res.send(req.user))
 
 // Create project
-router.post('/projects', response(req => services.createProject(req.user, req.body.name, req.body.dataset)))
+router.post('/projects', response(req => services.createProject(req.user, req.body.name, req.body.dataset, req.body.ancillary)))
 
 // Load project
 router.get('/projects/:id', response(req => services.loadProject(req.user, req.params.id)))

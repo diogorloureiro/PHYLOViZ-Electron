@@ -1,5 +1,5 @@
 <template>
-    <nav class='navbar navbar-expand navbar-dark bg-dark'>
+    <nav class='navbar navbar-expand navbar-dark bg-dark' style='position: fixed; width: 100%; left:0; top: 0; height: 50px;'>
         <ul class='navbar-nav mr-auto'>
             <li class='nav-item'>
                 <router-link tag='li' to="/">
@@ -34,16 +34,18 @@
 </template>
 
 <script>
-    export default {
-        methods: {
-            logout() {
-                fetch('http://localhost:3000/logout', { method: 'POST', credentials: 'include' }).then(res => {
-                    
-                    this.$store.commit('setUsername', undefined)
-                    this.$store.commit('setProject', undefined)
-                    this.$router.push('/')
-                })
-            }
-        }
+export default {
+  methods: {
+    logout() {
+      fetch("http://localhost:3000/logout", {
+        method: "POST",
+        credentials: "include"
+      }).then(res => {
+        this.$store.commit("setUsername", undefined);
+        this.$store.commit("setProject", undefined);
+        this.$router.push("/");
+      });
     }
+  }
+};
 </script>
