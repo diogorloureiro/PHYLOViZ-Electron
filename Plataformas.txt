@@ -1,0 +1,2 @@
+--platform=darwin --arch=x64
+--platform=win32 --arch=x64
