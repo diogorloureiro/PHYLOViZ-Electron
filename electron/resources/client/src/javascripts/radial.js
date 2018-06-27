@@ -81,7 +81,7 @@ function render(graph, conf) {
         .attr('cx', d => d.x + conf.width / 2)
         .attr('cy', d => d.y + conf.height / 2)
         .attr('r', d => d.size)
-        .style('fill', '#00549f')
+        .attr('fill', '#00549f')
 
     nodeEnter
         .append('text')

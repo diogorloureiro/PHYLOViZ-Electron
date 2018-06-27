@@ -172,7 +172,7 @@ function render(graph, conf) {
         .attr('cx', d => d.coordinates[0] + conf.width / 2)
         .attr('cy', d => d.coordinates[1] + conf.height / 2)
         .attr('r', d => d.size)
-        .style('fill', '#00549f')
+        .attr('fill', '#00549f')
 
     elemEnter
         .append('text')
