@@ -38,5 +38,8 @@
 	"bugs": {
 		"url": "https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
 	},
-	"homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron"
+	"homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron",
+	"dependencies": {
+		"npm": "^6.1.0"
+	}
 }

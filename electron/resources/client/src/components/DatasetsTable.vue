@@ -1,5 +1,5 @@
 <template>
-    <div id='datasets-table'>
+    <div id='datasets-table' style='overflow: auto;'>
         <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
         <b-alert :show='error' variant='danger' dismissible>An error has occurred while fetching the datasets</b-alert>
         <br>

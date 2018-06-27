@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style='overflow: auto;'>
         <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
         <b-alert :show='error' variant='danger' dismissible>An error has occurred</b-alert>
         <br>
@@ -14,6 +14,13 @@
                 <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
                 <p>Select the rendering algorithm:</p>
                 <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
+                <button class='btn btn-outline-secondary' @click='show = !show'>Ancillary Data</button>
+                <b-card-body v-if='show'>
+                    <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose an ancillary data file...' accept='.db'></b-form-file>
+                    <button class='btn btn-outline-secondary' @click='uploadAncillary'>Upload</button>
+                </b-card-body>
+                <div v-if='ancillary.head' class='mt-3'>Selected ancillary file: {{file && file.name}}</div>
+                <hr>
                 <button class='btn btn-outline-success' @click='process'>Render</button>
             </b-card-body>
         </b-card>
@@ -35,6 +42,9 @@
                     { value: 'grapetree', text: 'GrapeTree Layout' },
                     { value: 'radial', text: 'Radial Static Layout' }
                 ],
+                show: false,
+                file: undefined,
+                ancillary: {},
                 loading: false,
                 error: undefined,
             }
@@ -53,7 +63,7 @@
                     const info = {
                         name: this.project.dataset.name,
                         graph: this.project.computations[0].graph,
-                        ancillary: {},
+                        ancillary: this.ancillary,
                         render: this.selectedRender
                     }
                     console.log(info)
@@ -61,6 +71,22 @@
                     this.loading = false
                     this.$router.push('/canvas')
                 })
+            },
+            uploadAncillary() {
+                this.loading = true
+                const formData = new FormData()
+                formData.append('file', this.file)
+                const options = {
+                    method: 'POST',
+                    body: formData
+                }
+                fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(obj => {
+
+                    console.log(obj)
+                    this.ancillary = obj
+                    this.show = false
+                    this.loading = false
+                }).catch(error => this.error = error)
             }
         }
     }

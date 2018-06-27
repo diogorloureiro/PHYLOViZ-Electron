@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style='overflow: auto;'>
         <br>
         <b-card>
             <b-card-body>

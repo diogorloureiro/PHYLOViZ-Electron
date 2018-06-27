@@ -57,17 +57,15 @@
         },
         created() {
             this.project = JSON.parse(window.sessionStorage.getItem('project'))
-            console.log('project : '+this.project)
         },
         watch: {
-            // call again the method if the route changes
             '$route': 'render'
         },
         methods: {
             render() {
                 this.loading = true
                 const graph = this.flattenGraph
-                graph.edges = this.flattenGraph.edges.filter(e => e.distance <= this.cut)
+                graph.edges = this.graph.edges.filter(e => e.distance <= this.cut)
                 this.functions.render(graph)
                 this.loading = false
             },
