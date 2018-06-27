@@ -1,91 +1,45 @@
 {
-<<<<<<< HEAD
-	"name": "phyloviz-electron-desktop",
-	"version": "1.0.0",
-	"description": "PHYLOViZ-Electron - Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
-	"main": "main.js",
-	"scripts": {
-		"start": "electron .",
-		"build": "electron-packager . PHYLOViZ-Electron --all"
-	},
-	"devDependencies": {
-		"debug": "~2.6.9",
-		"electron": "~1.8.2",
-		"electron-packager": "^12.1.0",
-		"electron-rebuild": "^1.7.3"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/DrLDiogo/PHYLOViZ-Electron.git"
-	},
-	"contributors": [
-		{
-			"name": "Diogo Loureiro",
-			"email": "42392@alunos.isel.ipl.pt",
-			"url": "https://github.com/DrLDiogo"
-		},
-		{
-			"name": "Leonardo Alexandre",
-			"email": "42932@alunos.isel.ipl.pt",
-			"url": "https://github.com/JupitersMight"
-		},
-		{
-			"name": "Luana Silva",
-			"email": "42189@alunos.isel.ipl.pt",
-			"url": "https://github.com/Luanab"
-		}
-	],
-	"license": "GPL-3.0-only",
-	"bugs": {
-		"url": "https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
-	},
-	"homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron",
-	"dependencies": {
-		"npm": "^6.1.0"
-	}
-=======
-  "name": "phyloviz-electron-desktop",
-  "version": "1.0.0",
-  "description": "PHYLOViZ-Electron - Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-packager . PHYLOViZ-Electron --platform=win32 --arch=x64"
-  },
-  "devDependencies": {
-    "debug": "~2.6.9",
-    "electron": "~1.8.2",
-    "electron-packager": "^12.1.0",
-    "electron-rebuild": "^1.7.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DrLDiogo/PHYLOViZ-Electron.git"
-  },
-  "contributors": [
-    {
-      "name": "Diogo Loureiro",
-      "email": "42392@alunos.isel.ipl.pt",
-      "url": "https://github.com/DrLDiogo"
+    "name":"phyloviz-electron-desktop",
+    "version":"1.0.0",
+    "description":"PHYLOViZ-Electron - Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
+    "main":"main.js",
+    "scripts":{
+        "start":"electron .",
+        "build":"electron-packager . PHYLOViZ-Electron --platform=win32 --arch=x64"
     },
-    {
-      "name": "Leonardo Alexandre",
-      "email": "42932@alunos.isel.ipl.pt",
-      "url": "https://github.com/JupitersMight"
+    "devDependencies":{
+        "debug":"~2.6.9",
+        "electron":"~1.8.2",
+        "electron-packager":"^12.1.0",
+        "electron-rebuild":"^1.7.3"
     },
-    {
-      "name": "Luana Silva",
-      "email": "42189@alunos.isel.ipl.pt",
-      "url": "https://github.com/Luanab"
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/DrLDiogo/PHYLOViZ-Electron.git"
+    },
+    "contributors":[
+        {
+            "name":"Diogo Loureiro",
+            "email":"42392@alunos.isel.ipl.pt",
+            "url":"https://github.com/DrLDiogo"
+        },
+        {
+            "name":"Leonardo Alexandre",
+            "email":"42932@alunos.isel.ipl.pt",
+            "url":"https://github.com/JupitersMight"
+        },
+        {
+            "name":"Luana Silva",
+            "email":"42189@alunos.isel.ipl.pt",
+            "url":"https://github.com/Luanab"
+        }
+    ],
+    "license":"GPL-3.0-only",
+    "bugs":{
+        "url":"https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
+    },
+    "homepage":"https://github.com/DrLDiogo/PHYLOViZ-Electron",
+    "dependencies":{
+        "electron-squirrel-startup":"^1.0.0"
     }
-  ],
-  "license": "GPL-3.0-only",
-  "bugs": {
-    "url": "https://github.com/DrLDiogo/PHYLOViZ-Electron/issues"
-  },
-  "homepage": "https://github.com/DrLDiogo/PHYLOViZ-Electron",
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
-  }
->>>>>>> e0cd91843a5429f517d191e7abe720a30d1263ab
 }
