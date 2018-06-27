@@ -48,7 +48,8 @@ function init(db = new PouchDB('database')) {
 			contributors: [],
 			dataset,
 			ancillary,
-			computations: {}
+			computations: {},
+			renders: {}
 		}
 		return db.put(user)
 			.then(() => db.put(project))

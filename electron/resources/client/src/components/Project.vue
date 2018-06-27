@@ -18,15 +18,15 @@
                 <br>
                 <button class='btn btn-outline-success' @click='compute'>Add Computation</button>
                 <br>
-                <b-form-select v-model='selectedComputation' :options='computations' class='mb-3' :select-size='4' />
+                <b-form-select v-model='selectedComputation' :options='computations' class='mb-3' :select-size='3' />
 
                 <p>Select the rendering algorithm:</p>
                 <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
                 <button class='btn btn-outline-success' @click='sendToCanvas' :disabled='this.selectedComputation === undefined'>Render</button>
-                <br>
+                <hr>
                 <button class='btn btn-outline-success' @click='saveProject'>Save Project</button>
                 <button class='btn btn-outline-danger' @click='deleteProject'>Delete Project</button>
-                <br>
+                <hr>
                 <b-form-input v-model='contributor' type='text' placeholder='Enter the persons username'></b-form-input>
                 <button class='btn btn-outline-success' @click='shareProject'>Share Project</button>
             </b-card-body>
@@ -70,7 +70,6 @@
                 }
                 fetch(`http://localhost:3000/algorithms/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
 
-                    console.log(graph)
                     this.project.computations[this.selected] = { graph, matrix }
                     this.computations.push(this.selected)
                     this.$store.commit('setProject', this.project)
@@ -81,6 +80,7 @@
                 const info = {
                     name: this.project.dataset.name,
                     graph: this.project.computations[this.selected].graph,
+                    ancillary: {},
                     render: this.selectedRender
                 }
                 window.sessionStorage.setItem('project', JSON.stringify(info))
@@ -121,10 +121,8 @@
                     headers: { 'content-type': 'application/json' },
                     credentials: 'include'
                 }
-                console.log(options)
                 fetch(`http://localhost:3000/projects/${this.project._id}/share/${this.contributor}`, options).then(res => {
                     
-                    console.log(res)
                     this.project.contributors.push(this.contributor)
                     this.loading = false
                 })
