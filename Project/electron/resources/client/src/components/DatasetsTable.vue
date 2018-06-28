@@ -109,7 +109,7 @@
                 this.loading = true
                 fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(obj => {
 
-                    dataset['profiles'] = obj.profiles
+                    dataset.profiles = obj.profiles
 
                     this.$store.commit('setProject', { dataset, computations: [], ancillary :{} })
                     this.loading = false

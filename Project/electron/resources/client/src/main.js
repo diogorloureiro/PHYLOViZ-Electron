@@ -18,6 +18,7 @@ import Login from './components/Login.vue'
 import Projects from './components/Projects.vue'
 import CreateProject from './components/CreateProject.vue'
 import Project from './components/Project.vue'
+import UrlDataset from './components/UrlDataset.vue'
 Vue.component('Navbar', Navbar)
 Vue.component('Sidebar', Sidebar)
 Vue.component('Canvas', Canvas)
@@ -28,6 +29,7 @@ Vue.component('Login', Login)
 Vue.component('Projects', Projects)
 Vue.component('CreateProject', CreateProject)
 Vue.component('Project', Project)
+Vue.component('UrlDataset', UrlDataset)
 
 Vue.use(Router)
 Vue.use(Vuex)
@@ -84,6 +86,10 @@ const routes = [
     {
         path: '/project',
         component: Project
+    },
+    {
+        path: '/url-dataset',
+        component: UrlDataset
     }
 ]
 

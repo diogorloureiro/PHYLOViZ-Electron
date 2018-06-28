@@ -1,9 +1,11 @@
 <template>
     <div :class='$style.sidebar'>
         <br>
-        <button class='btn btn-link' @click='uploadDataset'>Upload dataset</button>
+        <button class='btn btn-link' @click='uploadDataset'>Load dataset</button>
         <br>
         <button class='btn btn-link' @click='publicDatasets'>Public datasets</button>
+        <br>
+        <button class='btn btn-link' @click='urlDataset'>Load dataset from URL</button>
         <br>
         <button v-if='this.$store.state.username' class='btn btn-link' @click='projects'>Projects</button>
     </div>
@@ -17,6 +19,9 @@
             },
             publicDatasets() {
                 this.$router.push('/public-datasets')
+            },
+            urlDataset() {
+                this.$router.push('/url-dataset')
             },
             projects() {
                 this.$router.push('/projects')

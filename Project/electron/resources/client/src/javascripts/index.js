@@ -49,7 +49,7 @@ function init(canvas, algorithm) {
         const cx = searched.attr('cx')
         const cy = searched.attr('cy')
 
-        const scale = 3 //Math.max(1, Math.min(8, 0.9 / Math.max(cx / width, cy / height)))
+        const scale = 3
         const [x, y] = [width / 2 - scale * cx, height / 2 - scale * cy]
 
         svg.transition()
