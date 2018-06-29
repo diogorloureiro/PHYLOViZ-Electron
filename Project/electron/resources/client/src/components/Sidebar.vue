@@ -5,8 +5,6 @@
         <br>
         <button class='btn btn-link' @click='publicDatasets'>Public datasets</button>
         <br>
-        <button class='btn btn-link' @click='urlDataset'>Load dataset from URL</button>
-        <br>
         <button v-if='this.$store.state.username' class='btn btn-link' @click='projects'>Projects</button>
     </div>
 </template>
@@ -19,9 +17,6 @@
             },
             publicDatasets() {
                 this.$router.push('/public-datasets')
-            },
-            urlDataset() {
-                this.$router.push('/url-dataset')
             },
             projects() {
                 this.$router.push('/projects')

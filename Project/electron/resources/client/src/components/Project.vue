@@ -83,7 +83,7 @@
                     ancillary: {},
                     render: this.selectedRender
                 }
-                window.sessionStorage.setItem('project', JSON.stringify(info))
+                this.$store.commit('setProject', info)
                 this.loading = false
                 this.$router.push('/canvas')
             },
