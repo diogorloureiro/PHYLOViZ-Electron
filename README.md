@@ -2,11 +2,12 @@
 
 Make sure Node version 8 or above and npm are installed.
 
-For Windows or Darwin download the installer from:
-https://nodejs.org/en/
+**For Windows or Darwin download the installer from:** https://nodejs.org/en/
 
-For Linux:
+**For Linux:**
+
 `curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - `
+
 `sudo apt-get install -y nodejs `
 
 
@@ -37,49 +38,57 @@ After all these commands are executed you're all set and back to `...\Project\el
 To run the application execute:
 `...\Project\electron> npm start`
 
-To build the application for distribution:
+# To build the application for distribution:
 
--Darwin:
+### Darwin:
+
 Enter config.json file and change the value of "mode" to "darwin".
 Then execute the following command:
 
-!!! Take notice that you need to change the arch type to fit your machine !!!
+###### Take notice that you need to change the arch type to fit your machine ######
+
 `...\Project\electron> npm run build --platform=darwin --arch=x64`
 
 And you should end up with a .app
 
--Linux
+
+### Linux
 
 Enter config.json file and change the value of "mode" to "windowsOrLinux".
 Then execute the following command:
 
-!!! Take notice that you need to change the arch type to fit your machine !!!
+###### Take notice that you need to change the arch type to fit your machine ######
+
 `...\Project\electron> npm run build --platform=linux --arch=x64`
 
 And you should end up with a folder and a linux runnable file inside
 
 
--Windows:
+### Windows:
 
 Enter config.json file and change the value of "mode" to "windowsOrLinux".
 Then execute the following command:
 
 !!! Take notice that you need to change the arch type to fit your machine !!!
+
 `...\Project\electron> npm run build --platform=win32 --arch=x64`
 
 And you should end up with a folder with an .exe file inside
 
-After the windows distribution build is done building you
-can create a windows installer for the application.
+After the windows distribution build is done building you can create a windows installer for the application.
 
 Execute the following commands:
 
 `...\Project\electron> move X ..`
+
 X = name of the folder generated after built
 
 `...\Project\electron> cd ..`
+
 `...\Project> mkdir installers`
+
 `...\Project> npm install electron-winstaller`
+
 `...\Project> node build.js`
 
 Inside the folder `...\Project\installers` there should be an .exe which you can run to install the application
