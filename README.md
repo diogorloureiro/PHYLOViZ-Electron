@@ -13,7 +13,7 @@ Make sure Node version 8 or above and npm are installed.
 
 # After cloning
 
-Open Command Prompt inside the clone repository then execute the following commands
+Open Command Prompt inside the clone repository then execute the following commands:
 
 `...> cd Project/electron`
 
@@ -33,7 +33,7 @@ Open Command Prompt inside the clone repository then execute the following comma
 
 `...\Project\electron\resources\server> cd ../..`
 
-After all these commands are executed you're all set and back to `...\Project\electron>. `
+After all these commands are executed you're all set and back to `...\Project\electron>`.
 
 To run the application execute:
 `...\Project\electron> npm start`
@@ -45,7 +45,7 @@ To run the application execute:
 Enter config.json file and change the value of "mode" to "darwin".
 Then execute the following command:
 
-###### Take notice that you need to change the arch type to fit your machine ######
+##### Take notice that you need to change the arch type to fit your machine! #####
 
 `...\Project\electron> npm run build --platform=darwin --arch=x64`
 
@@ -57,11 +57,11 @@ And you should end up with a .app
 Enter config.json file and change the value of "mode" to "windowsOrLinux".
 Then execute the following command:
 
-###### Take notice that you need to change the arch type to fit your machine ######
+##### Take notice that you need to change the arch type to fit your machine! #####
 
 `...\Project\electron> npm run build --platform=linux --arch=x64`
 
-And you should end up with a folder and a linux runnable file inside
+And you should end up with a folder and a linux runnable file inside.
 
 
 ### Windows:
@@ -69,11 +69,13 @@ And you should end up with a folder and a linux runnable file inside
 Enter config.json file and change the value of "mode" to "windowsOrLinux".
 Then execute the following command:
 
-!!! Take notice that you need to change the arch type to fit your machine !!!
+##### Take notice that you need to change the arch type to fit your machine! #####
 
 `...\Project\electron> npm run build --platform=win32 --arch=x64`
 
-And you should end up with a folder with an .exe file inside
+And you should end up with a folder with an .exe file inside.
+
+#### Windows Installer:
 
 After the windows distribution build is done building you can create a windows installer for the application.
 
@@ -81,7 +83,7 @@ Execute the following commands:
 
 `...\Project\electron> move X ..`
 
-X = name of the folder generated after built
+X = name of the folder generated after built.
 
 `...\Project\electron> cd ..`
 
@@ -91,4 +93,4 @@ X = name of the folder generated after built
 
 `...\Project> node build.js`
 
-Inside the folder `...\Project\installers` there should be an .exe which you can run to install the application
+Inside the folder `...\Project\installers` there should be an .exe which you can run to install the application.
