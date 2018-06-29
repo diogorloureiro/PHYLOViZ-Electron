@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager . PHYLOViZ-Electron --platform=win32 --arch=x64"
+    "build": "electron-packager . PHYLOViZ-Electron"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0"

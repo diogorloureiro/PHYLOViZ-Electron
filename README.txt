@@ -39,24 +39,20 @@ To build the application for distribution:
 
 -Darwin:
 Enter config.json file and change the value of "mode" to "darwin".
-Then enter package.json file and change the script "build" to 
-"electron-packager . PHYLOViZ-Electron --platform=darwin --arch=x64".
-!!! Take notice that you need to change the arch type to fit your machine !!!
 Then execute the following command:
 
-...\Project\electron> npm run build
+!!! Take notice that you need to change the arch type to fit your machine !!!
+...\Project\electron> npm run build --platform=darwin --arch=x64
 
 And you should end up with a .app
 
 -Linux
 
 Enter config.json file and change the value of "mode" to "windowsOrLinux".
-Then enter package.json file and change the script "build" to 
-"electron-packager . PHYLOViZ-Electron --platform=linux --arch=x64".
-!!! Take notice that you need to change the arch type to fit your machine !!!
 Then execute the following command:
 
-...\Project\electron> npm run build
+!!! Take notice that you need to change the arch type to fit your machine !!!
+...\Project\electron> npm run build --platform=linux --arch=x64
 
 And you should end up with a folder and a linux runnable file inside
 
@@ -64,12 +60,10 @@ And you should end up with a folder and a linux runnable file inside
 -Windows:
 
 Enter config.json file and change the value of "mode" to "windowsOrLinux".
-Then enter package.json file and change the script "build" to 
-"electron-packager . PHYLOViZ-Electron --platform=win32 --arch=x64".
-!!! Take notice that you need to change the arch type to fit your machine !!!
 Then execute the following command:
 
-...\Project\electron> npm run build
+!!! Take notice that you need to change the arch type to fit your machine !!!
+...\Project\electron> npm run build --platform=win32 --arch=x64
 
 And you should end up with a folder with an .exe file inside
 
@@ -87,20 +81,3 @@ X = name of the folder generated after built
 ...\Project> node build.js
 
 Inside the folder "...\Project\installers" there should be an .exe which you can run to install the application
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
