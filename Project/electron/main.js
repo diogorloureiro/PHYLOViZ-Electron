@@ -8,11 +8,8 @@ const fs = require('fs')
 // Module to control application life.
 const app = electron.app
 
-// this should be placed at top of main.js to handle setup events quickly
-if (handleSquirrelEvent(app)) {
-    // squirrel event handled and app will exit in 1000ms, so don't do anything else
+if (handleSquirrelEvent(app))
     return
-}
 
 function handleSquirrelEvent(application) {
     if (process.argv.length === 1)

@@ -31,7 +31,7 @@ function testLoadDatasetFromUrl(test) {
 
 function testLoadDatasetFromFile(test) {
     test.expect(1)
-    fs.readFile('./tests/inputs/testLoadDatasetFromFile.txt')
+    fs.readFile('./tests/inputs/dataset.txt')
         .then(data => services.loadDatasetFromFile({ buffer: data }))
         .then(profiles => {
             const expected = {
@@ -51,7 +51,7 @@ function testLoadDatasetFromFile(test) {
 
 function testLoadAncillaryDataFromFile(test) {
     test.expect(1)
-    fs.readFile('./tests/inputs/testLoadAncillaryDataFromFile.db')
+    fs.readFile('./tests/inputs/ancillary.db')
         .then(data => services.loadAncillaryDataFromFile({ buffer: data }))
         .then(profiles => {
             const expected = {
