@@ -20,7 +20,7 @@
 </template>
 
 <script>
-    import init from '../javascripts'
+    import { init, destroy } from '../javascripts'
 
     export default {
         data() {
@@ -58,6 +58,7 @@
             this.project = this.$store.state.project
         },
         beforeDestroy() {
+            destroy()
             this.$store.commit('setProject', undefined)
         },
         watch: {

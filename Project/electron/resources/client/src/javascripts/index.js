@@ -7,6 +7,8 @@ import radial from './radial'
 
 import * as d3 from 'd3'
 
+let link, node, simulation, conf
+
 function init(algorithm) {
     
     const zoom = d3.zoom()
@@ -15,20 +17,20 @@ function init(algorithm) {
     const width = parseInt(svg.style('width').replace('px', ''))
     svg = svg.call(zoom.on('zoom', () => svg.attr('transform', d3.event.transform))).append('g')
 
-    const link = svg.append('g')
+    link = svg.append('g')
         .attr('class', 'links')
         .selectAll('line')
 
-    const node = svg.append('g')
+    node = svg.append('g')
         .attr('class', 'nodes')
         .selectAll('circle')
     
-    const simulation = d3.forceSimulation()
+    simulation = d3.forceSimulation()
         .force('link', d3.forceLink().id(d => d.id).distance(120))
         .force('charge', d3.forceManyBody())
         .force('center', d3.forceCenter(width / 2, height / 2))
 
-    const conf = { height, width, svg, link, node, simulation }
+    conf = { height, width, svg, link, node, simulation }
     
     // Animation speed slider
     function updateSpeed(value) {
@@ -66,4 +68,17 @@ function init(algorithm) {
     }
 }
 
-export default init
+function destroy() {
+    link.remove()
+    node.remove()
+    simulation.nodes([])
+    simulation.force('link').links([])
+    simulation.stop()
+    conf.link.remove()
+    conf.node.remove()
+    conf.simulation.nodes([])
+    conf.simulation.force('link').links([])
+    conf.simulation.stop()
+}
+
+export { init, destroy }
