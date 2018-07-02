@@ -4,15 +4,7 @@ const fs = require('../fspromises')
 const { datasets } = require('../services/data-manager')
 const processor = require('../services/data-processor')
 
-//const [ , , location, mode, processor, comparator, algorithm, executions, dataset] = process.argv
-
-const location = 'C:\\Users\\luana\\Desktop\\backups\\código\\benchmark\\github'
-const mode = 'promises'
-const processor = processor.goeburst.processor
-const comparator = processor.goeburst.comparator
-const algorithm = processor.algorithms.prim
-const executions = 1
-const dataset = 'spneumoniae'
+const [ , , location, mode, processor, comparator, algorithm, executions, dataset] = process.argv
 
 datasets.loadDatasetFromUrl(`https://pubmlst.org/data/profiles/${dataset}.txt`)
     .then(({ profiles }) => {

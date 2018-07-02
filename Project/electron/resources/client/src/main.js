@@ -11,7 +11,7 @@ import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import Canvas from './components/Canvas.vue'
 import DatasetsTable from './components/DatasetsTable.vue'
-import FileUpload from './components/FileUpload.vue'
+import LoadDataset from './components/LoadDataset.vue'
 import Algorithms from './components/Algorithms.vue'
 import Register from './components/Register.vue'
 import Login from './components/Login.vue'
@@ -59,7 +59,7 @@ const routes = [
     },
     {
         path: '/upload-dataset',
-        component: FileUpload
+        component: LoadDataset
     },
     {
         path: '/algorithms',

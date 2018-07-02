@@ -54,11 +54,13 @@
                 this.loading = true
                 const options = {
                     method: 'POST',
-                    body: JSON.stringify(this.project.dataset.profiles),
+                    body: JSON.stringify({
+                        processor: this.selected,
+                        profiles: this.project.dataset.profiles
+                    }),
                     headers: { 'content-type': 'application/json' }
                 }
-                fetch(`http://localhost:3000/algorithms/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
-
+                fetch(`http://localhost:3000/process`, options).then(res => res.json()).then(({ graph, matrix }) => {
                     this.project.computations.push({ algorithm: this.selected, graph, matrix })
                     const info = {
                         name: this.project.dataset.name,
@@ -73,15 +75,14 @@
             },
             uploadAncillary() {
                 this.loading = true
-                const formData = new FormData()
-                formData.append('file', this.file)
+                const file = new FormData()
+                file.append('file', this.file)
                 const options = {
                     method: 'POST',
-                    body: formData
+                    body: file
                 }
-                fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(obj => {
-
-                    this.ancillary = obj
+                fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(ancillary => {
+                    this.ancillary = ancillary
                     this.show = false
                     this.loading = false
                 }).catch(error => this.error = error)

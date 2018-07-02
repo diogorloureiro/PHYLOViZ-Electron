@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "node ./bin/www",
 		"test": "nodeunit ./tests",
-		"benchmark": "node benchmark.js",
+		"benchmark": "node ./benchmark/index.js",
 		"rebuildForElectron": "electron-rebuild -f -w node_modules"
 	},
 	"dependencies": {

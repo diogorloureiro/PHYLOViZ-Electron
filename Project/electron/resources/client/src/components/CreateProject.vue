@@ -33,14 +33,14 @@
         methods: {
             processAncillary() {
                 this.loading = true
-                const formData = new FormData()
-                formData.append('file', this.ancillary)
+                const ancillary = new FormData()
+                ancillary.append('file', this.ancillary)
                 const options = {
                     method: 'POST',
-                    body: formData
+                    body: ancillary
                 }
-                fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(obj => {
-                    this.ancillary = obj
+                fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(ancillary => {
+                    this.ancillary = ancillary
                     this.loading = false
                 }).catch(error => this.error = error)
             },
