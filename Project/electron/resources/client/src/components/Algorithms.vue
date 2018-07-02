@@ -16,8 +16,14 @@
                 <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
                 <button class='btn btn-outline-secondary' @click='show = !show'>Ancillary Data</button>
                 <b-card-body v-if='show'>
-                    <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose an ancillary data file...' accept='.db'></b-form-file>
-                    <button class='btn btn-outline-secondary' @click='uploadAncillary'>Upload</button>
+                    <div class='row'>
+                        <div class='col-lg-6'>
+                            <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose an ancillary data file...' accept='.db'></b-form-file>
+                        </div>
+                        <div class='col-lg'>
+                            <button class='btn btn-outline-secondary' @click='uploadAncillary'>Upload</button>
+                        </div>
+                    </div>
                 </b-card-body>
                 <div v-if='ancillary.head' class='mt-3'>Selected ancillary file: {{file && file.name}}</div>
                 <hr>

@@ -38,7 +38,7 @@ function direct(graph) {
 
 function ancillary(graph, ancillary = [], minimum = 5) {
     graph.vertices.forEach(vertex => {
-        vertex.ancillary = ancillary.filter(row => id === row.st)
+        vertex.ancillary = ancillary.filter(row => vertex.id === row.st)
         vertex.size = vertex.ancillary.length + minimum
     })
 }

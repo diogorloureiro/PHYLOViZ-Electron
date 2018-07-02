@@ -1,17 +1,29 @@
 <template>
     <div style='overflow: auto;'>
         <br>
-        <b-card>
+        <b-card title='Load a dataset from a file'>
             <b-card-body>
-                <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt'></b-form-file>
-                <button class='btn btn-outline-success' @click='uploadFile'>Upload</button>
+                <div class='row'>
+                    <div class='col-lg-10'>
+                        <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt'></b-form-file>
+                    </div>
+                    <div class='col-lg'>
+                        <button class='btn btn-outline-success' @click='uploadFile'>Upload</button>
+                    </div>
+                </div>
             </b-card-body>
         </b-card>
         <br>
-        <b-card>
+        <b-card title='Load a dataset from a URL'>
             <b-card-body>
-                <b-form-input v-model='url' type='text' placeholder='Enter the dataset URL'></b-form-input>
-                <button class='btn btn-outline-success' @click='load'>Load</button>
+                <div class='row'>
+                    <div class='col-lg-10'>
+                        <b-form-input v-model='url' type='text' placeholder='Enter the dataset URL'></b-form-input>
+                    </div>
+                    <div class='col-lg'>
+                        <button class='btn btn-outline-success' @click='load'>Load</button>
+                    </div>
+                </div>
             </b-card-body>
         </b-card>
     </div>
