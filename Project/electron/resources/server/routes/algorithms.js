@@ -2,7 +2,7 @@
 
 const router = require('express').Router()
 const response = require('./response')
-const { process, goeburst, algorithms } = require('../services/data-processor')
+const { process, goeburst, algorithms } = require('../services/data-processor')(true)
 
 // Process profiles using goeburst algorithm and comparator
 router.post('/process', response(req => {
