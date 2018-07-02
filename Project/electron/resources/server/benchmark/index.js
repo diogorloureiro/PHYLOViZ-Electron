@@ -4,7 +4,7 @@ const fs = require('../fspromises')
 const { datasets } = require('../services/data-manager')
 const processor = require('../services/data-processor')
 
-const [ , , location, mode, processor, comparator, algorithm, executions, dataset] = process.argv
+const [ , , location, mode, comparator, algorithm, executions, dataset] = process.argv
 
 datasets.loadDatasetFromUrl(`https://pubmlst.org/data/profiles/${dataset}.txt`)
     .then(({ profiles }) => {
