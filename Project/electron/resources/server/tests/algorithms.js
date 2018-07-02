@@ -1,6 +1,6 @@
 'use strict'
 
-const { process, goeburst, algorithms } = require('../services/data-processor')
+const { process, goeburst, algorithms } = require('../services/data-processor')(true)
 const { compare } = require('../services/data-processor/goeburst')
 
 function testGoeburstComparatorDistanceRule(test) {

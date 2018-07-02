@@ -1,10 +1,10 @@
 'use strict'
 
+const [ , , location, mode, comparator, algorithm, executions, dataset] = process.argv
+
 const fs = require('../fspromises')
 const { datasets } = require('../services/data-manager')
-const processor = require('../services/data-processor')
-
-const [ , , location, mode, comparator, algorithm, executions, dataset] = process.argv
+const processor = require('../services/data-processor')(mode === 'promises')
 
 datasets.loadDatasetFromUrl(`https://pubmlst.org/data/profiles/${dataset}.txt`)
     .then(({ profiles }) => {
