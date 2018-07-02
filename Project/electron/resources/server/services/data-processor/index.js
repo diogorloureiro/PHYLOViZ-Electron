@@ -4,40 +4,49 @@ const kue = require('kue')
 const uuid = require('uuid/v4')
 const fs = require('../../fspromises')
 const goeburst = require('./goeburst')
+const algorithms = require('./algorithms')
 
 const local = true
 
-const algorithms = {
+const processors = {
     goeburst: goeburst.process
 }
 
 const comparators = {
-    goeburst: goeburst.comparator
+    goeburst: goeburst.compare
 }
 
 let process
 
-if (!local) {
+if (local) {
+    process = function (processor, comparator, algorithm, profiles, lvs = 3) {
+        processor = processors[processor]
+        comparator = comparators[comparator]
+        algorithm = algorithms[algorithm]
+        return new Promise(resolve => resolve(processor(profiles, comparator, algorithm, lvs)))
+    }
+} else {
     const queue = kue.createQueue()
 
     queue.process('algorithm', (job, done) => {
         const path = job.data.path
         fs.readFile(path)
             .then(data => {
-                let { algorithm, comparator, profiles, lvs } = JSON.parse(data)
-                algorithm = algorithms[algorithm]
+                let { processor, comparator, profiles, lvs } = JSON.parse(data)
+                processor = processors[processor]
                 comparator = comparators[comparator]
-                const result = algorithm(profiles, comparator, lvs)
+                algorithm = algorithms[algorithm]
+                const result = processor(profiles, comparator, algorithm, lvs)
                 return fs.writeFile(path, JSON.stringify(result))
             })
             .then(() => done())
     })
 
-    process = function(algorithm, comparator, profiles, lvs = 3) {
+    process = function (processor, comparator, profiles, lvs = 3) {
         return new Promise((resolve, reject) => {
             const path = uuid()
             const job = queue.create('algorithm', { path })
-            const data = { algorithm, comparator, profiles, lvs }
+            const data = { processor, comparator, profiles, lvs }
             fs.writeFile(path, JSON.stringify(data))
                 .then(() => job
                     .on('failed', err => {
@@ -53,13 +62,17 @@ if (!local) {
                     .save())
         })
     }
-} else {
-    process = function(algorithm, comparator, profiles, lvs = 3) {
-        return new Promise(resolve => resolve(algorithms[algorithm](profiles, comparators[comparator], lvs)))
-    }
 }
 
 module.exports = {
     process,
-    goeburst: { algorithm: 'goeburst', comparator: 'goeburst' }
+    goeburst: {
+        processor: 'goeburst',
+        comparator: 'goeburst'
+    },
+    algorithms: {
+        boruvka: 'boruvka',
+        kruskal: 'kruskal',
+        prim: 'prim'
+    }
 }

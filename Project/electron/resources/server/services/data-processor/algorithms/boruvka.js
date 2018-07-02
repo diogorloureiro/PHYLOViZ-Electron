@@ -1,80 +1,47 @@
 'use strict'
 
-// Generate a minimum spanning tree (edges and vertices) and distance matrix from the given allelic profiles and comparator using boruvka's algorithm
-function process(profiles, comparator, lvs) {
-	const { vertices, matrix, forest, components } = generateGraph(profiles)
+// Generate a minimum spanning tree from the vertices, distance matrix and comparator using boruvka's algorithm
+function process(vertices, matrix, comparator) {
+	const forest = [], components = []
+	vertices.forEach((vertex, index) => {
+		components[vertex.id] = index
+		forest[index] = []
+	})
 	// Loop while the forest contains more than one component
 	while (forest.filter(component => component !== undefined).length > 1) {
-		const cheapest = findCheapestEdges(vertices, matrix, components, comparator, lvs)
-		addEdgesAndConnectToForest(forest, components, cheapest)
-	}
-	const edges = forest[0].map(edge => ({ source: edge.source.id, target: edge.target.id, distance: edge.distance }))
-	const graph = { vertices, edges }
-	return { graph, matrix }
-}
-
-// Generate a graph (with all edges and vertices) given the allelic profiles
-// The edges will contain the ids of the vertices they connect as well as the Hamming distance
-// The vertices will contain the id and the count of locus variants of the allelic profile
-function generateGraph(profiles) {
-	const vertices = [], matrix = [], forest = [], components = []
-	for (let i = 0; i < profiles.length; i++) {
-		const { id, loci } = profiles[i]
-		vertices[i] = { id, loci, lvs: [] }
-		components[id] = i
-		forest[i] = []
-	}
-	for (let i = 0; i < profiles.length - 1; i++) {
-		const ploci = profiles[i].loci, plvs = vertices[i].lvs
-		matrix[i] = []
-		for (let j = i + 1; j < profiles.length; j++) {
-			const qloci = profiles[j].loci, qlvs = vertices[j].lvs
-			const diff = ploci.filter((value, index) => value !== qloci[index]).length // Hamming distance
-			plvs[diff] = (plvs[diff] || 0) + 1
-			qlvs[diff] = (qlvs[diff] || 0) + 1
-			matrix[i][j - i - 1] = diff
-		}
-	}
-	return { vertices, matrix, forest, components }
-}
-
-// Find the cheapest edges that connect different components
-function findCheapestEdges(vertices, matrix, components, comparator, lvs) {
-	const cheapest = []
-	for (let i = 0; i < matrix.length; i++) {
-		const source = vertices[i]
-		for (let j = 0; j < matrix[i].length; j++) {
-			const target = vertices[j + i + 1]
-			const distance = matrix[i][j]
-			const sc = components[source.id], tc = components[target.id]
-			if (sc !== tc) {
-				const edge = { source, target, distance }
-				if (!cheapest[sc] || comparator(cheapest[sc], edge, lvs) > 0)
-					cheapest[sc] = edge
-				if (!cheapest[tc] || comparator(cheapest[tc], edge, lvs) > 0)
-					cheapest[tc] = edge
+		const cheapest = []
+		for (let i = 0; i < matrix.length; i++) {
+			const source = vertices[i]
+			for (let j = 0; j < matrix[i].length; j++) {
+				const target = vertices[j + i + 1]
+				const distance = matrix[i][j]
+				const sc = components[source.id], tc = components[target.id]
+				if (sc !== tc) {
+					const edge = { source, target, distance }
+					if (!cheapest[sc] || comparator(cheapest[sc], edge) > 0)
+						cheapest[sc] = edge
+					if (!cheapest[tc] || comparator(cheapest[tc], edge) > 0)
+						cheapest[tc] = edge
+				}
 			}
 		}
-	}
-	return cheapest
-}
-
-// Add the cheapest edges of this iteration to the forest
-function addEdgesAndConnectToForest(forest, components, cheapest) {
-	cheapest.forEach(edge => {
-		const source = edge.source.id, sc = components[source]
-		const target = edge.target.id, tc = components[target]
-		if (sc !== tc) {
-			const src = Math.max(sc, tc), dst = Math.min(sc, tc)
-			forest[dst].push(edge)
-			components[source] = components[target] = dst
-			forest[src].forEach(edge => {
+		cheapest.forEach(edge => {
+			const source = edge.source.id, sc = components[source]
+			const target = edge.target.id, tc = components[target]
+			if (sc !== tc) {
+				const src = Math.max(sc, tc), dst = Math.min(sc, tc)
 				forest[dst].push(edge)
-				components[edge.source.id] = components[edge.target.id] = dst
-			})
-			delete forest[src]
-		}
-	})
+				components[source] = components[target] = dst
+				forest[src].forEach(edge => {
+					forest[dst].push(edge)
+					components[edge.source.id] = components[edge.target.id] = dst
+				})
+				delete forest[src]
+			}
+		})
+	}
+	const edges = forest[0].map(edge => ({ source: edge.source.id, target: edge.target.id, distance: edge.distance }))
+	return { vertices, edges }
 }
 
 module.exports = process
