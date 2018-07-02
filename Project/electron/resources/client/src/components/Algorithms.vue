@@ -66,8 +66,7 @@
                         ancillary: this.ancillary,
                         render: this.selectedRender
                     }
-                    console.log(info)
-                    window.sessionStorage.setItem('project', JSON.stringify(info))
+                    this.$store.commit('setProject', info)
                     this.loading = false
                     this.$router.push('/canvas')
                 })
@@ -82,7 +81,6 @@
                 }
                 fetch('http://localhost:3000/ancillary/file', options).then(res => res.json()).then(obj => {
 
-                    console.log(obj)
                     this.ancillary = obj
                     this.show = false
                     this.loading = false

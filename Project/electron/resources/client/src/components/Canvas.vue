@@ -4,7 +4,7 @@
             <b-alert :show='error' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
             <br>
             <strong>{{this.project.name}}</strong>
-            <svg id='canvas' width='500' height='400' style='border:1px solid black'></svg>
+            <svg id='canvas' :width='width' :height='height' style='border:1px solid black'></svg>
             <div>
                 <br>
                 <label for='cut-value'>Tree cut-off</label>
@@ -20,13 +20,11 @@
 </template>
 
 <script>
-    import init from '../javascripts'
-    import * as d3 from 'd3'
+    import { init, destroy } from '../javascripts'
 
     export default {
         data() {
             return {
-                canvas: undefined,
                 functions: undefined,
                 project: undefined,
                 graph: undefined,
@@ -42,9 +40,8 @@
             }
         },
         mounted() {
-            this.canvas = d3.select('svg')
             this.algorithm = this.project.render
-            this.functions = init(this.canvas, this.algorithm)
+            this.functions = init(this.algorithm)
             this.cut = this.maxCut = Math.max(...this.project.graph.edges.map(e => e.distance))
             this.graph = this.functions.direct(this.project.graph)
             this.flattenGraph = {
@@ -56,7 +53,13 @@
             this.render()
         },
         created() {
-            this.project = JSON.parse(window.sessionStorage.getItem('project'))
+            this.height = window.innerHeight - 280
+            this.width = window.innerWidth - 300
+            this.project = this.$store.state.project
+        },
+        beforeDestroy() {
+            destroy()
+            this.$store.commit('setProject', undefined)
         },
         watch: {
             '$route': 'render'

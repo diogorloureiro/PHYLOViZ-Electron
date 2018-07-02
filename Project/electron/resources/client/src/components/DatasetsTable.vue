@@ -84,7 +84,6 @@
             this.fetchData()
         },
         watch: {
-            // call again the method if the route changes
             '$route': 'fetchData'
         },
         methods: {
@@ -110,7 +109,6 @@
                 fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(obj => {
 
                     dataset.profiles = obj.profiles
-
                     this.$store.commit('setProject', { dataset, computations: [], ancillary :{} })
                     this.loading = false
                     if(this.$store.state.username)
