@@ -1,7 +1,7 @@
 <template>
     <div>
         <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-        <b-alert :show='error' variant='danger' dismissible>An error has occurred</b-alert>
+        <b-alert :show='infoMsg' variant='info' dismissible>{{this.infoMsg}}</b-alert>
         <br>
         <b-card>
             <b-card-body>
@@ -53,7 +53,7 @@
                 ],
                 contributor: undefined,
                 loading: false,
-                error: undefined,
+                infoMsg: undefined,
             }
         },
         created() {
@@ -65,10 +65,13 @@
                 this.loading = true
                 const options = {
                     method: 'POST',
-                    body: JSON.stringify(this.project.dataset.profiles),
+                    body: JSON.stringify({
+                        processor: this.selected,
+                        profiles: this.project.dataset.profiles
+                    }),
                     headers: { 'content-type': 'application/json' }
                 }
-                fetch(`http://localhost:3000/algorithms/${this.selected}`, options).then(res => res.json()).then(({ graph, matrix }) => {
+                fetch(`http://localhost:3000/process`, options).then(res => res.json()).then(({ graph, matrix }) => {
 
                     this.project.computations[this.selected] = { graph, matrix }
                     this.computations.push(this.selected)
@@ -97,6 +100,7 @@
                 }
                 fetch(`http://localhost:3000/projects/${this.project._id}`, options).then(res => {
                     
+                    this.infoMsg = 'Project successfully saved.'
                     this.loading = false
                 })
             },
@@ -123,6 +127,7 @@
                 }
                 fetch(`http://localhost:3000/projects/${this.project._id}/share/${this.contributor}`, options).then(res => {
                     
+                    this.infoMsg = `Project successfully shared with ${this.contributor}.`
                     this.project.contributors.push(this.contributor)
                     this.loading = false
                 })

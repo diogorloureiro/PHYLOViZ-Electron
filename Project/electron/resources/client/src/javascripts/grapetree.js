@@ -133,6 +133,9 @@ function render(graph, conf) {
         })
     })
 
+    d3.selectAll('.node').remove()
+    d3.selectAll('.link').remove()
+
     conf.link = conf.link
         .data(graph.edges)
 
