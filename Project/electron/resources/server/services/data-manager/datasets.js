@@ -49,6 +49,8 @@ function parseDataset(body) {
 				const loci = rows.shift()
 				loci.shift()
 				const clonal_complex = loci[loci.length - 1] === 'clonal_complex'
+				if (clonal_complex)
+					loci.pop()
 				const profiles = rows.map(columns => {
 					const id = columns.shift()
 					if (clonal_complex)
