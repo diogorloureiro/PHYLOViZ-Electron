@@ -43,8 +43,8 @@ router.post('/projects', response(req => services.createProject(req.user, req.bo
 // Load project
 router.get('/projects/:id', response(req => services.loadProject(req.user, req.params.id)))
 
-// Save project
-router.put('/projects/:id', response(req => services.saveProject(req.user, req.params.id, req.body)))
+// Add computation to project
+router.put('/projects/:id', response(req => services.addComputation(req.user, req.params.id, req.body.algorithm, req.body.lvs, req.body.computation)))
 
 // Delete project
 router.delete('/projects/:id', response(req => services.deleteProject(req.user, req.params.id)))

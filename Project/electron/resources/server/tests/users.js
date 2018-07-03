@@ -94,26 +94,18 @@ function testLoadProject(test) {
         })
 }
 
-function testSaveProject(test) {
+function testAddComputation(test) {
     test.expect(5)
     services.loadUser('User')
         .then(user => {
             const _id = user.projects[0]._id
-            services.loadProject(user, _id)
-                .then(project => {
-                    project.name = 'Error'
-                    project.owner = 'Error'
-                    project.contributors = 'Error'
-                    project.dataset = 'Error'
-                    project.computations.goeburst = {}
-                    return services.saveProject(user, _id, project)
-                })
+            services.addComputation(user, _id, 'goeburst', 3, 'computation')
                 .then(project => {
                     test.strictEqual(project.name, 'Project')
                     test.strictEqual(project.owner, 'User')
                     test.deepEqual(project.contributors, [])
                     test.deepEqual(project.dataset, {})
-                    test.deepEqual(project.computations, { goeburst: {} })
+                    test.strictEqual(project.computations['goeburst'][3], 'computation')
                     test.done()
                 })
         })
@@ -166,7 +158,7 @@ module.exports = {
     testLoadUser,
     testCreateProject,
     testLoadProject,
-    testSaveProject,
+    testAddComputation,
     testShareProject,
     testDeleteProject,
     after

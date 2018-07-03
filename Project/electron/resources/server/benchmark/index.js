@@ -1,14 +1,14 @@
 'use strict'
 
-const [ , , location, mode, comparator, algorithm, executions, dataset] = process.argv
+const [ , , location, mode, processor, comparator, algorithm, executions, dataset, lvs] = process.argv
 
 const fs = require('../fspromises')
 const { datasets } = require('../services/data-manager')
-const processor = require('../services/data-processor')(mode === 'promises')
+const proc = require('../services/data-processor')(mode)
 
 datasets.loadDatasetFromUrl(`https://pubmlst.org/data/profiles/${dataset}.txt`)
     .then(({ profiles }) => {
-        const path = `${location}\\${mode}-${algorithm}-${dataset}-${executions}.txt`
+        const path = `${location}\\${mode}-${processor}-${comparator}-${algorithm}-${dataset}-${lvs}-${executions}.txt`
         const promises = []
         const { heapTotal, heapUsed } = process.memoryUsage()
         let file = `Heap total: ${heapTotal} bytes\tHeap used: ${heapUsed} bytes\r\n`
@@ -16,7 +16,7 @@ datasets.loadDatasetFromUrl(`https://pubmlst.org/data/profiles/${dataset}.txt`)
         for (let i = 0; i < executions; i++) {
             const index = i
             const start = new Date()
-            promises[index] = processor.process(processor.goeburst.processor, comparator, algorithm, profiles)
+            promises[index] = proc(processor, comparator, algorithm, profiles, lvs)
                 .then(result => {
                     const end = new Date()
                     file += `${index + 1}: Time: ${end - start}ms\tMemory: ${process.memoryUsage().heapUsed - heapUsed} bytes\r\n`

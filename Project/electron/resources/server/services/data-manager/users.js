@@ -68,14 +68,18 @@ function init(db = new PouchDB('database')) {
 			})
 	}
 
-	function saveProject(user, _id, project) {
+	function addComputation(user, _id, algorithm, lvs, computation) {
 		return loadProject(user, _id)
-			.then(old => {
-				old.computations = project.computations
-				return db.put(old)
+			.then(project => {
+				const computations = project.computations
+				if (computations[algorithm])
+					computations[algorithm][lvs] = computation
+				else
+					computations[algorithm] = { [lvs]: computation }
+				return db.put(project)
 					.then(res => {
-						old._rev = res.rev
-						return old
+						project._rev = res.rev
+						return project
 					})
 			})
 	}
@@ -125,7 +129,7 @@ function init(db = new PouchDB('database')) {
 		loadUser,
 		createProject,
 		loadProject,
-		saveProject,
+		addComputation,
 		deleteProject,
 		shareProject
 	}
