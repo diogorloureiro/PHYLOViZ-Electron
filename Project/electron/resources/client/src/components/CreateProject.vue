@@ -1,14 +1,14 @@
 <template>
     <div>
         <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-        <b-alert :show='error' variant='danger' dismissible>An error has occurred</b-alert>
+        <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred</b-alert>
         <br>
         <b-card title=''>
             <b-card-body>
                 <p><strong>Dataset Name: </strong>{{this.dataset.name}}</p>
                 <p><strong>Count: </strong>{{this.dataset.count}}</p>
-                <p><strong>Loci: </strong>{{this.dataset.loci}}</p>
-                <p><strong>URL: </strong>{{this.dataset.url}}</p>
+                <p><strong>Loci: </strong>{{this.dataset.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2)}}</p>
+                <p v-show='this.dataset.url'><strong>URL: </strong>{{this.dataset.url}}</p>
                 <hr>
                 <p>Project Name:</p>
                 <b-form-input v-model='projectName' type='text' placeholder='Project Name'></b-form-input>
@@ -59,7 +59,7 @@
                 fetch(`http://localhost:3000/projects`, options).then(res => {
                     this.loading = false
                     this.$router.push('/projects')
-                })
+                }).catch(error => this.error = error)
             }
         }
     }

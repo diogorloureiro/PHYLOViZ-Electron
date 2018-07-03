@@ -1,7 +1,7 @@
 <template>
     <div id='datasets-table' style='overflow: auto;'>
         <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-        <b-alert :show='error' variant='danger' dismissible>An error has occurred while fetching the datasets</b-alert>
+        <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred while fetching the datasets</b-alert>
         <br>
         <b-container fluid>
             <!-- User Interface controls -->
@@ -19,7 +19,7 @@
 
                 <b-col md='3' class='my-1'>
                     <b-form-group horizontal label='Per page:' class='mb-0'>
-                    <b-form-select :options='pageOptions' v-model='perPage' />
+                        <b-form-select :options='pageOptions' v-model='perPage' />
                     </b-form-group>
                 </b-col>
             </b-row>
@@ -34,10 +34,10 @@
                 @filtered='onFiltered'>
 
                 <template slot='name' slot-scope='data'>
-                    <button class='btn btn-link' @click='fetchDataset(data.item.url, data.item)'>{{data.item.name}}</button>
+                    <button class='btn btn-link' @click='fetchDataset(data.item.url, data.item.name)'>{{data.item.name}}</button>
                 </template>
                 <template slot='loci' slot-scope='loci'>
-                    {{ loci.unformatted }}
+                    {{ loci.unformatted.reduce((acc, curr) => acc + curr.name + ', ', '').slice(0, -2) }}
                 </template>
             </b-table>
 
@@ -93,10 +93,6 @@
                 fetch('http://localhost:3000/datasets/pubmlst').then(res => res.json()).then(datasets => {
 
                     this.totalRows = datasets.length
-
-                    datasets.forEach(elem => {
-                        elem.loci = elem.loci.reduce((acc, curr) => acc + curr.name + ', ', '').slice(0, -2)
-                    })
                     this.loading = false
                     this.datasets = datasets
                 }).catch(error => {
@@ -104,17 +100,21 @@
                     this.error = true
                 })
             },
-            fetchDataset(url, dataset) {
+            fetchDataset(url, name) {
                 this.loading = true
-                fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(obj => {
-
-                    dataset.profiles = obj.profiles
-                    this.$store.commit('setProject', { dataset, computations: [], ancillary :{} })
+                fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(dataset => {
+                    dataset.name = name
+                    dataset.url = url
+                    dataset.count = dataset.profiles.length
+                    this.$store.commit('setProject', { dataset, computations: [], ancillary: {} })
                     this.loading = false
                     if(this.$store.state.username)
                         this.$router.push('/projects/create')
                     else
                         this.$router.push('/algorithms')
+                }).catch(error => {
+                    this.loading = false
+                    this.error = true
                 })
             },
             onFiltered (filteredItems) {

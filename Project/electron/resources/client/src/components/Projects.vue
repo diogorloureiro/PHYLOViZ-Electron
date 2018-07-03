@@ -1,6 +1,7 @@
 <template>
     <div>
         <br>
+        <b-alert :show='infoMsg !== undefined' :variant='variant' dismissible>{{this.infoMsg}}</b-alert>
         <b-card>
             <b-card-body>
                 <b-row>
@@ -34,6 +35,9 @@
                     <template slot='name' slot-scope='data'>
                         <button class='btn btn-link' @click='fetchProject(data.item._id)'>{{data.item.name}}</button>
                     </template>
+                    <template slot='actions' slot-scope='data'>
+                        <button class='btn btn-outline-danger btn-sm' @click='deleteProject(data.item._id)'>X</button>
+                    </template>
                 </b-table>
 
                 <b-row>
@@ -54,6 +58,9 @@
                     name: {
                         label: 'Project Name',
                         sortable: true
+                    },
+                    actions: {
+                        label: ''
                     }
                 },
                 currentPage: 1,
@@ -63,7 +70,8 @@
                 filter: null,
                 projects: [],
                 loading: false,
-                error: undefined
+                infoMsg: undefined,
+                variant: undefined
             }
         },
         created() {
@@ -81,6 +89,7 @@
                 }
                 fetch(`http://localhost:3000/user`, options).then(res => res.json()).then(user => {
                     this.projects = user.projects.concat(user.shared)
+                    this.projects.forEach(proj => proj['actions'] = ['delete'])
                     this.totalRows = this.projects.length
                     this.loading = false
                 }).catch(error => {
@@ -94,11 +103,33 @@
                     method: 'GET',
                     credentials: 'include'
                 }
-                fetch(`http://localhost:3000/projects/${id}`, options).then(res => res.json()).then(project => {
-                    
+                fetch(`http://localhost:3000/projects/${id}`, options).then(res => {
+                    if(res.status === 404) {
+                        this.variant = 'danger'
+                        this.infoMsg = 'The project was deleted.'
+                        throw new Error('Project Deleted')
+                    }
+                    return res.json()
+                }).then(project => {
                     this.$store.commit('setProject', project)
                     this.$router.push(`/project`)
                     this.loading = false
+                })
+            },
+            deleteProject(id) {
+                const options = {
+                    method: 'DELETE',
+                    credentials: 'include'
+                }
+                fetch(`http://localhost:3000/projects/${id}`, options).then(res => {
+                    if(res.ok) {
+                        this.projects = this.projects.filter(p => p._id !== id)
+                        this.variant = 'success'
+                        this.infoMsg = 'The project was successfully deleted.'
+                    } else {
+                        this.variant = 'danger'
+                        this.infoMsg = 'An error has occurred.'
+                    }
                 })
             },
             onFiltered (filteredItems) {

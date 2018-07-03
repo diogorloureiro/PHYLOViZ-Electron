@@ -14,6 +14,7 @@
 </template>
 
 <script>
+    import App from '../App.vue'
     export default {
         data() {
             return {
@@ -35,6 +36,7 @@
                 }
                 fetch('http://localhost:3000/login', options).then(res => {
                         if (res.ok) {
+                            console.log(App)
                             this.$store.commit('setUsername', this.username)
                             this.$router.push('/')
                         } else

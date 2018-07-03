@@ -1,7 +1,7 @@
 <template>
         <div>
             <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-            <b-alert :show='error' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
+            <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
             <br>
             <strong>{{this.project.name}}</strong>
             <svg id='canvas' :width='width' :height='height' style='border:1px solid black'></svg>
@@ -36,7 +36,7 @@
                 maxCut: 0,
                 nodeId: '',
                 loading: false,
-                error: null
+                error: undefined
             }
         },
         mounted() {

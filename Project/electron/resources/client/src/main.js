@@ -75,19 +75,29 @@ const routes = [
     },
     {
         path: '/projects',
-        component: Projects
+        component: Projects,
+        meta: { requiresAuth: true }
     },
     {
         path: '/projects/create',
-        component: CreateProject
+        component: CreateProject,
+        meta: { requiresAuth: true }
     },
     {
         path: '/project',
-        component: Project
+        component: Project,
+        meta: { requiresAuth: true }
     }
 ]
 
 const router = new Router({ mode: 'history', routes })
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth) && !store.state.username)
+        next({ path: '/login' })
+    else
+        next()
+})
 
 new Vue({
     store,

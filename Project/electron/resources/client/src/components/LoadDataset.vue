@@ -1,6 +1,7 @@
 <template>
     <div style='overflow: auto;'>
         <br>
+        <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred.</b-alert>
         <b-card title='Load a dataset from a file'>
             <b-card-body>
                 <div class='row'>
@@ -45,19 +46,15 @@
         methods: {
             uploadFile() {
                 this.loading = true
-                const formData = new FormData()
-                formData.append('file', this.file)
+                const file = new FormData()
+                file.append('file', this.file)
                 const options = {
                     method: 'POST',
-                    body: formData
+                    body: file
                 }
-                fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(obj => {
-                    const dataset = {
-                        name: this.file.name,
-                        count: obj.profiles.length,
-                        loci: obj.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2),
-                        profiles: obj.profiles
-                    }
+                fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(dataset => {
+                    dataset.name = this.file.name
+                    dataset.count = dataset.profiles.length
                     this.$store.commit('setProject', { dataset, computations: [] })
                     this.loading = false
                     if(this.$store.state.username)
@@ -68,13 +65,9 @@
             },
             load() {
                 this.loading = true
-                fetch(`http://localhost:3000/datasets/${encodeURIComponent(this.url)}`).then(res => res.json()).then(obj => {
-                    const dataset = {
-                        name: this.url,
-                        count: obj.profiles.length,
-                        loci: obj.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2),
-                        profiles: obj.profiles
-                    }
+                fetch(`http://localhost:3000/datasets/${encodeURIComponent(this.url)}`).then(res => res.json()).then(dataset => {
+                    dataset.name = this.url
+                    dataset.count = dataset.profiles.length
                     this.$store.commit('setProject', { dataset, computations: [] })
                     this.loading = false
                     if(this.$store.state.username)
