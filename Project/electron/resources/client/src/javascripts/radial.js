@@ -39,29 +39,43 @@ function leafcount(node) {
     return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
 }
 
-function render(graph, conf) {
-    const vertices = graph.vertices
-    radial(vertices[0])
+function render(graph, conf, click) {
+
+    d3.selectAll('.node').remove()
+    d3.selectAll('.link').remove()
+
+    radial(graph.vertices[0])
+
+    graph.vertices.forEach(vertex => {
+        graph.edges.forEach(edge => {
+            const id = vertex.id
+            if (id === edge.source || id === edge.source.id)
+                edge.source = { x: vertex.x, y: vertex.y, id }
+            else if (id === edge.target || id === edge.target.id)
+                edge.target = { x: vertex.x, y: vertex.y, id }
+        })
+    })
 
     conf.link = conf.link
-        .data(vertices)
+        .data(graph.edges.filter(edge => graph.vertices.find(vertex => vertex.id === edge.target.id)))
 
     let edgeEnter = conf.link
         .enter()
         .append('g')
+        .attr('class', 'link')
         .attr('transform', d => 'rotate(0)')
 
     edgeEnter
         .append('line')
-        .attr('x1', d => d.x + conf.width / 2)
-        .attr('y1', d => d.y + conf.height / 2)
-        .attr('x2', d => d.xp + conf.width / 2)
-        .attr('y2', d => d.yp + conf.height / 2)
+        .attr('x1', d => d.source.x + conf.width / 2)
+        .attr('y1', d => d.source.y + conf.height / 2)
+        .attr('x2', d => d.target.x + conf.width / 2)
+        .attr('y2', d => d.target.y + conf.height / 2)
         .style('stroke', '#000000')
         .attr('stroke-width', 1)
 
     let nodes = conf.node
-        .data(vertices)
+        .data(graph.vertices)
 
     let nodeEnter = nodes
         .enter()
@@ -71,28 +85,24 @@ function render(graph, conf) {
 
     nodeEnter
         .append('circle')
-        .attr('id', d => 'node'+d.id)
-        .on('click', d => {
-            let active = d.active ? false : true
-            let visibility = active ? 'hidden' : 'visible'
-            d3.select('#text' + d.id).style('visibility', visibility)
-            d.active = active;
-        })
+        .attr('id', d => 'node' + d.id)
+        .on('click', d => click(d, render, graph, conf))
         .attr('cx', d => d.x + conf.width / 2)
         .attr('cy', d => d.y + conf.height / 2)
         .attr('r', d => d.size)
-        .attr('fill', '#00549f')
+        .attr('fill', d => d._children && d._children.length > 0 ? 'orange' : '#00549f')
 
     nodeEnter
         .append('text')
         .attr('id', d => 'text' + d.id)
-        .style('visibility', 'hidden')
+        .style('visibility', 'visible')
         .attr('dx', -1)
         .attr('dy', 0)
         .attr('x', d => d.x + conf.width / 2)
         .attr('y', d => d.y + conf.height / 2)
         .text(d => d.id)
         .style('font-size', d => (d.size / (d.id + '').length) + 'px')
+        .attr('fill','white')
 }
 
 export default render
