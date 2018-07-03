@@ -88,7 +88,7 @@ function convertToCartesian(nodes, minRadius) {
             node.coordinates = [0, 0]
         }
         const selfRadial = minRadius * Math.sqrt(node.size)
-        if (node.children) {
+        if (node.children !== []) {
             if (node.children.length > 2)
                 node.children.sort((c1, c2) => c1.id - c2.id)
             node.children.forEach(child => {
@@ -119,25 +119,26 @@ function toPolar(coord, center = [0, 0]) {
     return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-function render(graph, conf) {
+function render(graph, conf, click) {
+
+    d3.selectAll('.node').remove()
+    d3.selectAll('.link').remove()
+
     grapetree(graph.vertices)
 
     graph.vertices.forEach(vertex => {
         graph.edges.forEach(edge => {
             const id = vertex.id
             const [x, y] = vertex.coordinates
-            if (id === edge.source)
+            if (id === edge.source || id === edge.source.id)
                 edge.source = { x, y, id }
-            else if (id === edge.target)
+            else if (id === edge.target || id === edge.target.id)
                 edge.target = { x, y, id }
         })
     })
 
-    d3.selectAll('.node').remove()
-    d3.selectAll('.link').remove()
-
     conf.link = conf.link
-        .data(graph.edges)
+        .data(graph.edges.filter(edge => graph.vertices.find(vertex => vertex.id === edge.target.id)))
 
     let edgeEnter = conf.link
         .enter()
@@ -166,27 +167,23 @@ function render(graph, conf) {
     elemEnter
         .append('circle')
         .attr('id', d => 'node' + d.id)
-        .on('click', d => {
-            let active = d.active ? false : true
-            let visibility = active ? 'hidden' : 'visible'
-            d3.select('#text' + d.id).style('visibility', visibility)
-            d.active = active;
-        })
+        .on('click', d => click(d, render, graph, conf))
         .attr('cx', d => d.coordinates[0] + conf.width / 2)
         .attr('cy', d => d.coordinates[1] + conf.height / 2)
         .attr('r', d => d.size)
-        .attr('fill', '#00549f')
+        .attr('fill', d => d._children && d._children.length > 0 ? 'orange' : '#00549f')
 
     elemEnter
         .append('text')
         .attr('id', d => 'text' + d.id)
-        .style('visibility', 'hidden')
+        .style('visibility', 'visible')
         .attr('dx', -1)
         .attr('dy', 1)
         .attr('x', d => d.coordinates[0] + conf.width / 2)
         .attr('y', d => d.coordinates[1] + conf.height / 2)
         .text(d => d.id)
-        .style('font-size', d => (d.size / (d.id+'').length) + 'px')
+        .style('font-size', d => (d.size / (d.id + '').length + 1) + 'px')
+        .attr('fill','white')
 }
 
 export default render
