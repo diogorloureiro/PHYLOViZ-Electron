@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-const cluster = require('cluster')
-
 const app = require('../app')
 const debug = require('debug')('web:server')
 const http = require('http')
