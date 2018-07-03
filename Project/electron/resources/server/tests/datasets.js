@@ -35,7 +35,7 @@ function testLoadDatasetFromFile(test) {
         .then(data => services.loadDatasetFromFile({ buffer: data }))
         .then(profiles => {
             const expected = {
-                loci: ['adk', 'aroE', 'deoD', 'gapDH', 'gnd', 'mdh', 'zwf', 'clonal_complex'],
+                loci: ['adk', 'aroE', 'deoD', 'gapDH', 'gnd', 'mdh', 'zwf'],
                 profiles: [
                     { id: 1, loci: [1, 2, 1, 2, 1, 2, 1] },
                     { id: 2, loci: [2, 1, 1, 1, 2, 1, 2] },
