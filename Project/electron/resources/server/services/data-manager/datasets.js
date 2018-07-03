@@ -65,12 +65,19 @@ function parseDataset(body) {
 }
 
 // Retrieve ancillary data from given file
-function loadAncillaryDataFromFile(file) {
-	return parseAncillaryData(file.buffer.toString())
+function loadAncillaryFromFile(file) {
+	return parseAncillary(file.buffer.toString())
+}
+
+// Retrieve dataset from given URL
+function loadAncillaryFromURL(url) {
+	return fetch(url)
+		.then(res => res.text())
+		.then(body => parseAncillary(body))
 }
 
 // Parse a .csv or .txt file into ancillary data
-function parseAncillaryData(body) {
+function parseAncillary(body) {
 	return new Promise((resolve, reject) => {
 		papaparse.parse(body, {
 			dynamicTyping: true,
@@ -95,5 +102,6 @@ module.exports = {
 	loadDatasetsList,
 	loadDatasetFromUrl,
 	loadDatasetFromFile,
-	loadAncillaryDataFromFile
+	loadAncillaryFromFile,
+	loadAncillaryFromURL
 }

@@ -6,7 +6,7 @@
             <b-card-body>
                 <div class='row'>
                     <div class='col-lg-10'>
-                        <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt'></b-form-file>
+                        <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt, .csv'></b-form-file>
                     </div>
                     <div class='col-lg'>
                         <button class='btn btn-outline-success' @click='uploadFile'>Upload</button>

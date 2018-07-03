@@ -25,10 +25,16 @@
                 <b-card-body v-if='show'>
                     <div class='row'>
                         <div class='col-lg-6'>
-                            <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose an ancillary data file...' accept='.db'></b-form-file>
+                            <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose an ancillary data file' accept='.db'></b-form-file>
                         </div>
                         <div class='col-lg'>
                             <button class='btn btn-outline-secondary' @click='uploadAncillary'>Upload</button>
+                        </div>
+                        <div class='col-lg-6'>
+                            <b-form-input v-model='url' type='text' placeholder='Enter the ancillary data URL'></b-form-input>
+                        </div>
+                        <div class='col-lg'>
+                            <button class='btn btn-outline-secondary' @click='loadAncillary(url)'>Load</button>
                         </div>
                     </div>
                 </b-card-body>
@@ -58,6 +64,7 @@
                 lvs: 3,
                 show: false,
                 file: undefined,
+                url: undefined,
                 ancillary: {},
                 loading: false,
                 error: undefined,
@@ -90,7 +97,10 @@
                     this.$store.commit('setProject', info)
                     this.loading = false
                     this.$router.push('/canvas')
-                }).catch(error => this.error = error)
+                }).catch(error => {
+                    this.error = error
+                    this.loading = false
+                })
             },
             uploadAncillary() {
                 this.loading = true
@@ -104,7 +114,21 @@
                     this.ancillary = ancillary
                     this.show = false
                     this.loading = false
-                }).catch(error => this.error = error)
+                }).catch(error => {
+                    this.error = error
+                    this.loading = false
+                })
+            },
+            loadAncillary(url) {
+                this.loading = true
+                fetch(`http://localhost:3000/ancillary/${url}`).then(res => res.json()).then(ancillary => {
+                    this.ancillary = ancillary
+                    this.show = false
+                    this.loading = false
+                }).catch(error => {
+                    this.error = error
+                    this.loading = false
+                })
             }
         }
     }
