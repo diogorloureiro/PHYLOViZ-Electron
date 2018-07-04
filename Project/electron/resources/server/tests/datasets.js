@@ -49,10 +49,10 @@ function testLoadDatasetFromFile(test) {
         })
 }
 
-function testLoadAncillaryDataFromFile(test) {
+function testloadAncillaryFromFile(test) {
     test.expect(1)
     fs.readFile('./tests/inputs/ancillary.db')
-        .then(data => services.loadAncillaryDataFromFile({ buffer: data }))
+        .then(data => services.loadAncillaryFromFile({ buffer: data }))
         .then(profiles => {
             const expected = {
                 head: ['id', 'strain', 'st', 'country', 'yeaR', 'age_yR', 'sex', 'diagnosis1', 'diagnosis2', 'diagnosis3', 'source'],
@@ -73,5 +73,5 @@ module.exports = {
     testLoadDatasetsList,
     testLoadDatasetFromUrl,
     testLoadDatasetFromFile,
-    testLoadAncillaryDataFromFile
+    testloadAncillaryFromFile
 }
