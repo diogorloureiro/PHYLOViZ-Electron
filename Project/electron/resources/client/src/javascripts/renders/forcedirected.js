@@ -17,7 +17,7 @@ function render(graph, conf) {
     conf.node = conf.node.enter()
         .append('g')
         .append('circle')
-        .attr('r', conf.width * 0.01)
+        .attr('r', d => d.size)
         .attr('fill', '#00549f')
         .attr('id', d => 'node' + d.id)
         .call(d3.drag()
