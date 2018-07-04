@@ -26,7 +26,7 @@
 </template>
 
 <script>
-    import { init, destroy } from '../javascripts'
+    import { init, destroy } from '../../javascripts'
 
     export default {
         data() {

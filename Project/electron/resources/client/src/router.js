@@ -2,7 +2,7 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import { Algorithms, Canvas, CreateProject, DatasetsTable, LoadDataset, Login, Project, Projects, Register } from './routes'
+import { Algorithms, Canvas, CreateProject, DatasetsTable, LoadDataset, Login, Project, Projects, Register } from './views/routes'
 
 Vue.use(Router)
 

@@ -9,8 +9,8 @@ Vue.use(BootstrapVue)
 
 import router from './router'
 import store from './store'
-import App from './App.vue'
-import { Navbar, Sidebar } from './components'
+import App from './views/App.vue'
+import { Navbar, Sidebar } from './views/components'
 
 Vue.component('Navbar', Navbar)
 Vue.component('Sidebar', Sidebar)
