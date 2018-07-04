@@ -1,11 +1,9 @@
 'use strict'
 
-import { flatten, direct, ancillary } from './graph-handler'
-import forcedirected from './forcedirected'
-import grapetree from './grapetree'
-import radial from './radial'
-
 import * as d3 from 'd3'
+
+import { flatten, direct, ancillary } from './graph-handler'
+import renders from './renders'
 
 let link, node, simulation, conf
 
@@ -71,7 +69,6 @@ function init(algorithm) {
         }
     }
 
-    const renders = { forcedirected, grapetree, radial }
     return {
         flatten,
         direct,
@@ -95,4 +92,7 @@ function destroy() {
     conf.simulation.stop()
 }
 
-export { init, destroy }
+ export {
+    init,
+    destroy
+}

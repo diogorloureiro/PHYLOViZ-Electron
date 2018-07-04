@@ -183,7 +183,7 @@ function render(graph, conf, click) {
         .attr('y', d => d.coordinates[1] + conf.height / 2)
         .text(d => d.id)
         .style('font-size', d => (d.size / (d.id + '').length + 1) + 'px')
-        .attr('fill','white')
+        .attr('fill', 'white')
 }
 
 export default render

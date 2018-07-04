@@ -3,19 +3,25 @@
             <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
             <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
             <br>
+            <form class='form-inline'>
+                <div class='form-group'>
+                    <label class='mr-sm-2' for='animation-speed'>Animation speed</label>
+                    <input class='form-control-range mr-sm-2' id='animation-speed' type='range' min='0' max='100' v-model='speed' @change='sliderChange'>
+                </div>
+                <div class='form-group'>
+                    <label class='mr-sm-2' for='cut-value'>Tree cut-off</label>
+                    <input class='form-control mr-sm-2' id='cut-value' type='number' v-model='cut' min='0' :max='maxCut'>
+                    <button class='btn btn-outline-success mr-sm-2' id='cut-button' @click='cutOff'>Cut</button>
+                </div>
+                <div class='form-group'>
+                    <label class='mr-sm-2' for='search-input'>Search: </label>
+                    <input class='form-control mr-sm-2' id='search-input' type='text' name='Search' v-model='nodeId'>
+                    <button class='btn btn-outline-success mr-sm-2' id='search-button' @click='search'>Search</button>
+                </div>
+            </form>
+            <br>
             <strong>{{this.project.name}}</strong>
             <svg id='canvas' :width='width' :height='height' style='border:1px solid black'></svg>
-            <div>
-                <br>
-                <label for='cut-value'>Tree cut-off</label>
-                <input id='cut-value' type='number' v-model='cut' min='0' :max='maxCut'>
-                <button class='btn btn-outline-success' id='cut-button' @click='cutOff'>Apply</button>
-                <label for='search-input'>Search: </label>
-                <input id='search-input' type='text' name='Search' v-model='nodeId'>
-                <button class='btn btn-outline-success' id='search-button' @click='search'>Search</button>
-                <p>Animation speed</p>
-                <input id='slider' type='range' min='0' max='100' v-model='speed' @change='sliderChange'>
-            </div>
         </div>
 </template>
 
@@ -53,7 +59,7 @@
             this.render()
         },
         created() {
-            this.height = window.innerHeight - 280
+            this.height = window.innerHeight - 200
             this.width = window.innerWidth - 300
             this.project = this.$store.state.project
         },
@@ -75,10 +81,12 @@
             sliderChange() {
                 this.functions.updateSpeed(this.speed / 100)
             },
-            cutOff() {
+            cutOff(e) {
+                e.preventDefault()
                 this.render()
             },
-            search() {
+            search(e) {
+                e.preventDefault()
                 this.functions.search(this.nodeId)
             }
         }

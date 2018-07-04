@@ -1,5 +1,5 @@
 <template>
-    <div style='overflow: auto;'>
+    <div>
         <br>
         <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred.</b-alert>
         <b-card title='Load a dataset from a file'>
