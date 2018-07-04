@@ -54,6 +54,12 @@ function init(algorithm) {
             .call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
     }
 
+    function toggleLabels() {
+        const labels = d3.selectAll('text')
+        const visibility = labels.style('visibility') === 'visible' ?  'hidden' : 'visible'
+        labels.style('visibility', visibility)
+    }
+
     function click(d, render, graph, conf) {
         if (!d3.event.defaultPrevented) {
             if (d.children.length > 0) {
@@ -117,7 +123,8 @@ function init(algorithm) {
         ancillary,
         render: graph => renders[algorithm](graph, conf, click),
         updateSpeed,
-        search
+        search,
+        toggleLabels
     }
 }
 

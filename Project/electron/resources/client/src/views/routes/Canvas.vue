@@ -18,6 +18,9 @@
                     <input class='form-control mr-sm-2' id='search-input' type='text' name='Search' v-model='nodeId'>
                     <button class='btn btn-outline-success mr-sm-2' id='search-button' @click='search'>Search</button>
                 </div>
+                <div class='form-group'>
+                    <button class='btn btn-outline-success mr-sm-2' id='labels-button' @click='toggleLabels'>Toggle Labels</button>
+                </div>
             </form>
             <br>
             <strong>{{this.project.name}}</strong>
@@ -34,7 +37,7 @@
                 functions: undefined,
                 project: undefined,
                 graph: undefined,
-                flattenGraph: undefined,
+                flattened: undefined,
                 ancillary: undefined,
                 algorithm: undefined,
                 speed: 50,
@@ -50,12 +53,12 @@
             this.functions = init(this.algorithm)
             this.cut = this.maxCut = Math.max(...this.project.graph.edges.map(e => e.distance))
             this.graph = this.functions.direct(this.project.graph)
-            this.flattenGraph = {
+            this.flattened = {
                     vertices: this.functions.flatten(this.graph.root),
                     edges: this.graph.edges
             }
             this.ancillary = this.project.ancillary.head || []
-            this.functions.ancillary(this.flattenGraph, this.project.ancillary.body)
+            this.functions.ancillary(this.flattened, this.project.ancillary.body)
             this.render()
         },
         created() {
@@ -73,7 +76,7 @@
         methods: {
             render() {
                 this.loading = true
-                const graph = this.flattenGraph
+                const graph = this.flattened
                 graph.edges = this.graph.edges.filter(e => e.distance <= this.cut)
                 this.functions.render(graph)
                 this.loading = false
@@ -88,6 +91,10 @@
             search(e) {
                 e.preventDefault()
                 this.functions.search(this.nodeId)
+            },
+            toggleLabels(e) {
+                e.preventDefault()
+                this.functions.toggleLabels()
             }
         }
     }
