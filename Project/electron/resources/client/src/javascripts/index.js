@@ -56,10 +56,10 @@ function init(algorithm) {
 
     function toggleLabels() {
         const labels = d3.selectAll('text')
-        const visibility = labels.style('visibility') === 'visible' ?  'hidden' : 'visible'
+        const visibility = labels.style('visibility') === 'visible' ? 'hidden' : 'visible'
         labels.style('visibility', visibility)
     }
-    
+
     function click(d, render, graph, conf, ancillary) {
         if (!d3.event.defaultPrevented) {
             if (d.children.length > 0) {
@@ -74,14 +74,19 @@ function init(algorithm) {
         }
     }
 
-    function processYear(ancillary) {
+    function processAncillaryToArray(ancillary, header) {
         const newData = []
         ancillary.forEach(data => {
-            let x = newData.find(d => d.year === data.yeaR)
-            if (x)
-                x.count += 1
-            else
-                newData.push({ year: data.yeaR, count: 1 })
+            let found = newData.find(d => d[header] === data[header])
+            if (found)
+                found.count += 1
+            else {
+                const dataPushed = {}
+                dataPushed[header] = data[header]
+                dataPushed.count = 1
+                newData.push(dataPushed)
+            }
+
         })
         return newData
     }
@@ -120,23 +125,54 @@ function init(algorithm) {
         }
     }
 
-    function ancillaryVisual(ancillary) {
+    function setupAncillary(ancillary) {
         if (ancillary.length > 0) {
+            const headers = []
+            for (const header in ancillary[0]){
+                if (ancillary[0].hasOwnProperty(header)){
+                    headers.push(header)
+                }
+            }
 
-            d3.select('#ancillaryCanvas').remove()
-            d3.select('#textAncillary').remove()
+            const text = d3.select('#textAncillary')
+            if(text){
+                text.remove()
+            }
+            
+            const buttons = d3.selectAll('#ancillaryButton')
+            if(buttons){
+                buttons.remove()
+            }
 
             const id = ancillary[0].st
+            d3.select('#ancillary').append('text').attr('id', 'textAncillary').text('Selected node ' + id)
+            d3.select('#ancillary').append('div').attr('id','ancillaryButtons')
 
-            d3.select('#ancillary').append('text').attr('id','textAncillary').text('Selected node '+id)
+            const buttonsDiv = d3.select('#ancillaryButtons')
 
-            const data = processYear(ancillary)
+            headers.forEach(header => {
+                buttonsDiv
+                    .append('button')
+                    .attr('id','ancillaryButton')
+                    .text(header)
+                    .on('click', () => ancillaryVisual(ancillary, header))
+            })
+        }
+    }
 
-            const canvas = d3.select('#ancillary')
+    function ancillaryVisual(ancillary, header) {
+        if (ancillary.length > 0) {
+            let canvas = d3.select('#ancillaryCanvas')
+            if(canvas){
+                canvas.remove()
+            }
+            const data = processAncillaryToArray(ancillary, header)
+            
+            canvas = d3.select('#ancillary')
                 .append('canvas')
-                .attr('id','ancillaryCanvas')
-                .attr('height',conf.height)
-                .attr('width',conf.width)
+                .attr('id', 'ancillaryCanvas')
+                .attr('height', conf.height)
+                .attr('width', conf.width)
                 .style('border', '1px solid black')
 
             const context = canvas.node().getContext('2d')
@@ -180,7 +216,7 @@ function init(algorithm) {
             context.fillStyle = '#000'
             arcs.forEach(d => {
                 const c = labelArc.centroid(d)
-                context.fillText(d.data.year + ' (' + d.data.count + ')', c[0], c[1])
+                context.fillText(d.data[header] + ' (' + d.data.count + ')', c[0], c[1])
             })
         }
     }
@@ -232,7 +268,7 @@ function init(algorithm) {
         flatten,
         direct,
         ancillary,
-        render: graph => renders[algorithm](graph, conf, click,ancillaryVisual),
+        render: graph => renders[algorithm](graph, conf, click, setupAncillary),
         updateSpeed,
         search,
         toggleLabels
