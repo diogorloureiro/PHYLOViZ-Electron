@@ -119,8 +119,8 @@ function toPolar(coord, center = [0, 0]) {
     return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-function render(graph, conf, click) {
-
+function render(graph, conf, click, ancillary) {
+    
     d3.selectAll('.node').remove()
     d3.selectAll('.link').remove()
 
@@ -167,7 +167,13 @@ function render(graph, conf, click) {
     elemEnter
         .append('circle')
         .attr('id', d => 'node' + d.id)
-        .on('click', d => click(d, render, graph, conf))
+        .on('click', d => {
+            if (d3.event.ctrlKey)
+                click(d, render, graph, conf, ancillary)
+            else{
+                ancillary(d.ancillary)
+            }
+        })
         .attr('cx', d => d.coordinates[0] + conf.width / 2)
         .attr('cy', d => d.coordinates[1] + conf.height / 2)
         .attr('r', d => d.size)

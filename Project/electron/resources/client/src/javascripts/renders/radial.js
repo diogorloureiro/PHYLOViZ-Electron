@@ -39,7 +39,7 @@ function leafcount(node) {
     return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
 }
 
-function render(graph, conf, click) {
+function render(graph, conf, click, ancillary) {
 
     d3.selectAll('.node').remove()
     d3.selectAll('.link').remove()
@@ -86,7 +86,13 @@ function render(graph, conf, click) {
     nodeEnter
         .append('circle')
         .attr('id', d => 'node' + d.id)
-        .on('click', d => click(d, render, graph, conf))
+        .on('click', d => {
+            if (d3.event.ctrlKey)
+                click(d, render, graph, conf, ancillary)
+            else{
+                ancillary(d.ancillary)
+            }
+        })
         .attr('cx', d => d.x + conf.width / 2)
         .attr('cy', d => d.y + conf.height / 2)
         .attr('r', d => d.size)

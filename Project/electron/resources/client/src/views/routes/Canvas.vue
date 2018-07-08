@@ -22,6 +22,11 @@
             <br>
             <strong>{{this.project.name}}</strong>
             <svg id='canvas' :width='width' :height='height' style='border:1px solid black'></svg>
+            <div id='ancillary'>
+                <text id='textAncillary'></text>
+                <canvas id='ancillaryCanvas'></canvas>
+            </div>
+            
         </div>
 </template>
 
