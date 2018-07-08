@@ -2,9 +2,11 @@
 
 import * as d3 from 'd3'
 
-function render(graph, conf) {
+function render(graph, conf, click) {
 
-    conf.link = conf.link.data(graph.edges)
+    const edges = graph.edges.filter(edge => graph.vertices.find(vertex => vertex.id === edge.target || vertex.id === edge.target.id))
+
+    conf.link = conf.link.data(edges)
     conf.link.exit().remove()
     conf.link = conf.link.enter()
         .append('line')
@@ -18,13 +20,14 @@ function render(graph, conf) {
         .append('g')
         .append('circle')
         .attr('r', d => d.size)
-        .attr('fill', '#00549f')
         .attr('id', d => 'node' + d.id)
+        .on('click', d => click(d, render, graph, conf))
         .call(d3.drag()
             .on('start', dragstarted)
             .on('drag', dragged)
             .on('end', dragended))
         .merge(conf.node)
+        .attr('fill', d => d._children && d._children.length > 0 ? 'orange' : '#00549f')
 
     conf.node.append('title').text(d => d.id)
     conf.simulation.nodes(graph.vertices).on('tick', ticked)

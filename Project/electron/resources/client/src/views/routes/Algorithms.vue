@@ -70,9 +70,6 @@
                 error: undefined,
             }
         },
-        created() {
-            console.log(this.project.dataset)
-        },
         methods: {
             process() {
                 this.loading = true
