@@ -60,7 +60,7 @@ function init(algorithm) {
         labels.style('visibility', visibility)
     }
 
-    function click(d, render, graph, conf, ancillary) {
+    function collapseClick(d, render, graph, conf, ancillary) {
         if (!d3.event.defaultPrevented) {
             if (d.children.length > 0) {
                 d._children = d.children
@@ -70,27 +70,22 @@ function init(algorithm) {
                 d._children = []
             }
             graph.vertices = flatten(graph.vertices[0])
-            render(graph, conf, click, ancillary)
+            render(graph, conf, collapseClick, ancillary)
         }
     }
 
-    function processAncillaryToArray(ancillary, header) {
-        const newData = []
-        ancillary.forEach(data => {
-            let found = newData.find(d => d[header] === data[header])
-            if (found)
-                found.count += 1
-            else {
-                const dataPushed = {}
-                dataPushed[header] = data[header]
-                dataPushed.count = 1
-                newData.push(dataPushed)
-            }
-
+    function parseAncillary(ancillary, header) {
+        const data = []
+        ancillary.forEach(ancillary => {
+            const info = data.find(d => d[header] === ancillary[header])
+            if (info)
+                info.count += 1
+            else
+                data.push({ [header]: ancillary[header], count: 1 })
         })
-        return newData
+        return data
     }
-
+    // This function is taken from http://bl.ocks.org/jdarling/06019d16cb5fd6795edf
     function randomColor() {
         let golden_ratio_conjugate = 0.618033988749895
         let h = Math.random()
@@ -128,46 +123,57 @@ function init(algorithm) {
     function setupAncillary(ancillary) {
         if (ancillary.length > 0) {
             const headers = []
-            for (const header in ancillary[0]){
-                if (ancillary[0].hasOwnProperty(header)){
+            for (const header in ancillary[0])
+                if (ancillary[0].hasOwnProperty(header))
                     headers.push(header)
-                }
-            }
+            
+            const canvas = d3.select('#ancillaryCanvas')
+            if (canvas)
+                canvas.remove()
 
             const text = d3.select('#textAncillary')
-            if(text){
+            if (text)
                 text.remove()
-            }
-            
-            const buttons = d3.selectAll('#ancillaryButton')
-            if(buttons){
-                buttons.remove()
-            }
+
+            const button = d3.select('#ancillaryButtons')
+            if (button)
+                button.remove()
 
             const id = ancillary[0].st
-            d3.select('#ancillary').append('text').attr('id', 'textAncillary').text('Selected node ' + id)
-            d3.select('#ancillary').append('div').attr('id','ancillaryButtons')
+
+            d3.select('#ancillary')
+                .append('text')
+                .attr('id', 'textAncillary')
+                .text('Selected node ' + id)
+            
+            d3.select('#ancillary')
+                .append('div')
+                .attr('id', 'ancillaryButtons')
 
             const buttonsDiv = d3.select('#ancillaryButtons')
 
             headers.forEach(header => {
                 buttonsDiv
                     .append('button')
-                    .attr('id','ancillaryButton')
+                    .attr('id', 'ancillaryButton')
+                    .attr('class', 'btn btn-outline-primary mr-sm-2')
                     .text(header)
-                    .on('click', () => ancillaryVisual(ancillary, header))
+                    .on('click', () => drawPieChart(ancillary, header))
             })
         }
     }
 
-    function ancillaryVisual(ancillary, header) {
+    function drawPieChart(ancillary, header) {
         if (ancillary.length > 0) {
+
             let canvas = d3.select('#ancillaryCanvas')
-            if(canvas){
+            if (canvas)
                 canvas.remove()
-            }
-            const data = processAncillaryToArray(ancillary, header)
             
+            const data = parseAncillary(ancillary, header)
+
+            const color = randomColor()
+
             canvas = d3.select('#ancillary')
                 .append('canvas')
                 .attr('id', 'ancillaryCanvas')
@@ -177,9 +183,7 @@ function init(algorithm) {
 
             const context = canvas.node().getContext('2d')
 
-            const height = conf.height,
-                width = conf.width,
-                radius = Math.min(width, height) / 2
+            const radius = Math.min(conf.width, conf.height) / 2
 
             const arc = d3.arc()
                 .outerRadius(radius - 10)
@@ -187,22 +191,22 @@ function init(algorithm) {
                 .context(context)
 
             const labelArc = d3.arc()
-                .outerRadius(radius - 40)
-                .innerRadius(radius - 40)
+                .outerRadius(radius - 70)
+                .innerRadius(radius - 70)
                 .context(context)
 
             const pie = d3.pie()
                 .sort(null)
                 .value(d => d.count)
 
-            context.translate(width / 2, height / 2)
+            context.translate(conf.width / 2, conf.height / 2)
 
             const arcs = pie(data)
 
             arcs.forEach(d => {
                 context.beginPath()
                 arc(d)
-                context.fillStyle = (randomColor())()
+                context.fillStyle = color()
                 context.fill()
             })
 
@@ -214,9 +218,10 @@ function init(algorithm) {
             context.textAlign = 'center'
             context.textBaseline = 'middle'
             context.fillStyle = '#000'
+            context.font = '15px Arial'
             arcs.forEach(d => {
-                const c = labelArc.centroid(d)
-                context.fillText(d.data[header] + ' (' + d.data.count + ')', c[0], c[1])
+                const coordinates = labelArc.centroid(d)
+                context.fillText(d.data[header] + ' (' + d.data.count + ')', coordinates[0], coordinates[1])
             })
         }
     }
@@ -268,7 +273,7 @@ function init(algorithm) {
         flatten,
         direct,
         ancillary,
-        render: graph => renders[algorithm](graph, conf, click, setupAncillary),
+        render: graph => renders[algorithm](graph, conf, collapseClick, setupAncillary),
         updateSpeed,
         search,
         toggleLabels

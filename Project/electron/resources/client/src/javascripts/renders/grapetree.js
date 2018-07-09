@@ -119,10 +119,15 @@ function toPolar(coord, center = [0, 0]) {
     return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-function render(graph, conf, click, ancillary) {
+function render(graph, conf, collapseClick, setupAncillary) {
+
+    let nodes = d3.selectAll('.node')
+    if(nodes)
+        nodes.remove()
     
-    d3.selectAll('.node').remove()
-    d3.selectAll('.link').remove()
+    let links = d3.selectAll('.link')
+    if(links)
+        links.remove()
 
     grapetree(graph.vertices)
 
@@ -155,7 +160,7 @@ function render(graph, conf, click, ancillary) {
         .style('stroke', '#000000')
         .attr('stroke-width', 1)
 
-    let nodes = conf.node
+    nodes = conf.node
         .data(graph.vertices)
 
     let elemEnter = nodes
@@ -169,9 +174,9 @@ function render(graph, conf, click, ancillary) {
         .attr('id', d => 'node' + d.id)
         .on('click', d => {
             if (d3.event.ctrlKey)
-                click(d, render, graph, conf, ancillary)
-            else{
-                ancillary(d.ancillary)
+                collapseClick(d, render, graph, conf, setupAncillary)
+            else {
+                setupAncillary(d.ancillary)
             }
         })
         .attr('cx', d => d.coordinates[0] + conf.width / 2)

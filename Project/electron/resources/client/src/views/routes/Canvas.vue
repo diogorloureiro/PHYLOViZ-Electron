@@ -25,9 +25,7 @@
             <br>
             <strong>{{this.project.name}}</strong>
             <svg id='canvas' :width='width' :height='height' style='border:1px solid black'></svg>
-            <div id='ancillary'>
-                <div id='ancillaryButtons'></div>
-            </div>
+            <div id='ancillary'></div>
         </div>
 </template>
 

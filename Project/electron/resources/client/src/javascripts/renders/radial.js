@@ -39,10 +39,15 @@ function leafcount(node) {
     return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
 }
 
-function render(graph, conf, click, ancillary) {
+function render(graph, conf, collapseClick, setupAncillary) {
 
-    d3.selectAll('.node').remove()
-    d3.selectAll('.link').remove()
+    let nodes = d3.selectAll('.node')
+    if(nodes)
+        nodes.remove()
+    
+    let links = d3.selectAll('.link')
+    if(links)
+        links.remove()
 
     radial(graph.vertices[0])
 
@@ -88,9 +93,9 @@ function render(graph, conf, click, ancillary) {
         .attr('id', d => 'node' + d.id)
         .on('click', d => {
             if (d3.event.ctrlKey)
-                click(d, render, graph, conf, ancillary)
-            else{
-                ancillary(d.ancillary)
+                collapseClick(d, render, graph, conf, setupAncillary)
+            else {
+                setupAncillary(d.ancillary)
             }
         })
         .attr('cx', d => d.x + conf.width / 2)
