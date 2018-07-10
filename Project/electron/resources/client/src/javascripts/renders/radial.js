@@ -68,7 +68,7 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .enter()
         .append('g')
         .attr('class', 'link')
-        .attr('transform', d => 'rotate(0)')
+        .attr('transform', 'rotate(0)')
 
     edgeEnter
         .append('line')
@@ -86,7 +86,7 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .enter()
         .append('g')
         .attr('class', 'node')
-        .attr('transform', d => 'rotate(0)')
+        .attr('transform', 'rotate(0)')
 
     nodeEnter
         .on('click', d => {

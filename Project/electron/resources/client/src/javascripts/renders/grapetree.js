@@ -167,7 +167,7 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .enter()
         .append('g')
         .attr('class', 'node')
-        .attr('transform', d => 'rotate(0)')
+        .attr('transform', 'rotate(0)')
 
     elemEnter
         .on('click', d => {

@@ -41,7 +41,7 @@ function init(algorithm) {
         const searched = d3.select(`#node${id}`)
         if (searched.empty()) return
         oldSearch = searched
-        searched.attr('fill', 'orange')
+        searched.attr('fill', 'red')
 
         const cx = searched.attr('cx')
         const cy = searched.attr('cy')
