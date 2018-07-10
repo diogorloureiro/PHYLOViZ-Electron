@@ -45,7 +45,7 @@ Then execute the following command:
 
 ##### Take notice that you need to change the arch type to fit your machine! #####
 
-`...\Project\electron> npm run build --platform=darwin --arch=x64`
+`...\Project\electron> npm run build --platform=darwin --arch=x64 --out=build`
 
 And you should end up with a .app
 
@@ -57,7 +57,7 @@ Then execute the following command:
 
 ##### Take notice that you need to change the arch type to fit your machine! #####
 
-`...\Project\electron> npm run build --platform=linux --arch=x64`
+`...\Project\electron> npm run build --platform=linux --arch=x64 --out=build`
 
 And you should end up with a folder and a linux runnable file inside.
 
@@ -69,7 +69,7 @@ Then execute the following command:
 
 ##### Take notice that you need to change the arch type to fit your machine! #####
 
-`...\Project\electron> npm run build --platform=win32 --arch=x64`
+`...\Project\electron> npm run build --platform=win32 --arch=x64 --out=build`
 
 And you should end up with a folder with an .exe file inside.
 
