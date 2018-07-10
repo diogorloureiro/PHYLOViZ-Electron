@@ -17,7 +17,7 @@ function testGoeburstPrim(test) {
 }
 
 function testProcess(test, processor, comparator, algorithm) {
-    test.expect(10)
+    test.expect(11)
     const profiles = [
         { id: 1, loci: [1, 1, 1, 1, 1, 1, 1] },
         { id: 2, loci: [2, 1, 1, 2, 2, 2, 2] },
@@ -62,6 +62,7 @@ function testProcess(test, processor, comparator, algorithm) {
         [5]
     ]
     test.deepEqual(result.graph.vertices, vertices)
+    test.equal(result.graph.edges.length, edges.length)
     edges.forEach(edge => test.ok(result.graph.edges.find(e =>
         (edge.distance === e.distance &&
             (edge.source === e.source && edge.target === e.target ||

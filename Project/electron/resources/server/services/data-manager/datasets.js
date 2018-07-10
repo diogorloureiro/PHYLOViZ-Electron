@@ -7,7 +7,7 @@ const RequestError = require('../../RequestError')
 
 const parser = new xml2js.Parser(xml2js.defaults["0.2"])
 
-// Retrieve all datasets (name, number of STs, profile URL, loci(name, locus URL)) from https://pubmlst.org/data/dbases.xml
+// Retrieve all pubmlst public datasets (name, number of STs, profile URL and loci (name and locus URL))
 function loadDatasetsList() {
 	return fetch('https://pubmlst.org/data/dbases.xml')
 		.then(res => res.text())
@@ -64,16 +64,16 @@ function parseDataset(body) {
 	})
 }
 
-// Retrieve ancillary data from given file
-function loadAncillaryFromFile(file) {
-	return parseAncillary(file.buffer.toString())
-}
-
 // Retrieve dataset from given URL
 function loadAncillaryFromURL(url) {
 	return fetch(url)
 		.then(res => res.text())
 		.then(body => parseAncillary(body))
+}
+
+// Retrieve ancillary data from given file
+function loadAncillaryFromFile(file) {
+	return parseAncillary(file.buffer.toString())
 }
 
 // Parse a .csv or .txt file into ancillary data

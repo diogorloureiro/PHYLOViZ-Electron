@@ -1,5 +1,5 @@
 <template>
-    <nav class='navbar navbar-expand navbar-dark bg-dark' style='position: fixed; width: 100%; left:0; top: 0; height: 50px;'>
+    <nav class='navbar navbar-expand navbar-dark bg-dark' style='position: fixed; width: 100%; left:0; top: 0; height: 50px; z-index:3'>
         <ul class='navbar-nav mr-auto'>
             <li class='nav-item'>
                 <router-link tag='li' to="/">

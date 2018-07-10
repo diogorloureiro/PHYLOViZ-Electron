@@ -7,13 +7,22 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(BootstrapVue)
 
-import router from './router'
-import store from './store'
 import App from './views/App.vue'
-import { Navbar, Sidebar } from './views/components'
+import { Navbar, Sidebar, Request } from './views/components'
 
 Vue.component('Navbar', Navbar)
 Vue.component('Sidebar', Sidebar)
+Vue.component('Request', Request)
+
+import router from './router'
+import store from './store'
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth) && !store.state.username)
+        next({ path: '/login' })
+    else
+        next()
+})
 
 new Vue({
     store,

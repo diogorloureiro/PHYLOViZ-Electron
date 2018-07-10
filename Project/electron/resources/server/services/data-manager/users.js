@@ -38,7 +38,7 @@ function init(db = new PouchDB('database')) {
 			.catch(() => { throw new RequestError('User not found', 404) })
 	}
 
-	function createProject(user, name, dataset, ancillary) {
+	function createProject(user, name, dataset, ancillary, computations = {}) {
 		const _id = uuid()
 		user.projects.push({ _id, name })
 		const project = {
@@ -48,14 +48,16 @@ function init(db = new PouchDB('database')) {
 			contributors: [],
 			dataset,
 			ancillary,
-			computations: {}
+			computations
 		}
 		return db.put(user)
 			.then(() => db.put(project))
-			.then(res => {
-				project._rev = res.rev
-				return project
-			})
+			.then(() => project)
+	}
+
+	function importProject(user, file) {
+		const { dataset, ancillary, computations } = JSON.parse(file.buffer.toString())
+		return createProject(user, file.originalname.replace('.json', ''), dataset, ancillary, computations)
 	}
 
 	function loadProject(user, _id) {
@@ -68,6 +70,15 @@ function init(db = new PouchDB('database')) {
 			})
 	}
 
+	function exportProject(user, _id) {
+		return loadProject(user, _id)
+			.then(project => ({
+				dataset: project.dataset,
+				ancillary: project.ancillary,
+				computations: project.computations
+			}))
+	}
+
 	function addComputation(user, _id, algorithm, lvs, computation) {
 		return loadProject(user, _id)
 			.then(project => {
@@ -77,10 +88,7 @@ function init(db = new PouchDB('database')) {
 				else
 					computations[algorithm] = { [lvs]: computation }
 				return db.put(project)
-					.then(res => {
-						project._rev = res.rev
-						return project
-					})
+					.then(() => project)
 			})
 	}
 
@@ -122,10 +130,7 @@ function init(db = new PouchDB('database')) {
 						project.contributors.push(contributor)
 						return db.put(project)
 					})
-					.then(res => {
-						project._rev = res.rev
-						return project
-					})
+					.then(() => project)
 			})
 	}
 
@@ -134,7 +139,9 @@ function init(db = new PouchDB('database')) {
 		register,
 		loadUser,
 		createProject,
+		importProject,
 		loadProject,
+		exportProject,
 		addComputation,
 		deleteProject,
 		shareProject

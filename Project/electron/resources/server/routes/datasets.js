@@ -6,7 +6,7 @@ const response = require('./response')
 const services = require('../services/data-manager').datasets
 
 // Load datasets list from PubMLST
-router.get('/datasets/pubmlst', response(req => services.loadDatasetsList()))
+router.get('/datasets/pubmlst', response(() => services.loadDatasetsList()))
 
 // Load dataset from URL
 router.get('/datasets/:url', response(req => services.loadDatasetFromUrl(req.params.url)))

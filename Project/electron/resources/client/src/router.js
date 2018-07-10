@@ -50,11 +50,4 @@ const routes = [
 
 const router = new Router({ mode: 'history', routes })
 
-router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth) && !store.state.username)
-        next({ path: '/login' })
-    else
-        next()
-})
-
 export default router

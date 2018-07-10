@@ -1,40 +1,63 @@
 <template>
     <div>
-        <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-        <b-alert :show='infoMsg !== undefined' variant='info' dismissible>{{this.infoMsg}}</b-alert>
         <br>
-        <b-card>
+        <Request :href='`/projects/${project._id}/export`' :onSuccess='onExport' />
+        <Request v-if='requests.remove' :href='`/projects/${project._id}`' method='DELETE' :onSuccess='onRemove' />
+        <Request v-if='requests.share' :href='`/projects/${project._id}/share/${contributor}`' method='POST' :onSuccess='onShare' />
+        <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
+        <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
+        <Request v-if='requests.process' href='/process' method='POST' :json='data' :onSuccess='onProcess' />
+        <Request v-if='requests.save' :href='`/projects/${project._id}`' method='PUT' :json='computation' :onSuccess='onSave' />
+        <b-card :show='!!project'>
             <b-card-body>
-                <h1>{{this.project.name}}</h1>
-                <p><strong>Owner: </strong>{{this.project.owner}}</p>
-                <br>
-                <p><strong>Dataset name: </strong>{{this.project.dataset.name}}</p>
-                <p><strong>Count: </strong>{{this.project.dataset.count}}</p>
-                <p><strong>Loci: </strong>{{this.project.dataset.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2)}}</p>
-                <p><strong>URL: </strong>{{this.project.dataset.url}}</p>
+                <h1>{{project.name}}</h1>
+                <p><strong>Owner: </strong>{{project.owner}}</p>
+                <div class='form-inline'>
+                    <b-form-input v-model='contributor' class='mr-sm-2' type='text' placeholder='Username'></b-form-input>
+                    <button class='btn btn-outline-success mr-sm-2' @click='share'>Share</button>
+                    <button class='btn btn-outline-info mr-sm-2' ><a :href='encodedURI' :download='`${project.name}.json`'>Export</a></button>
+                    <button class='btn btn-outline-danger mr-sm-2' @click='remove'>Delete</button>
+                </div>
+                <hr>
+                <p><strong>Dataset name: </strong>{{project.dataset.name}}</p>
+                <p><strong>Count: </strong>{{project.dataset.count}}</p>
+                <p><strong>Loci: </strong>{{project.dataset.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2)}}</p>
+                <p><strong>URL: </strong>{{project.dataset.url}}</p>
                 <hr>
                 <p>Select the algorithm to process the dataset's profiles:</p>
                 <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
                 <p>LVs: </p>
                 <div class='row'>
                     <div class='col-lg-2'>
-                        <b-form-input v-model='lvs' type='number' min='1' value='3' :max='this.project.dataset.loci.length'></b-form-input>
+                        <b-form-input v-model='lvs' type='number' min='1' value='3' :max='project.dataset.loci.length'></b-form-input>
                     </div>
                 </div>
                 <br>
-                <button class='btn btn-outline-success' @click='compute'>Add Computation</button>
-                <br>
+                <button class='btn btn-outline-success' @click='process'>Process</button>
+                <hr>
+                <p>Select the computation to render:</p>
                 <b-form-select v-model='selectedComputation' :options='computations' class='mb-3' :select-size='3' />
-
                 <p>Select the rendering algorithm:</p>
                 <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
-                <button class='btn btn-outline-success' @click='sendToCanvas' :disabled='this.selectedComputation === undefined'>Render</button>
-                <hr>
-                <button class='btn btn-outline-success' @click='saveProject'>Save Project</button>
-                <button class='btn btn-outline-danger' @click='deleteProject'>Delete Project</button>
-                <hr>
-                <b-form-input v-model='contributor' type='text' placeholder='Enter the persons username'></b-form-input>
-                <button class='btn btn-outline-success' @click='shareProject'>Share Project</button>
+                <button class='btn btn-outline-primary' @click='show = !show'>Ancillary</button>
+                <b-card-body v-if='show'>
+                    <div class='row'>
+                        <div class='col-lg-6'>
+                            <b-form-file v-model='file' :state='!!file' placeholder='Choose an ancillary data file' accept='.csv, .txt, .db'></b-form-file>
+                        </div>
+                        <div class='col-lg'>
+                            <button class='btn btn-outline-secondary' @click='upload'>Upload</button>
+                        </div>
+                        <div class='col-lg-6'>
+                            <b-form-input v-model='url' type='text' placeholder='Enter the ancillary data URL'></b-form-input>
+                        </div>
+                        <div class='col-lg'>
+                            <button class='btn btn-outline-secondary' @click='load'>Load</button>
+                        </div>
+                    </div>
+                </b-card-body>
+                <div v-if='ancillary.head' class='mt-3'>Selected ancillary file: {{file && file.name}}</div>
+                <button class='btn btn-outline-success' @click='draw' :disabled='!selectedComputation'>Render</button>
             </b-card-body>
         </b-card>
     </div>
@@ -45,13 +68,15 @@
         data () {
             return {
                 project: undefined,
+                encodedURI: undefined,
                 selected: 'goeburst',
                 lvs: 3,
                 options: [
                     { value: 'goeburst', text: 'GoeBURST' }
                 ],
                 selectedComputation: undefined,
-                computations: undefined,
+                computations: [],
+                computation: undefined,
                 selectedRender: 'forcedirected',
                 renderOptions: [
                     { value: 'forcedirected', text: 'Force-Directed Layout' },
@@ -59,89 +84,99 @@
                     { value: 'radial', text: 'Radial Static Layout' }
                 ],
                 contributor: undefined,
-                loading: false,
-                infoMsg: undefined,
+                file: undefined,
+                data: undefined,
+                url: undefined,
+                ancillary: {},
+                show: false,
+                requests: {
+                    remove: false,
+                    share: false,
+                    upload: false,
+                    load: false,
+                    process: false,
+                    save: false
+                }
             }
         },
         created() {
             this.project = this.$store.state.project
-            this.computations = Object.keys(this.project.computations)
+            Object.keys(this.project.computations).forEach(computation => 
+                Object.keys(this.project.computations[computation]).forEach(lvs => 
+                    this.computations.push({ text: `${computation} (${lvs})`, value: this.project.computations[computation][lvs] })))
         },
         methods: {
-            compute() {
-                if(this.computations.includes(this.selected))
-                    return
-                this.loading = true
-                const options = {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        processor: this.selected,
-                        profiles: this.project.dataset.profiles,
-                        lvs: this.lvs
-                    }),
-                    headers: { 'content-type': 'application/json' }
-                }
-                fetch(`http://localhost:3000/process`, options).then(res => res.json()).then(({ graph, matrix }) => {
-
-                    this.project.computations[this.selected] = { graph, matrix }
-                    this.computations.push(this.selected)
-                    this.$store.commit('setProject', this.project)
-                    this.loading = false
-                })
+            onExport(project) {
+                this.encodedURI = encodeURI(`data:text/json;charset=utf-8,${JSON.stringify(project)}`)
             },
-            sendToCanvas() {
+            remove() {
+                this.requests.remove = true
+            },
+            onRemove() {
+                this.$store.commit('setProject', undefined)
+                this.$router.push('/projects')
+            },
+            share(contributor) {
+                this.share = {
+                    name: `${this.project.name} (Shared by ${this.project.owner})`
+                }
+                this.requests.share = true
+            },
+            onShare() {
+                this.project.contributors.push(this.contributor)
+                return `Project successfully shared with ${this.contributor}.`
+            },
+            process() {
+                if (this.computations.some(computation => computation.text === `${this.selected} (${this.lvs})`))
+                    return
+                this.data = {
+                    processor: this.selected,
+                    profiles: this.project.dataset.profiles,
+                    lvs: this.lvs
+                }
+                this.requests.process = true
+            },
+            onProcess(result) {
+                this.computation = {
+                    algorithm: this.selected,
+                    lvs: this.lvs,
+                    computation: result
+                }
+                this.requests.process = false
+                this.requests.save = true
+            },
+            onSave(project) {
+                this.project = project
+                this.computations.push({ text: `${this.selected} (${this.lvs})`, value: project.computations[this.selected][this.lvs] })
+                this.$store.commit('setProject', this.project)
+                return 'Computation saved to project.'
+            },
+            draw() {
                 const info = {
                     name: this.project.dataset.name,
-                    graph: this.project.computations[this.selected].graph,
-                    ancillary: {},
+                    graph: this.project.computations[this.selected][this.lvs].graph,
+                    ancillary: this.ancillary,
                     render: this.selectedRender
                 }
                 this.$store.commit('setProject', info)
-                this.loading = false
                 this.$router.push('/canvas')
             },
-            saveProject() {
-                this.loading = true
-                const options = {
-                    method: 'PUT',
-                    body: JSON.stringify(this.project),
-                    headers: { 'content-type': 'application/json' },
-                    credentials: 'include'
-                }
-                fetch(`http://localhost:3000/projects/${this.project._id}`, options).then(res => {
-                    
-                    this.infoMsg = 'Project successfully saved.'
-                    this.loading = false
-                })
+            upload() {
+                this.requests.upload = true
+                const file = new FormData()
+                file.append('file', this.file)
+                this.file = file
             },
-            deleteProject() {
-                this.loading = true
-                const options = {
-                    method: 'DELETE',
-                    credentials: 'include'
-                }
-                fetch(`http://localhost:3000/projects/${this.project._id}`, options).then(res => {
-                    
-                    this.$store.commit('setProject', undefined)
-                    this.$router.push('/projects')
-                    this.loading = false
-                })
+            onUpload(ancillary) {
+                this.ancillary = ancillary
+                this.requests.upload = false
             },
-            shareProject(contributor) {
-                this.loading = true
-                const options = {
-                    method: 'POST',
-                    body: JSON.stringify({ name: `${this.project.name} (Shared by ${this.project.owner})` }),
-                    headers: { 'content-type': 'application/json' },
-                    credentials: 'include'
-                }
-                fetch(`http://localhost:3000/projects/${this.project._id}/share/${this.contributor}`, options).then(res => {
-                    
-                    this.infoMsg = `Project successfully shared with ${this.contributor}.`
-                    this.project.contributors.push(this.contributor)
-                    this.loading = false
-                })
-
+            load() {
+                this.requests.load = true
+            },
+            onLoad(ancillary) {
+                this.ancillary = ancillary
+                this.requests.load = false
             }
         }
     }

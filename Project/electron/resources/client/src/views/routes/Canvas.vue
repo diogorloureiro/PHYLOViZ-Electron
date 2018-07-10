@@ -1,8 +1,7 @@
 <template>
         <div>
-            <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-            <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred while rendering the graph</b-alert>
             <br>
+            <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
             <form class='form-inline'>
                 <div class='form-group'>
                     <label class='mr-sm-2' for='animation-speed'>Animation speed</label>
@@ -23,7 +22,7 @@
                 </div>
             </form>
             <br>
-            <strong>{{this.project.name}}</strong>
+            <strong>{{project.name}}</strong>
             <svg id='canvas' :width='width' :height='height' style='border:1px solid black'></svg>
             <div id='ancillary'></div>
         </div>
@@ -45,8 +44,7 @@
                 cut: 0,
                 maxCut: 0,
                 nodeId: '',
-                loading: false,
-                error: undefined
+                loading: false
             }
         },
         mounted() {
@@ -55,8 +53,8 @@
             this.cut = this.maxCut = Math.max(...this.project.graph.edges.map(e => e.distance))
             this.graph = this.functions.direct(this.project.graph)
             this.flattened = {
-                    vertices: this.functions.flatten(this.graph.root),
-                    edges: this.graph.edges
+                vertices: this.functions.flatten(this.graph.root),
+                edges: this.graph.edges
             }
             this.ancillary = this.project.ancillary.head || []
             this.functions.ancillary(this.flattened, this.project.ancillary.body)

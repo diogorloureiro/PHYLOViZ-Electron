@@ -1,7 +1,23 @@
 <template>
     <div>
         <br>
-        <b-alert :show='infoMsg !== undefined' :variant='variant' dismissible>{{this.infoMsg}}</b-alert>
+        <Request href='/user' :onSuccess='onLoadUser' />
+        <Request v-if='requests.import' href='/projects/import' method='POST' :data='data' :onSuccess='onImport' />
+        <Request v-if='requests.load' :href='`/projects/${loaded}`' :onSuccess='onLoadProject' />
+        <Request v-if='requests.remove' :href='`/projects/${removed}`' method='DELETE' :onSuccess='onRemove' />
+        <b-card title='Import project from a file'>
+            <b-card-body>
+                <div class='row'>
+                    <div class='col-lg-10'>
+                        <b-form-file v-model='file' :state='!!file' placeholder='Choose a file...' accept='.json'></b-form-file>
+                    </div>
+                    <div class='col-lg'>
+                        <button class='btn btn-outline-success' @click='this.import'>Import</button>
+                    </div>
+                </div>
+            </b-card-body>
+        </b-card>
+        <br>
         <b-card>
             <b-card-body>
                 <b-row>
@@ -33,10 +49,10 @@
                     @filtered='onFiltered'>
 
                     <template slot='name' slot-scope='data'>
-                        <button class='btn btn-link' @click='fetchProject(data.item._id)'>{{data.item.name}}</button>
+                        <button class='btn btn-link' @click='loadProject(data.item._id)'>{{data.item.name}}</button>
                     </template>
                     <template slot='actions' slot-scope='data'>
-                        <button class='btn btn-outline-danger btn-sm' @click='deleteProject(data.item._id)'>X</button>
+                        <button class='btn btn-outline-danger btn-sm' @click='remove(data.item._id)'>Delete</button>
                     </template>
                 </b-table>
 
@@ -65,72 +81,50 @@
                 },
                 currentPage: 1,
                 perPage: 10,
-                totalRows: null,
+                totalRows: undefined,
                 pageOptions: [ 10, 25, 50 ],
-                filter: null,
+                filter: undefined,
                 projects: [],
-                loading: false,
-                infoMsg: undefined,
-                variant: undefined
+                file: undefined,
+                data: undefined,
+                loaded: undefined,
+                removed: undefined,
+                requests: {
+                    import: false,
+                    load: false,
+                    remove: false
+                }
             }
         },
-        created() {
-            this.fetchUser()
-        },
-        watch: {
-            '$route': 'fetchData'
-        },
         methods: {
-            fetchUser() {
-                this.loading = true
-                const options = {
-                    method: 'GET',
-                    credentials: 'include'
-                }
-                fetch(`http://localhost:3000/user`, options).then(res => res.json()).then(user => {
-                    this.projects = user.projects.concat(user.shared)
-                    this.projects.forEach(proj => proj['actions'] = ['delete'])
-                    this.totalRows = this.projects.length
-                    this.loading = false
-                }).catch(error => {
-                    this.loading = false
-                    this.error = true
-                })
+            onLoadUser(user) {
+                this.projects = user.projects.concat(user.shared)
+                this.projects.forEach(proj => proj['actions'] = ['remove'])
+                this.totalRows = this.projects.length
             },
-            fetchProject(id) {
-                this.loading = true
-                const options = {
-                    method: 'GET',
-                    credentials: 'include'
-                }
-                fetch(`http://localhost:3000/projects/${id}`, options).then(res => {
-                    if(res.status === 404) {
-                        this.variant = 'danger'
-                        this.infoMsg = 'The project was deleted.'
-                        throw new Error('Project Deleted')
-                    }
-                    return res.json()
-                }).then(project => {
-                    this.$store.commit('setProject', project)
-                    this.$router.push(`/project`)
-                    this.loading = false
-                })
+            import() {
+                this.data = new FormData()
+                this.data.append('file', this.file)
+                this.requests.import = true
             },
-            deleteProject(id) {
-                const options = {
-                    method: 'DELETE',
-                    credentials: 'include'
-                }
-                fetch(`http://localhost:3000/projects/${id}`, options).then(res => {
-                    if(res.ok) {
-                        this.projects = this.projects.filter(p => p._id !== id)
-                        this.variant = 'success'
-                        this.infoMsg = 'The project was successfully deleted.'
-                    } else {
-                        this.variant = 'danger'
-                        this.infoMsg = 'An error has occurred.'
-                    }
-                })
+            onImport(project) {
+                this.$store.commit('setProject', project)
+                this.$router.push(`/project`)
+            },
+            loadProject(id) {
+                this.loaded = id
+                this.requests.load = true
+            },
+            onLoadProject(project) {
+                this.$store.commit('setProject', project)
+                this.$router.push(`/project`)
+            },
+            remove(id) {
+                this.removed = id
+                this.requests.remove = true
+            },
+            onRemove() {
+                this.projects = this.projects.filter(project => project._id !== this.removed)
             },
             onFiltered (filteredItems) {
                 this.totalRows = filteredItems.length

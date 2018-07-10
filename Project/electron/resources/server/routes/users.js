@@ -3,6 +3,7 @@
 const router = require('express').Router()
 const passport = require('passport')
 const Strategy = require('passport-local').Strategy
+const upload = require('multer')()
 const response = require('./response')
 const RequestError = require('../RequestError')
 const services = require('../services/data-manager').users()
@@ -20,7 +21,7 @@ passport.deserializeUser((username, done) =>
 		.catch(err => done(err)))
 
 // Authenticate user
-router.post('/login', passport.authenticate('local'), (req, res) => res.sendStatus(200))
+router.post('/login', passport.authenticate('local'), (req, res) => res.send(req.user))
 
 // Register user
 router.post('/register', response(req => services.register(req.body.username, req.body.password)))
@@ -40,8 +41,14 @@ router.get('/user', (req, res) => res.send(req.user))
 // Create project
 router.post('/projects', response(req => services.createProject(req.user, req.body.name, req.body.dataset, req.body.ancillary)))
 
+// Import project
+router.post('/projects/import', upload.single('file'), response(req => services.importProject(req.user, req.file)))
+
 // Load project
 router.get('/projects/:id', response(req => services.loadProject(req.user, req.params.id)))
+
+// Export project
+router.get('/projects/:id/export', response(req => services.exportProject(req.user, req.params.id)))
 
 // Add computation to project
 router.put('/projects/:id', response(req => services.addComputation(req.user, req.params.id, req.body.algorithm, req.body.lvs, req.body.computation)))

@@ -25,11 +25,13 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
+	const { message, status = 500 } = err
+	console.log(`${status} - ${message}`)
 	// set locals, only providing error in development
-	res.locals.message = err.message
+	res.locals.message = message
 	res.locals.error = req.app.get('env') === 'development' ? err : {}
-	res.status(err.status || 500)
-	res.send(err.message)
+	res.status(status)
+	res.send(message)
 })
 
 module.exports = app

@@ -1,15 +1,16 @@
 <template>
     <div>
         <br>
-        <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred.</b-alert>
+        <Request v-if='requests.upload' href='/datasets/file' method='POST' :data='data' :onSuccess='onUpload' />
+        <Request v-if='requests.load' :href='`/datasets/${encodeURIComponent(url)}`' :onSuccess='onLoad' />
         <b-card title='Load a dataset from a file'>
             <b-card-body>
                 <div class='row'>
                     <div class='col-lg-10'>
-                        <b-form-file v-model='file' :state='Boolean(file)' placeholder='Choose a file...' accept='.txt, .csv'></b-form-file>
+                        <b-form-file v-model='file' :state='!!file' placeholder='Choose a file...' accept='.csv, .txt, .db'></b-form-file>
                     </div>
                     <div class='col-lg'>
-                        <button class='btn btn-outline-success' @click='uploadFile'>Upload</button>
+                        <button class='btn btn-outline-success' @click='upload'>Upload</button>
                     </div>
                 </div>
             </b-card-body>
@@ -34,47 +35,36 @@
     export default {
         data () {
             return {
-                file: null,
+                file: undefined,
+                data: undefined,
                 url: undefined,
-                loading: false,
-                error: undefined
+                requests: {
+                    upload: false,
+                    load: false
+                }
             }
         },
-        watch: {
-            '$route': 'fetchData'
-        },
         methods: {
-            uploadFile() {
-                this.loading = true
+            upload() {
                 const file = new FormData()
                 file.append('file', this.file)
-                const options = {
-                    method: 'POST',
-                    body: file
-                }
-                fetch('http://localhost:3000/datasets/file', options).then(res => res.json()).then(dataset => {
-                    dataset.name = this.file.name
-                    dataset.count = dataset.profiles.length
-                    this.$store.commit('setProject', { dataset, computations: [] })
-                    this.loading = false
-                    if(this.$store.state.username)
-                        this.$router.push('/projects/create')
-                    else
-                        this.$router.push('/algorithms')
-                }).catch(error => this.error = error)
+                this.data = data
+                this.requests.upload = true
+            },
+            onUpload(dataset) {
+                update(dataset, this.file.name)
             },
             load() {
-                this.loading = true
-                fetch(`http://localhost:3000/datasets/${encodeURIComponent(this.url)}`).then(res => res.json()).then(dataset => {
-                    dataset.name = this.url
-                    dataset.count = dataset.profiles.length
-                    this.$store.commit('setProject', { dataset, computations: [] })
-                    this.loading = false
-                    if(this.$store.state.username)
-                        this.$router.push('/projects/create')
-                    else
-                        this.$router.push('/algorithms')
-                }).catch(error => this.error = error)
+                this.requests.load = true
+            },
+            onLoad(dataset) {
+                this.update(dataset, this.url)
+            },
+            update(dataset, name) {
+                dataset.name = name
+                dataset.count = dataset.profiles.length
+                this.$store.commit('setProject', { dataset, computations: [] })
+                this.$router.push(this.$store.state.username ? '/projects/create' : '/algorithms')
             }
         }
     }

@@ -1,10 +1,9 @@
 <template>
-    <div id='datasets-table' style='overflow: auto;'>
-        <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
-        <b-alert :show='error !== undefined' variant='danger' dismissible>An error has occurred while fetching the datasets</b-alert>
+    <div id='datasets-table'>
         <br>
+        <Request href='/datasets/pubmlst' :onSuccess='onLoadDatasets' />
+        <Request v-if='requests.load' :href='`/datasets/${encodeURIComponent(dataset.url)}`' :onSuccess='onLoadDataset' />
         <b-container fluid>
-            <!-- User Interface controls -->
             <b-row>
                 <b-col md='4' class='my-1'>
                     <b-form-group horizontal label='Filter:' class='mb-0'>
@@ -16,7 +15,6 @@
                         </b-input-group>
                     </b-form-group>
                 </b-col>
-
                 <b-col md='3' class='my-1'>
                     <b-form-group horizontal label='Per page:' class='mb-0'>
                         <b-form-select :options='pageOptions' v-model='perPage' />
@@ -24,7 +22,6 @@
                 </b-col>
             </b-row>
             <br>
-
             <b-table striped small hover
                 :items='datasets'
                 :fields='fields'
@@ -32,15 +29,13 @@
                 :per-page='perPage'
                 :filter='filter'
                 @filtered='onFiltered'>
-
                 <template slot='name' slot-scope='data'>
-                    <button class='btn btn-link' @click='fetchDataset(data.item.url, data.item.name)'>{{data.item.name}}</button>
+                    <button class='btn btn-link' @click='loadDataset(data.item.name, data.item.url)'>{{data.item.name}}</button>
                 </template>
                 <template slot='loci' slot-scope='loci'>
                     {{ loci.unformatted.reduce((acc, curr) => acc + curr.name + ', ', '').slice(0, -2) }}
                 </template>
             </b-table>
-
             <b-row>
                 <b-col md='6' class='my-1'>
                 <b-pagination :total-rows='totalRows' :per-page='perPage' v-model='currentPage' class='my-0' />
@@ -55,69 +50,40 @@
         data() {
             return {
                 fields: {
-                    name: {
-                        label: 'Dataset Name',
-                        sortable: true
-                    },
-                    count: {
-                        label: 'Count',
-                        sortable: true
-                    },
-                    url: {
-                        label: 'URL'
-                    },
-                    loci: {
-                        label: 'Loci'
-                    }
+                    name: { label: 'Dataset Name', sortable: true },
+                    count: { label: 'Count', sortable: true },
+                    url: { label: 'URL' },
+                    loci: { label: 'Loci' }
                 },
                 currentPage: 1,
                 perPage: 10,
-                totalRows: null,
+                totalRows: undefined,
                 pageOptions: [ 10, 25, 50 ],
-                filter: null,
-                datasets: [],
-                loading: false,
-                error: undefined
+                filter: undefined,
+                datasets: undefined,
+                dataset: undefined,
+                requests: {
+                    load: false
+                }
             }
         },
-        created() {
-            this.fetchData()
-        },
-        watch: {
-            '$route': 'fetchData'
-        },
         methods: {
-            fetchData() {
-
-                this.loading = true
-                fetch('http://localhost:3000/datasets/pubmlst').then(res => res.json()).then(datasets => {
-
-                    this.totalRows = datasets.length
-                    this.loading = false
-                    this.datasets = datasets
-                }).catch(error => {
-                    this.loading = false
-                    this.error = true
-                })
+            onLoadDatasets(datasets) {
+                this.totalRows = datasets.length
+                this.datasets = datasets
             },
-            fetchDataset(url, name) {
-                this.loading = true
-                fetch(`http://localhost:3000/datasets/${encodeURIComponent(url)}`).then(res => res.json()).then(dataset => {
-                    dataset.name = name
-                    dataset.url = url
-                    dataset.count = dataset.profiles.length
-                    this.$store.commit('setProject', { dataset, computations: [], ancillary: {} })
-                    this.loading = false
-                    if(this.$store.state.username)
-                        this.$router.push('/projects/create')
-                    else
-                        this.$router.push('/algorithms')
-                }).catch(error => {
-                    this.loading = false
-                    this.error = true
-                })
+            loadDataset(name, url) {
+                this.dataset = { name, url }
+                this.requests.load = true
             },
-            onFiltered (filteredItems) {
+            onLoadDataset(dataset){
+                dataset.name = this.dataset.name
+                dataset.url = this.dataset.url
+                dataset.count = dataset.profiles.length
+                this.$store.commit('setProject', { dataset, ancillary: {}, computations: [] })
+                this.$router.push(this.$store.state.username ? '/projects/create' : '/algorithms')
+            },
+            onFiltered(filteredItems) {
                 this.totalRows = filteredItems.length
                 this.currentPage = 1
             }
