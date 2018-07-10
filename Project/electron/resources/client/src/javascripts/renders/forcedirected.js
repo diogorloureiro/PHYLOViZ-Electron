@@ -2,7 +2,7 @@
 
 import * as d3 from 'd3'
 
-function render(graph, conf, click) {
+function render(graph, conf, collapseClick, setupAncillary) {
 
     const edges = graph.edges.filter(edge => graph.vertices.find(vertex => vertex.id === edge.target || vertex.id === edge.target.id))
 
@@ -21,7 +21,13 @@ function render(graph, conf, click) {
         .append('circle')
         .attr('r', d => d.size)
         .attr('id', d => 'node' + d.id)
-        .on('click', d => click(d, render, graph, conf))
+        .on('click', d => {
+            if (d3.event.ctrlKey)
+                collapseClick(d, render, graph, conf, setupAncillary)
+            else {
+                setupAncillary(d.ancillary)
+            }
+        })
         .call(d3.drag()
             .on('start', dragstarted)
             .on('drag', dragged)

@@ -79,7 +79,7 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .style('stroke', '#000000')
         .attr('stroke-width', 1)
 
-    let nodes = conf.node
+    nodes = conf.node
         .data(graph.vertices)
 
     let nodeEnter = nodes
