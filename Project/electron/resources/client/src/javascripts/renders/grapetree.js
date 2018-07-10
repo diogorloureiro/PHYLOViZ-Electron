@@ -170,8 +170,6 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .attr('transform', d => 'rotate(0)')
 
     elemEnter
-        .append('circle')
-        .attr('id', d => 'node' + d.id)
         .on('click', d => {
             if (d3.event.ctrlKey)
                 collapseClick(d, render, graph, conf, setupAncillary)
@@ -179,6 +177,8 @@ function render(graph, conf, collapseClick, setupAncillary) {
                 setupAncillary(d.ancillary)
             }
         })
+        .append('circle')
+        .attr('id', d => 'node' + d.id)
         .attr('cx', d => d.coordinates[0] + conf.width / 2)
         .attr('cy', d => d.coordinates[1] + conf.height / 2)
         .attr('r', d => d.size)
