@@ -10,7 +10,7 @@
                         <b-form-file v-model='file' :state='!!file' placeholder='Choose a file...' accept='.csv, .txt, .db'></b-form-file>
                     </div>
                     <div class='col-lg'>
-                        <button class='btn btn-outline-success' @click='upload'>Upload</button>
+                        <button class='btn btn-outline-success' @click='upload' :disabled='!file'>Upload</button>
                     </div>
                 </div>
             </b-card-body>
@@ -23,7 +23,7 @@
                         <b-form-input v-model='url' type='text' placeholder='Enter the dataset URL'></b-form-input>
                     </div>
                     <div class='col-lg'>
-                        <button class='btn btn-outline-success' @click='load'>Load</button>
+                        <button class='btn btn-outline-success' @click='load' :disabled='!url'>Load</button>
                     </div>
                 </div>
             </b-card-body>
@@ -48,11 +48,11 @@
             upload() {
                 const file = new FormData()
                 file.append('file', this.file)
-                this.data = data
+                this.data = file
                 this.requests.upload = true
             },
             onUpload(dataset) {
-                update(dataset, this.file.name)
+                this.update(dataset, this.file.name)
             },
             load() {
                 this.requests.load = true

@@ -24,7 +24,7 @@
                 <b-card-body v-if='show'>
                     <div class='row'>
                         <div class='col-lg-6'>
-                            <b-form-file v-model='file' :state='!!file' placeholder='Choose an ancillary data file' accept='.csv, .txt, .db'></b-form-file>
+                            <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose an ancillary data file' accept='.csv, .txt, .db'></b-form-file>
                         </div>
                         <div class='col-lg'>
                             <button class='btn btn-outline-secondary' @click='upload'>Upload</button>
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </b-card-body>
-                <div v-if='ancillary.head' class='mt-3'>Selected ancillary file: {{file && file.name}}</div>
+                <div v-if='ancillary.head' class='mt-3'>Selected ancillary file: {{inputFile && inputFile.name}}</div>
                 <button class='btn btn-outline-success' @click='process'>Render</button>
                 <Request v-if='requests.process' href='/process' method='POST' :json='json' :onSuccess='onProcess' />
             </b-card-body>
@@ -62,6 +62,7 @@
                 ],
                 lvs: 3,
                 json: undefined,
+                inputFile: undefined,
                 file: undefined,
                 url: undefined,
                 ancillary: {},
@@ -95,12 +96,13 @@
             upload() {
                 this.requests.upload = true
                 const file = new FormData()
-                file.append('file', this.file)
+                file.append('file', this.inputFile)
                 this.file = file
             },
             onUpload(ancillary) {
                 this.ancillary = ancillary
                 this.requests.upload = false
+                this.show = false
             },
             load() {
                 this.requests.load = true
