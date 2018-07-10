@@ -41,7 +41,7 @@ function init(algorithm) {
         const searched = d3.select(`#node${id}`)
         if (searched.empty()) return
         oldSearch = searched
-        searched.attr('fill', 'orange')
+        searched.attr('fill', 'red')
 
         const cx = searched.attr('cx')
         const cy = searched.attr('cy')
@@ -191,8 +191,8 @@ function init(algorithm) {
                 .context(context)
 
             const labelArc = d3.arc()
-                .outerRadius(radius - 70)
-                .innerRadius(radius - 70)
+                .outerRadius(radius - 50)
+                .innerRadius(radius - 50)
                 .context(context)
 
             const pie = d3.pie()
