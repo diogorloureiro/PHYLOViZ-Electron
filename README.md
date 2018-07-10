@@ -29,8 +29,6 @@ Open Command Prompt inside the clone repository then execute the following comma
 
 `...\Project\electron\resources\server> npm install`
 
-`...\Project\electron\resources\server> npm run rebuildForElectron`
-
 `...\Project\electron\resources\server> cd ../..`
 
 After all these commands are executed you're all set and back to `...\Project\electron>`.
