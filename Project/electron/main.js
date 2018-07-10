@@ -54,8 +54,8 @@ const prefixes = {
 }
 const prefix = prefixes[JSON.parse(fs.readFileSync('./config.json')).mode]
 // Insert apropriate server and client for electron to run
-const client = child_process.fork(path.join(__dirname, prefix, 'resources/client/server'))
-const server = child_process.fork(path.join(__dirname, prefix, 'resources/server/bin/www'))
+const client = child_process.execFile('node', [path.join(__dirname, prefix, 'resources/client/server')])
+const server = child_process.execFile('node', [path.join(__dirname, prefix, 'resources/server/bin/www')])
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

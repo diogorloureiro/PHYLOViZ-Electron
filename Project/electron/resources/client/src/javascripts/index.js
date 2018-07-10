@@ -191,8 +191,8 @@ function init(algorithm) {
                 .context(context)
 
             const labelArc = d3.arc()
-                .outerRadius(radius - 70)
-                .innerRadius(radius - 70)
+                .outerRadius(radius - 50)
+                .innerRadius(radius - 50)
                 .context(context)
 
             const pie = d3.pie()
