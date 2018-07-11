@@ -8,7 +8,8 @@ const RequestError = require('../../RequestError')
 function init(db = new PouchDB('database')) {
 
 	function authenticate(username, password) {
-		return loadUser(username)
+		return db.get(username)
+			.catch(() => { throw new RequestError('Wrong credentials', 401) })
 			.then(user => bcrypt.compare(password, user.hash)
 				.then(equal => {
 					if (!equal)
@@ -19,18 +20,8 @@ function init(db = new PouchDB('database')) {
 
 	function register(username, password) {
 		return db.get(username)
-			.then(
-				() => { throw new RequestError(`User already exists`, 403) },
-				() => bcrypt.hash(password, 10))
-			.then(hash => {
-				const user = {
-					_id: username,
-					hash,
-					projects: [],
-					shared: []
-				}
-				return db.put(user)
-			})
+			.then(() => { throw new RequestError(`User already exists`, 403) }, () => bcrypt.hash(password, 10))
+			.then(hash => db.put({ _id: username, hash, projects: [], shared: [] }))
 	}
 
 	function loadUser(username) {
@@ -38,7 +29,7 @@ function init(db = new PouchDB('database')) {
 			.catch(() => { throw new RequestError('User not found', 404) })
 	}
 
-	function createProject(user, name, dataset, ancillary, computations = {}) {
+	function createProject(user, name, dataset, ancillary = {}, computations = {}) {
 		const _id = uuid()
 		user.projects.push({ _id, name })
 		const project = {
@@ -118,9 +109,9 @@ function init(db = new PouchDB('database')) {
 			.catch(() => { throw new RequestError('Project not found', 404) })
 			.then(project => {
 				if (project.owner !== owner._id)
-					throw new RequestError('Only the owner can share the project', 401)
+					throw new RequestError('Project not found', 404)
 				if (owner._id === contributor || project.contributors.includes(contributor))
-					throw new RequestError('User already has access to project', 403)
+					throw new RequestError('User already has access to the project', 403)
 				return db.get(contributor)
 					.then(user => {
 						user.shared.push({ _id, name })
