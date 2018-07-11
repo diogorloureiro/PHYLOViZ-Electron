@@ -17,7 +17,7 @@ const prefixes = {
     darwin: 'PHYLOViZElectron/Contents/Resources/app/'
 }
 
-const mode = 'windowsOrLinux'
+const mode = 'local'
 
 const prefix = prefixes[mode]
 // Insert apropriate server and client for electron to run
