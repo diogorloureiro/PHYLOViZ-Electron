@@ -26,7 +26,7 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
 	const { message, status = 500, stack } = err
-	console.log(`Status: ${status}, ${stack}`)
+	console.log(`Path: ${req.path}, Status: ${status}, ${stack}`)
 	// set locals, only providing error in development
 	res.locals.message = message
 	res.locals.error = req.app.get('env') === 'development' ? err : {}

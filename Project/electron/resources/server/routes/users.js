@@ -32,7 +32,7 @@ router.use((req, res, next) => req.isAuthenticated() ? next() : next(new Request
 // Log out user
 router.post('/logout', (req, res) => {
 	req.logout()
-	res.sendStatus(200)
+	res.send({ ok: true })
 })
 
 // Load user

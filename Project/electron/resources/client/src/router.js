@@ -25,11 +25,13 @@ const routes = [
     },
     {
         path: '/register',
-        component: Register
+        component: Register,
+        meta: { requiresNotAuth: true }
     },
     {
         path: '/login',
-        component: Login
+        component: Login,
+        meta: { requiresNotAuth: true }
     },
     {
         path: '/projects',

@@ -7,8 +7,17 @@
                 </router-link>
             </li>
         </ul>
-        <div style='float:right' v-if='!this.$store.state.username'>
-            <ul class='navbar-nav mr-auto'>
+        <div style='float:right'>
+            <ul v-if='!!this.$store.state.username' class='navbar-nav mr-auto'>
+                <li class='nav-item'>
+                    <a class='nav-link'>{{this.$store.state.username}}</a>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' @click='logout'>Logout</a>
+                    <Request v-if='requests.logout' href='/logout' method='POST' :onSuccess='onLogout' />
+                </li>
+            </ul>
+            <ul v-else class='navbar-nav mr-auto'>
                 <li class='nav-item'>
                     <router-link tag='li' to="/register">
                         <a class='nav-link'>Register</a>
@@ -18,14 +27,6 @@
                     <router-link tag='li' to="/login">
                         <a class='nav-link'>Login</a>
                     </router-link>
-                </li>
-            </ul>
-        </div>
-        <div style='float:right' v-else>
-            <ul class='navbar-nav mr-auto'>
-                <li class='nav-item'>
-                    <Request v-if='requests.logout' href='/logout' method='POST' :onSuccess='onLogout' />
-                    <a class='nav-link' @click='logout'>Logout</a>
                 </li>
             </ul>
         </div>
@@ -46,6 +47,7 @@ export default {
             this.requests.logout = true
         },
         onLogout() {
+            this.requests.logout = false
             this.$store.commit("setUsername", undefined)
             this.$store.commit("setProject", undefined)
             this.$router.push("/")
