@@ -40,8 +40,7 @@ To run the application execute:
 
 ### Darwin:
 
-Enter config.json file and change the value of "mode" to "darwin".
-Then execute the following command:
+Execute the following command:
 
 ##### Take notice that you need to change the arch type to fit your machine! #####
 
@@ -52,8 +51,7 @@ And you should end up with a .app
 
 ### Linux
 
-Enter config.json file and change the value of "mode" to "windowsOrLinux".
-Then execute the following command:
+Execute the following command:
 
 ##### Take notice that you need to change the arch type to fit your machine! #####
 
@@ -64,8 +62,7 @@ And you should end up with a folder and a linux runnable file inside.
 
 ### Windows:
 
-Enter config.json file and change the value of "mode" to "windowsOrLinux".
-Then execute the following command:
+Execute the following command:
 
 ##### Take notice that you need to change the arch type to fit your machine! #####
 
