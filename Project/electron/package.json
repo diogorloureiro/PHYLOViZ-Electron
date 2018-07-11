@@ -1,11 +1,11 @@
 {
-	"name": "PHYLOViZElectron",
+	"name": "phyloviz-electron",
 	"version": "1.0.0",
 	"description": "PHYLOViZ-Electron - Cross-platform desktop application for processing, analysing and visualizing molecular typing data",
 	"main": "main.js",
 	"scripts": {
-		"start": "electron .",
-		"build": "electron-packager . PHYLOViZElectron"
+		"start": "electron . local",
+		"build": "electron-packager . PHYLOViZ-Electron"
 	},
 	"devDependencies": {
 		"debug": "~2.6.9",

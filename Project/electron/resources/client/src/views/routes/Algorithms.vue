@@ -1,48 +1,51 @@
 <template>
-    <div>
-        <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
-        <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
-        <b-card title=''>
-            <b-card-body>
-                <p><strong>Dataset Name: </strong>{{project.dataset.name}}</p>
-                <p><strong>Count: </strong>{{project.dataset.count}}</p>
-                <p><strong>Loci: </strong>{{project.dataset.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2)}}</p>
-                <p v-show='project.dataset.url'><strong>URL: </strong>{{project.dataset.url}}</p>
-                <hr>
-                <p>Select the algorithm to process the dataset's profiles:</p>
-                <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
-                <p>LVs: </p>
-                <div class='row'>
-                    <div class='col-lg-2'>
-                        <b-form-input v-model='lvs' type='number' min='1' value='3' :max='project.dataset.loci.length'></b-form-input>
-                    </div>
+    <b-card>
+        <b-card-body>
+            <p><strong>Dataset Name: </strong>{{project.dataset.name}}</p>
+            <p><strong>Count: </strong>{{project.dataset.count}}</p>
+            <p><strong>Loci: </strong>{{project.dataset.loci.reduce((acc, curr) => acc + curr + ', ', '').slice(0, -2)}}</p>
+            <p v-show='project.dataset.url'><strong>URL: </strong>{{project.dataset.url}}</p>
+            <hr>
+            <p><strong>(Optional)</strong> Select the ancillary data:</p>
+            <div class='form-row align-items-center'>
+                <div class='col-auto'>
+                    <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose a file' accept='.csv, .txt, .db'></b-form-file>
                 </div>
-                <hr>
-                <p>Select the rendering algorithm:</p>
-                <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
-                <button class='btn btn-outline-primary' @click='show = !show'>Ancillary</button>
-                <b-card-body v-if='show'>
-                    <div class='row'>
-                        <div class='col-lg-6'>
-                            <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose an ancillary data file' accept='.csv, .txt, .db'></b-form-file>
-                        </div>
-                        <div class='col-lg'>
-                            <button class='btn btn-outline-secondary' @click='upload'>Upload</button>
-                        </div>
-                        <div class='col-lg-6'>
-                            <b-form-input v-model='url' type='text' placeholder='Enter the ancillary data URL'></b-form-input>
-                        </div>
-                        <div class='col-lg'>
-                            <button class='btn btn-outline-secondary' @click='load'>Load</button>
-                        </div>
-                    </div>
-                </b-card-body>
-                <div v-if='ancillary.head' class='mt-3'>Selected ancillary file: {{inputFile && inputFile.name}}</div>
-                <button class='btn btn-outline-success' @click='process'>Render</button>
-                <Request v-if='requests.process' href='/process' method='POST' :json='json' :onSuccess='onProcess' />
-            </b-card-body>
-        </b-card>
-    </div>
+                <div class='col-auto'>
+                    <button class='btn btn-outline-secondary' @click='upload'>Upload</button>
+                </div>
+                <div class='col-auto'>
+                    <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
+                </div>
+            </div>
+            <br>
+            <div class='form-row align-items-center'>
+                <div class='col-auto'>
+                    <b-form-input v-model='url' type='text' placeholder='Enter a URL'></b-form-input>
+                </div>
+                <div class='col-auto'>
+                    <button class='btn btn-outline-secondary' @click='load'>Load</button>
+                </div>
+                <div class='col-auto'>
+                    <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
+                </div>
+            </div>
+            <hr>
+            <p>Select the processing algorithm:</p>
+            <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
+            <p>LVs: </p>
+            <div class='row'>
+                <div class='col-lg-2'>
+                    <b-form-input v-model='lvs' type='number' min='1' value='3' :max='project.dataset.loci.length'></b-form-input>
+                </div>
+            </div>
+            <hr>
+            <p>Select the rendering algorithm:</p>
+            <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
+            <button class='btn btn-outline-success' @click='process'>Render</button>
+            <Request v-if='requests.process' href='/process' method='POST' :json='json' :onSuccess='onProcess' />
+        </b-card-body>
+    </b-card>
 </template>
 
 <script>
@@ -66,7 +69,6 @@
                 file: undefined,
                 url: undefined,
                 ancillary: {},
-                show: false,
                 requests: {
                     upload: false,
                     load: false,
@@ -101,15 +103,18 @@
             },
             onUpload(ancillary) {
                 this.ancillary = ancillary
-                this.requests.upload = false
-                this.show = false
+                this.url = undefined
+                this.requests.load = false
+                return 'Ancillary uploaded'
             },
             load() {
                 this.requests.load = true
             },
             onLoad(ancillary) {
                 this.ancillary = ancillary
-                this.requests.load = false
+                this.file = undefined
+                this.requests.upload = false
+                return 'Ancillary loaded'
             }
         }
     }

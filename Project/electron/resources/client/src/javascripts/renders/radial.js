@@ -39,7 +39,7 @@ function leafcount(node) {
     return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
 }
 
-function render(graph, conf, collapseClick, setupAncillary) {
+function render(graph, conf, onNodeClick) {
 
     let nodes = d3.selectAll('.node')
     if(nodes)
@@ -89,16 +89,9 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .attr('transform', 'rotate(0)')
 
     nodeEnter
-        .on('click', d => {
-            if (d3.event.ctrlKey)
-                collapseClick(d, render, graph, conf, setupAncillary)
-            else {
-                setupAncillary(d.ancillary)
-            }
-        })
+        .on('click', onNodeClick)
         .append('circle')
         .attr('id', d => 'node' + d.id)
-        
         .attr('cx', d => d.x + conf.width / 2)
         .attr('cy', d => d.y + conf.height / 2)
         .attr('r', d => d.size)

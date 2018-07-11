@@ -10,7 +10,7 @@ const RequestError = require('./RequestError')
 
 const app = express()
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3010' }))
+app.use(cors({ credentials: true, origin: 'http://localhost:60000' }))
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: true }))
 app.use(passport.initialize())
@@ -25,8 +25,8 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-	const { message, status = 500 } = err
-	console.log(`${status} - ${message}`)
+	const { message, status = 500, stack } = err
+	console.log(`Status: ${status}, ${stack}`)
 	// set locals, only providing error in development
 	res.locals.message = message
 	res.locals.error = req.app.get('env') === 'development' ? err : {}

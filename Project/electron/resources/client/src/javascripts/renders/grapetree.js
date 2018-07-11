@@ -119,7 +119,7 @@ function toPolar(coord, center = [0, 0]) {
     return [Math.sqrt(x * x + y * y), Math.atan2(y, x)]
 }
 
-function render(graph, conf, collapseClick, setupAncillary) {
+function render(graph, conf, onNodeClick) {
 
     let nodes = d3.selectAll('.node')
     if(nodes)
@@ -170,13 +170,7 @@ function render(graph, conf, collapseClick, setupAncillary) {
         .attr('transform', 'rotate(0)')
 
     elemEnter
-        .on('click', d => {
-            if (d3.event.ctrlKey)
-                collapseClick(d, render, graph, conf, setupAncillary)
-            else {
-                setupAncillary(d.ancillary)
-            }
-        })
+        .on('click', onNodeClick)
         .append('circle')
         .attr('id', d => 'node' + d.id)
         .attr('cx', d => d.coordinates[0] + conf.width / 2)

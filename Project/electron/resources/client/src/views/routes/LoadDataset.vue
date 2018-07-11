@@ -1,16 +1,16 @@
 <template>
     <div>
-        <br>
-        <Request v-if='requests.upload' href='/datasets/file' method='POST' :data='data' :onSuccess='onUpload' />
-        <Request v-if='requests.load' :href='`/datasets/${encodeURIComponent(url)}`' :onSuccess='onLoad' />
         <b-card title='Load a dataset from a file'>
             <b-card-body>
-                <div class='row'>
-                    <div class='col-lg-10'>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
                         <b-form-file v-model='file' :state='!!file' placeholder='Choose a file...' accept='.csv, .txt, .db'></b-form-file>
                     </div>
-                    <div class='col-lg'>
-                        <button class='btn btn-outline-success' @click='upload' :disabled='!file'>Upload</button>
+                    <div class='col-auto'>
+                        <button class='btn btn-outline-success' @click='upload'>Upload</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.upload' href='/datasets/file' method='POST' :data='data' :onSuccess='onUpload' />
                     </div>
                 </div>
             </b-card-body>
@@ -18,12 +18,15 @@
         <br>
         <b-card title='Load a dataset from a URL'>
             <b-card-body>
-                <div class='row'>
-                    <div class='col-lg-10'>
-                        <b-form-input v-model='url' type='text' placeholder='Enter the dataset URL'></b-form-input>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <b-form-input v-model='url' type='text' placeholder='Enter a URL'></b-form-input>
                     </div>
-                    <div class='col-lg'>
-                        <button class='btn btn-outline-success' @click='load' :disabled='!url'>Load</button>
+                    <div class='col-auto'>
+                        <button class='btn btn-outline-success' @click='load'>Load</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.load' :href='`/datasets/${encodeURIComponent(url)}`' :onSuccess='onLoad' />
                     </div>
                 </div>
             </b-card-body>

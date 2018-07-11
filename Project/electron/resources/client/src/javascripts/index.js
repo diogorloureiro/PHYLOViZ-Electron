@@ -60,20 +60,6 @@ function init(algorithm) {
         labels.style('visibility', visibility)
     }
 
-    function collapseClick(d, render, graph, conf, ancillary) {
-        if (!d3.event.defaultPrevented) {
-            if (d.children.length > 0) {
-                d._children = d.children
-                d.children = []
-            } else if (d._children && d._children.length > 0) {
-                d.children = d._children
-                d._children = []
-            }
-            graph.vertices = flatten(graph.vertices[0])
-            render(graph, conf, collapseClick, ancillary)
-        }
-    }
-
     function parseAncillary(ancillary, header) {
         const data = []
         ancillary.forEach(ancillary => {
@@ -120,38 +106,43 @@ function init(algorithm) {
         }
     }
 
-    function setupAncillary(ancillary) {
+    function collapseClick(node, graph) {
+        if (!d3.event.defaultPrevented) {
+            if (node.children.length > 0) {
+                node._children = node.children
+                node.children = []
+            } else if (node._children && node._children.length > 0) {
+                node.children = node._children
+                node._children = []
+            }
+            graph.vertices = flatten(graph.vertices[0])
+            render(graph)
+        }
+    }
+
+    function ancillaryClick(ancillary) {
         if (ancillary.length > 0) {
             const headers = []
             for (const header in ancillary[0])
                 if (ancillary[0].hasOwnProperty(header))
                     headers.push(header)
-            
             const canvas = d3.select('#ancillaryCanvas')
             if (canvas)
                 canvas.remove()
-
             const text = d3.select('#textAncillary')
             if (text)
                 text.remove()
-
             const button = d3.select('#ancillaryButtons')
             if (button)
                 button.remove()
-
-            const id = ancillary[0].st
-
             d3.select('#ancillary')
                 .append('text')
                 .attr('id', 'textAncillary')
-                .text('Selected node ' + id)
-            
+                .text(`Selected node ${ancillary[0].st}`)
             d3.select('#ancillary')
                 .append('div')
                 .attr('id', 'ancillaryButtons')
-
             const buttonsDiv = d3.select('#ancillaryButtons')
-
             headers.forEach(header => {
                 buttonsDiv
                     .append('button')
@@ -165,56 +156,42 @@ function init(algorithm) {
 
     function drawPieChart(ancillary, header) {
         if (ancillary.length > 0) {
-
             let canvas = d3.select('#ancillaryCanvas')
             if (canvas)
                 canvas.remove()
-            
             const data = parseAncillary(ancillary, header)
-
             const color = randomColor()
-
             canvas = d3.select('#ancillary')
                 .append('canvas')
                 .attr('id', 'ancillaryCanvas')
                 .attr('height', conf.height)
                 .attr('width', conf.width)
                 .style('border', '1px solid black')
-
             const context = canvas.node().getContext('2d')
-
             const radius = Math.min(conf.width, conf.height) / 2
-
             const arc = d3.arc()
                 .outerRadius(radius - 10)
                 .innerRadius(0)
                 .context(context)
-
             const labelArc = d3.arc()
                 .outerRadius(radius - 50)
                 .innerRadius(radius - 50)
                 .context(context)
-
             const pie = d3.pie()
                 .sort(null)
                 .value(d => d.count)
-
             context.translate(conf.width / 2, conf.height / 2)
-
             const arcs = pie(data)
-
             arcs.forEach(d => {
                 context.beginPath()
                 arc(d)
                 context.fillStyle = color()
                 context.fill()
             })
-
             context.beginPath()
             arcs.forEach(arc)
             context.strokeStyle = '#fff'
             context.stroke()
-
             context.textAlign = 'center'
             context.textBaseline = 'middle'
             context.fillStyle = '#000'
@@ -269,11 +246,22 @@ function init(algorithm) {
         })
     }
 
+    function onNodeClick(node, graph) {
+        if (d3.event.ctrlKey)
+            collapseClick(node, graph)
+        else
+            ancillaryClick(node.ancillary)
+    }
+
+    function render(graph) {
+        return renders[algorithm](graph, conf, node => onNodeClick(node, graph))
+    }
+
     return {
         flatten,
         direct,
         ancillary,
-        render: graph => renders[algorithm](graph, conf, collapseClick, setupAncillary),
+        render,
         updateSpeed,
         search,
         toggleLabels

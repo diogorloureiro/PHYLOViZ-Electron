@@ -1,18 +1,19 @@
 <template>
     <div>
-        <br>
         <Request href='/user' :onSuccess='onLoadUser' />
-        <Request v-if='requests.import' href='/projects/import' method='POST' :data='data' :onSuccess='onImport' />
         <Request v-if='requests.load' :href='`/projects/${loaded}`' :onSuccess='onLoadProject' />
         <Request v-if='requests.remove' :href='`/projects/${removed}`' method='DELETE' :onSuccess='onRemove' />
         <b-card title='Import project from a file'>
             <b-card-body>
-                <div class='row'>
-                    <div class='col-lg-10'>
-                        <b-form-file v-model='file' :state='!!file' placeholder='Choose a file...' accept='.json'></b-form-file>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <b-form-file v-model='file' :state='!!file' placeholder='Choose a file' ></b-form-file>
                     </div>
-                    <div class='col-lg'>
+                    <div class='col-auto'>
                         <button class='btn btn-outline-success' @click='this.import'>Import</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.import' href='/projects/import' method='POST' :data='data' :onSuccess='onImport' />
                     </div>
                 </div>
             </b-card-body>
@@ -99,7 +100,7 @@
         methods: {
             onLoadUser(user) {
                 this.projects = user.projects.concat(user.shared)
-                this.projects.forEach(proj => proj['actions'] = ['remove'])
+                this.projects.forEach(project => project['actions'] = ['remove'])
                 this.totalRows = this.projects.length
             },
             import() {

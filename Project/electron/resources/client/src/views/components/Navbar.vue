@@ -24,6 +24,7 @@
         <div style='float:right' v-else>
             <ul class='navbar-nav mr-auto'>
                 <li class='nav-item'>
+                    <Request v-if='requests.logout' href='/logout' method='POST' :onSuccess='onLogout' />
                     <a class='nav-link' @click='logout'>Logout</a>
                 </li>
             </ul>
@@ -33,16 +34,21 @@
 
 <script>
 export default {
+    data() {
+        return {
+            requests: {
+                logout: false
+            }
+        }
+    },
     methods: {
         logout() {
-            fetch("http://localhost:3000/logout", {
-                method: "POST",
-                credentials: "include"
-            }).then(res => {
-                this.$store.commit("setUsername", undefined)
-                this.$store.commit("setProject", undefined)
-                this.$router.push("/")
-            })
+            this.requests.logout = true
+        },
+        onLogout() {
+            this.$store.commit("setUsername", undefined)
+            this.$store.commit("setProject", undefined)
+            this.$router.push("/")
         }
     }
 }

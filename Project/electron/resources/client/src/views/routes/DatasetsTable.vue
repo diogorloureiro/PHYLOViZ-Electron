@@ -1,6 +1,5 @@
 <template>
     <div id='datasets-table'>
-        <br>
         <Request href='/datasets/pubmlst' :onSuccess='onLoadDatasets' />
         <Request v-if='requests.load' :href='`/datasets/${encodeURIComponent(dataset.url)}`' :onSuccess='onLoadDataset' />
         <b-container fluid>

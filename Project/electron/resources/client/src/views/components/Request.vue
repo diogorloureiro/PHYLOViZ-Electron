@@ -48,7 +48,7 @@
                     options.headers['content-type'] = 'application/json'
                 } else if (this.data)
                     options['body'] = this.data
-                this.request = Bluebird.resolve(fetch(`http://localhost:3000${this.href}`, options))
+                this.request = Bluebird.resolve(fetch(`http://localhost:50000${this.href}`, options))
                     .then(res => res.text().then(body => {
                         if (!res.ok)
                             this.error = body

@@ -1,6 +1,5 @@
 <template>
         <div>
-            <br>
             <i class='fa fa-spinner fa-spin' v-if='loading' style='font-size:36px'></i>
             <form class='form-inline'>
                 <div class='form-group'>
@@ -68,9 +67,6 @@
         beforeDestroy() {
             destroy()
             this.$store.commit('setProject', undefined)
-        },
-        watch: {
-            '$route': 'render'
         },
         methods: {
             render() {

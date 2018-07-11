@@ -1,9 +1,9 @@
 'use strict'
 
+const [, , local] = process.argv
+
 const electron = require('electron')
 const child_process = require('child_process')
-const path = require('path')
-const fs = require('fs')
 
 // Module to control application life.
 const app = electron.app
@@ -13,16 +13,15 @@ const BrowserWindow = electron.BrowserWindow
 
 const prefixes = {
     local: '',
-    windowsOrLinux: 'resources/app/',
+    win32: 'resources/app/',
+    linux: 'resources/app/',
     darwin: 'PHYLOViZElectron/Contents/Resources/app/'
 }
 
-const mode = 'local'
-
-const prefix = prefixes[mode]
+const prefix = prefixes[local || process.platform]
 // Insert apropriate server and client for electron to run
-const client = child_process.execFile('node', ['./resources/client/server'], {cwd : prefix})
-const server = child_process.execFile('node', ['./resources/server/bin/www'], {cwd : prefix})
+const client = child_process.execFile('node', ['./resources/client/server'], { cwd: prefix })
+const server = child_process.execFile('node', ['./resources/server/bin/www'], { cwd: prefix })
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -32,30 +31,27 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({ width: 800, height: 600 })
     // and load the index.html of the app.
-    mainWindow.loadURL('http://localhost:3010')
-    const Menu = electron.Menu
-    const menuTemplate = [
-        {
-            label: 'Settings',
-            submenu: [
-                mode === 'local'?
-                {
-                    label: 'Open Dev Tools',
-                    click: () => mainWindow.webContents.openDevTools()
-                }
-                :
-                {
-                    
-                },
-                {
-                    label: 'Reload',
-                    click: () => mainWindow.reload()
-                }
-            ]
-        }
-    ]
-    const menu = Menu.buildFromTemplate(menuTemplate)
-    Menu.setApplicationMenu(menu)
+    mainWindow.loadURL('http://localhost:60000')
+    if (local) {
+        const Menu = electron.Menu
+        const menuTemplate = [
+            {
+                label: 'Settings',
+                submenu: [
+                    {
+                        label: 'Open Dev Tools',
+                        click: () => mainWindow.webContents.openDevTools()
+                    },
+                    {
+                        label: 'Reload',
+                        click: () => mainWindow.reload()
+                    }
+                ]
+            }
+        ]
+        const menu = Menu.buildFromTemplate(menuTemplate)
+        Menu.setApplicationMenu(menu)
+    }
     mainWindow.maximize()
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {

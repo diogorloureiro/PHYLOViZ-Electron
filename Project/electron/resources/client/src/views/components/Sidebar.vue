@@ -1,5 +1,5 @@
 <template>
-    <div :class='$style.sidebar'>
+    <div style='height: 100%; width: 180px; position: fixed; left: 0; background-color: #f5f5f5;  overflow-x: scroll;'>
         <br>
         <button class='btn btn-link' @click='uploadDataset'>Load dataset</button>
         <br>
@@ -24,14 +24,3 @@
         }
     }
 </script>
-
-<style module>
-    .sidebar {
-        height: 100%;
-        width: 180px;
-        position: fixed;
-        left: 0;
-        background-color: #f5f5f5;
-        overflow-x: scroll;
-    }
-</style>

@@ -1,5 +1,5 @@
 {
-  "name": "PHYLOViZElectron_client",
+  "name": "phyloviz-electron-client",
   "version": "0.4.0",
   "description": "PHYLOViZ-Electron UI",
   "scripts": {

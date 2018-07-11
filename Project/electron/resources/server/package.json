@@ -1,5 +1,5 @@
 {
-	"name": "PHYLOViZElectron_server",
+	"name": "phyloviz-electron-server",
 	"version": "0.4.0",
 	"description": "PHYLOViZ-Electron API",
 	"main": "app.js",
@@ -27,7 +27,6 @@
 		"xml2js": "^0.4.19"
 	},
 	"devDependencies": {
-		"debug": "~2.6.9",
 		"nodeunit": "^0.11.2"
 	},
 	"repository": {

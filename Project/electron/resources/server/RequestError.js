@@ -1,8 +1,8 @@
 'use strict'
 
-module.exports = class RequestError {
+module.exports = class RequestError extends Error {
     constructor(message, status) {
-        this.message = message
+        super(message)
         this.status = status
     }
 }

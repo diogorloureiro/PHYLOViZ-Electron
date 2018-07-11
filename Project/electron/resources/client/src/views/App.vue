@@ -4,7 +4,9 @@
         <Navbar/>
         <Sidebar/>
         <div id='main'>
+            <br>
             <router-view></router-view>
+            <br>
         </div>
     </div>
 </div>
