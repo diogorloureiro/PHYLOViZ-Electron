@@ -8,54 +8,21 @@ const fs = require('fs')
 // Module to control application life.
 const app = electron.app
 
-if (handleSquirrelEvent(app))
-    return
-
-function handleSquirrelEvent(application) {
-    if (process.argv.length === 1)
-        return false
-
-    const appFolder = path.resolve(process.execPath, '..')
-    const rootAtomFolder = path.resolve(appFolder, '..')
-    const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'))
-    const exeName = path.basename(process.execPath)
-
-    const update = command => child_process.spawn(updateDotExe, [command, exeName], { detached: true })
-
-    const squirrelEvent = process.argv[1]
-    switch (squirrelEvent) {
-        case '--squirrel-install':
-        case '--squirrel-updated':
-            // Install desktop and start menu shortcuts
-            update('--createShortcut')
-            setTimeout(application.quit, 1000)
-            return true
-        case '--squirrel-uninstall':
-            // Remove desktop and start menu shortcuts
-            update('--removeShortcut')
-            setTimeout(application.quit, 1000)
-            return true
-        case '--squirrel-obsolete':
-            // This is called on the outgoing version of your app before
-            // we update to the new version - it's the opposite of
-            // --squirrel-updated
-            application.quit()
-            return true
-    }
-}
-
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
 const prefixes = {
     local: '',
     windowsOrLinux: 'resources/app/',
-    darwin: 'PHYLOViZ-Electron/Contents/Resources/app/'
+    darwin: 'PHYLOViZElectron/Contents/Resources/app/'
 }
-const prefix = prefixes[JSON.parse(fs.readFileSync('./config.json')).mode]
+
+const mode = 'local'
+
+const prefix = prefixes[mode]
 // Insert apropriate server and client for electron to run
-const client = child_process.execFile('node', [path.join(__dirname, prefix, 'resources/client/server')])
-const server = child_process.execFile('node', [path.join(__dirname, prefix, 'resources/server/bin/www')])
+const client = child_process.execFile('node', ['./resources/client/server'], {cwd : prefix})
+const server = child_process.execFile('node', ['./resources/server/bin/www'], {cwd : prefix})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -65,15 +32,20 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({ width: 800, height: 600 })
     // and load the index.html of the app.
-    mainWindow.loadURL('http://localhost:8080')
+    mainWindow.loadURL('http://localhost:3010')
     const Menu = electron.Menu
     const menuTemplate = [
         {
             label: 'Settings',
             submenu: [
+                mode === 'local'?
                 {
                     label: 'Open Dev Tools',
                     click: () => mainWindow.webContents.openDevTools()
+                }
+                :
+                {
+                    
                 },
                 {
                     label: 'Reload',

@@ -5,6 +5,9 @@
 </template>
 
 <script>
+    import Bluebird from 'bluebird'
+    Bluebird.config({ warnings: true, cancellation: true })
+
     export default {
         props: ['href', 'method', 'json', 'data', 'action', 'onSuccess'],
         data() {
@@ -12,15 +15,15 @@
                 loading: true,
                 message: undefined,
                 error: undefined,
-                controller: undefined
+                request: undefined
             }
         },
         created() {
             this.load()
         },
         beforeDestroy() {
-            if (this.controller)
-                this.controller.abort()
+            if (this.request)
+                this.request.cancel()
         },
         watch: {
             href() { this.load() },
@@ -29,26 +32,23 @@
         },
         methods: {
             load() {
-                console.log(`Load (${this.href}, ${this.method}, ${JSON.stringify(this.json)}, ${this.data})`)
-                if (this.controller) {
-                    this.controller.abort()
+                if (this.request) {
+                    this.request.cancel()
                     this.loading = true
                     this.message = undefined
                     this.error = undefined
                 }
-                this.controller = new AbortController()
                 const options = {
                     method: this.method || 'GET',
                     headers: {},
-                    credentials: 'include',
-                    signal: this.controller.signal
+                    credentials: 'include'
                 }
                 if (this.json) {
                     options['body'] = JSON.stringify(this.json)
                     options.headers['content-type'] = 'application/json'
                 } else if (this.data)
                     options['body'] = this.data
-                fetch(`http://localhost:3000${this.href}`, options)
+                this.request = Bluebird.resolve(fetch(`http://localhost:3000${this.href}`, options))
                     .then(res => res.text().then(body => {
                         if (!res.ok)
                             this.error = body

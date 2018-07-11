@@ -10,7 +10,7 @@ const RequestError = require('./RequestError')
 
 const app = express()
 
-app.use(cors({ credentials: true, origin: 'http://localhost:8080' }))
+app.use(cors({ credentials: true, origin: 'http://localhost:3010' }))
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: true }))
 app.use(passport.initialize())
