@@ -34,8 +34,14 @@
             <p>Project Name:</p>
             <b-form-input v-model='name' type='text' placeholder='Name'></b-form-input>
             <br>
-            <button class='btn btn-outline-success' @click='create'>Create</button>
-            <Request v-if='requests.create' href='/projects' method='POST' :json='project' :onSuccess='onCreate' />
+            <div class='form-row align-items-center'>
+                <div class='col-auto'>
+                    <button class='btn btn-outline-success' @click='create'>Create</button>
+                </div>
+                <div class='col-auto'>
+                    <Request v-if='requests.create' href='/projects' method='POST' :json='project' :onSuccess='onCreate' />
+                </div>
+            </div>
         </b-card-body>
     </b-card>
 </template>

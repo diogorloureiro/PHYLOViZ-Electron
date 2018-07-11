@@ -34,16 +34,22 @@
             <p>Select the processing algorithm:</p>
             <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
             <p>LVs: </p>
-            <div class='row'>
-                <div class='col-lg-2'>
+            <div class='form-row align-items-center'>
+                <div class='col-auto'>
                     <b-form-input v-model='lvs' type='number' min='1' value='3' :max='project.dataset.loci.length'></b-form-input>
                 </div>
             </div>
             <hr>
             <p>Select the rendering algorithm:</p>
             <b-form-select v-model='selectedRender' :options='renderOptions' class='mb-3'></b-form-select>
-            <button class='btn btn-outline-success' @click='process'>Render</button>
-            <Request v-if='requests.process' href='/process' method='POST' :json='json' :onSuccess='onProcess' />
+            <div class='form-row align-items-center'>
+                <div class='col-auto'>
+                    <button class='btn btn-outline-success' @click='process'>Render</button>
+                </div>
+                <div class='col-auto'>
+                    <Request v-if='requests.process' href='/process' method='POST' :json='json' :onSuccess='onProcess' />
+                </div>
+            </div>
         </b-card-body>
     </b-card>
 </template>

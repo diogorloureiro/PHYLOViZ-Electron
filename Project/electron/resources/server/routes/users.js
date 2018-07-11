@@ -21,7 +21,7 @@ passport.deserializeUser((username, done) =>
 		.catch(err => done(err)))
 
 // Authenticate user
-router.post('/login', passport.authenticate('local'), (req, res) => res.send(req.user))
+router.post('/login', passport.authenticate('local'), (req, res) => res.send({ ok: true }))
 
 // Register user
 router.post('/register', response(req => services.register(req.body.username, req.body.password)))
