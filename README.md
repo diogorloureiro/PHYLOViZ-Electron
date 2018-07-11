@@ -46,7 +46,7 @@ Execute the following command:
 
 `...\Project\electron> npm run build -- --platform=darwin --arch=x64`
 
-And you should end up with a .app file.
+And you should end up with a .app.
 
 
 ### Linux
