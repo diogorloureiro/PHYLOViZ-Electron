@@ -7,15 +7,19 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
-        project: undefined,
-        username: undefined
+        token: undefined,
+        username: undefined,
+        project: undefined
     },
     mutations: {
-        setProject(state, project) {
-            state.project = project
+        setToken(state, token) {
+            state.token = token
         },
         setUsername(state, username) {
             state.username = username
+        },
+        setProject(state, project) {
+            state.project = project
         }
     }
 })

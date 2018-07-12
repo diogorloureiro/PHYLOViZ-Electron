@@ -92,7 +92,7 @@
                 this.requests.remove = true
             },
             onRemove() {
-                this.$store.commit('setProject', undefined)
+                this.$store.commit('setProject')
                 this.$router.push('/projects')
             },
             share() {
@@ -131,13 +131,13 @@
                 return 'Computation saved to project.'
             },
             draw() {
-                const info = {
+                const project = {
                     name: this.project.dataset.name,
                     graph: this.project.computations[this.selected][this.lvs].graph,
                     ancillary: this.project.ancillary,
                     render: this.selectedRender
                 }
-                this.$store.commit('setProject', info)
+                this.$store.commit('setProject', project)
                 this.$router.push('/canvas')
             }
         }

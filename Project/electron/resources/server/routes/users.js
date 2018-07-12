@@ -1,36 +1,28 @@
 'use strict'
 
 const router = require('express').Router()
-const passport = require('passport')
-const Strategy = require('passport-local').Strategy
-const jwt = require('jsonwebtoken')
 const upload = require('multer')()
 const response = require('./response')
 const RequestError = require('../RequestError')
 const services = require('../services/data-manager').users()
 
-passport.use(new Strategy((username, password, done) =>
-	services.authenticate(username, password)
-		.then(user => done(null, user))
-		.catch(err => done(err))))
-
-passport.serializeUser((user, done) => done(null, user))
-
-passport.deserializeUser((user, done) => done(null, user))
-
 // Authenticate user
-router.post('/login', passport.authenticate('local'), (req, res) => res.send({ ok: req.isAuthenticated() }))
+router.post('/login', response(req => services.login(req.body.username, req.body.password)))
 
 // Register user
 router.post('/register', response(req => services.register(req.body.username, req.body.password)))
 
 // Check if user is authenticated in order to reach the endpoints defined below
-router.use((req, res, next) => req.isAuthenticated() ? next() : next(new RequestError('Unauthorized', 401)))
-
-// Log out user
-router.post('/logout', (req, res) => {
-	req.logout()
-	res.send({ ok: req.isUnauthenticated() })
+router.use((req, res, next) => {
+	const [schema, token] = req.get('Authorization').split(' ')
+	if (schema !== 'Bearer')
+		next(new RequestError('Unsupported authorization schema', 401))
+	services.authenticate(token)
+		.then(user => {
+			req.user = user
+			next()
+		})
+		.catch(err => next(err))
 })
 
 // Load user

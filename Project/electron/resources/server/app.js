@@ -2,8 +2,6 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const session = require('express-session')
-const passport = require('passport')
 const cors = require('cors')
 const routes = require('./routes')
 const RequestError = require('./RequestError')
@@ -12,9 +10,6 @@ const app = express()
 
 app.use(cors({ credentials: true, origin: 'http://localhost:60000' }))
 app.use(bodyParser.json({ limit: '50mb' }))
-app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: false }))
-app.use(passport.initialize())
-app.use(passport.session())
 
 app.use(...routes)
 

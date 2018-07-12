@@ -2,7 +2,7 @@
     <nav class='navbar navbar-expand navbar-dark bg-dark' style='position: fixed; width: 100%; left:0; top: 0; height: 50px; z-index:3'>
         <ul class='navbar-nav mr-auto'>
             <li class='nav-item'>
-                <router-link tag='li' to="/">
+                <router-link tag='li' to='/'>
                     <a class='navbar-brand'>PHYLOViZ</a>
                 </router-link>
             </li>
@@ -14,17 +14,16 @@
                 </li>
                 <li class='nav-item'>
                     <a class='nav-link' @click='logout'>Logout</a>
-                    <Request v-if='requests.logout' href='/logout' method='POST' :onSuccess='onLogout' />
                 </li>
             </ul>
             <ul v-else class='navbar-nav mr-auto'>
                 <li class='nav-item'>
-                    <router-link tag='li' to="/register">
+                    <router-link tag='li' to='/register'>
                         <a class='nav-link'>Register</a>
                     </router-link>
                 </li>
                 <li class='nav-item'>
-                    <router-link tag='li' to="/login">
+                    <router-link tag='li' to='/login'>
                         <a class='nav-link'>Login</a>
                     </router-link>
                 </li>
@@ -35,22 +34,12 @@
 
 <script>
 export default {
-    data() {
-        return {
-            requests: {
-                logout: false
-            }
-        }
-    },
     methods: {
         logout() {
-            this.requests.logout = true
-        },
-        onLogout() {
-            this.requests.logout = false
-            this.$store.commit("setUsername", undefined)
-            this.$store.commit("setProject", undefined)
-            this.$router.push("/")
+            this.$store.commit('setToken')
+            this.$store.commit('setUsername')
+            this.$store.commit('setProject')
+            this.$router.push('/')
         }
     }
 }

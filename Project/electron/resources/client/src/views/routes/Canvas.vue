@@ -66,7 +66,7 @@
         },
         beforeDestroy() {
             destroy()
-            this.$store.commit('setProject', undefined)
+            this.$store.commit('setProject')
         },
         methods: {
             render() {

@@ -1,20 +1,23 @@
 'use strict'
 
 const PouchDB = require('pouchdb')
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const uuid = require('uuid/v4')
 const RequestError = require('../../RequestError')
 
+const secret = 'raccoonoo attak'
+
 function init(db = new PouchDB('database')) {
 
-	function authenticate(username, password) {
+	function login(username, password) {
 		return db.get(username)
 			.catch(() => { throw new RequestError('Wrong credentials', 401) })
 			.then(user => bcrypt.compare(password, user.hash)
 				.then(equal => {
 					if (!equal)
 						throw new RequestError('Wrong credentials', 401)
-					return user
+					return { token: jwt.sign({ _id: user._id, password: user.password }, secret) }
 				}))
 	}
 
@@ -24,9 +27,15 @@ function init(db = new PouchDB('database')) {
 			.then(hash => db.put({ _id: username, hash, projects: [], shared: [] }))
 	}
 
-	function loadUser(username) {
-		return db.get(username)
-			.catch(() => { throw new RequestError('User not found', 404) })
+	function authenticate(token) {
+		const { _id, hash } = jwt.verify(token, secret)
+		return db.get(_id)
+			.catch(() => { throw new RequestError('Wrong credentials', 401) })
+			.then(user => {
+				if (user.hash === hash)
+					throw new RequestError('Wrong credentials', 401)
+				return user
+			})
 	}
 
 	function createProject(user, name, dataset, ancillary = {}, computations = {}) {
@@ -128,7 +137,7 @@ function init(db = new PouchDB('database')) {
 	return {
 		authenticate,
 		register,
-		loadUser,
+		login,
 		createProject,
 		importProject,
 		loadProject,

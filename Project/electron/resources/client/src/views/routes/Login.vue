@@ -32,8 +32,9 @@
                 }
                 this.requests.login = true
             },
-            onLogin() {
-                this.$store.commit('setUsername', this.username)
+            onLogin(res) {
+                this.$store.commit('setToken', res.token)
+                this.$store.commit('setUsername', this.credentials.username)
                 this.$router.push('/')
             }
         }

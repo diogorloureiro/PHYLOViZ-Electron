@@ -18,9 +18,9 @@ import router from './router'
 import store from './store'
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth) && !store.state.username)
+    if (to.matched.some(record => record.meta.requiresAuth) && !store.state.token)
         next({ path: '/login' })
-    else if (to.matched.some(record => record.meta.requiresNotAuth) && store.state.username)
+    else if (to.matched.some(record => record.meta.requiresNotAuth) && store.state.token)
         next({ path: '/' })
     else
         next()

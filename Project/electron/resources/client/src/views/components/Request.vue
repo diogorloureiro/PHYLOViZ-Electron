@@ -12,6 +12,7 @@
         props: ['href', 'method', 'json', 'data', 'onSuccess'],
         data() {
             return {
+                token: this.$store.state.token,
                 loading: true,
                 message: undefined,
                 error: undefined,
@@ -43,11 +44,13 @@
                     headers: {},
                     credentials: 'include'
                 }
+                if (this.token)
+                    options.headers['Authorization'] = `Bearer ${this.token}`
                 if (this.json) {
-                    options['body'] = JSON.stringify(this.json)
-                    options.headers['content-type'] = 'application/json'
+                    options.body = JSON.stringify(this.json)
+                    options.headers['Content-Type'] = 'application/json'
                 } else if (this.data)
-                    options['body'] = this.data
+                    options.body = this.data
                 this.request = Bluebird.resolve(fetch(`http://localhost:50000${this.href}`, options))
                     .then(res => res.text().then(body => {
                         if (!res.ok)
