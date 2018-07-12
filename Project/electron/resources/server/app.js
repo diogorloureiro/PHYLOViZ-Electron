@@ -12,7 +12,7 @@ const app = express()
 
 app.use(cors({ credentials: true, origin: 'http://localhost:60000' }))
 app.use(bodyParser.json({ limit: '50mb' }))
-app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: true }))
+app.use(session({ secret: 'raccoonoo attak', resave: true, saveUninitialized: false }))
 app.use(passport.initialize())
 app.use(passport.session())
 

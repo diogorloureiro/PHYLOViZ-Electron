@@ -3,6 +3,7 @@
 const router = require('express').Router()
 const passport = require('passport')
 const Strategy = require('passport-local').Strategy
+const jwt = require('jsonwebtoken')
 const upload = require('multer')()
 const response = require('./response')
 const RequestError = require('../RequestError')
@@ -13,15 +14,12 @@ passport.use(new Strategy((username, password, done) =>
 		.then(user => done(null, user))
 		.catch(err => done(err))))
 
-passport.serializeUser((user, done) => done(null, user._id))
+passport.serializeUser((user, done) => done(null, user))
 
-passport.deserializeUser((username, done) =>
-	services.loadUser(username)
-		.then(user => done(null, user))
-		.catch(err => done(err)))
+passport.deserializeUser((user, done) => done(null, user))
 
 // Authenticate user
-router.post('/login', passport.authenticate('local'), (req, res) => res.send({ ok: true }))
+router.post('/login', passport.authenticate('local'), (req, res) => res.send({ ok: req.isAuthenticated() }))
 
 // Register user
 router.post('/register', response(req => services.register(req.body.username, req.body.password)))
@@ -32,7 +30,7 @@ router.use((req, res, next) => req.isAuthenticated() ? next() : next(new Request
 // Log out user
 router.post('/logout', (req, res) => {
 	req.logout()
-	res.send({ ok: true })
+	res.send({ ok: req.isUnauthenticated() })
 })
 
 // Load user

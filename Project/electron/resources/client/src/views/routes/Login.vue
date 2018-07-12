@@ -33,7 +33,6 @@
                 this.requests.login = true
             },
             onLogin() {
-                this.requests.false = true
                 this.$store.commit('setUsername', this.username)
                 this.$router.push('/')
             }
