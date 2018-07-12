@@ -4,13 +4,13 @@
             <h1>{{project.name}}</h1>
             <p><strong>Owner: </strong>{{project.owner}}</p>
             <div class='form-inline'>
-                <b-form-input v-model='contributor' class='mr-sm-2' type='text' placeholder='Username'></b-form-input>
-                <button class='btn btn-outline-success mr-sm-2' @click='share'>Share</button>
-                <Request v-if='requests.share' :href='`/projects/${project._id}/share/${contributor}`' method='POST' :json='shared' :onSuccess='onShare' />
                 <button class='btn btn-outline-info mr-sm-2' ><a :href='encodedURI' :download='`${project.name}.json`'>Export</a></button>
                 <Request :href='`/projects/${project._id}/export`' :onSuccess='onExport' />
                 <button class='btn btn-outline-danger mr-sm-2' @click='remove'>Delete</button>
                 <Request v-if='requests.remove' :href='`/projects/${project._id}`' method='DELETE' :onSuccess='onRemove' />
+                <b-form-input v-model='contributor' class='mr-sm-2' type='text' placeholder='Username'></b-form-input>
+                <button class='btn btn-outline-success mr-sm-2' @click='share'>Share</button>
+                <Request v-if='requests.share' :href='`/projects/${project._id}/share/${contributor}`' method='POST' :json='shared' :onSuccess='onShare' />
             </div>
             <hr>
             <p><strong>Dataset name: </strong>{{project.dataset.name}}</p>

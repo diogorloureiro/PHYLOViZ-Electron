@@ -9,7 +9,7 @@
     Bluebird.config({ warnings: true, cancellation: true })
 
     export default {
-        props: ['href', 'method', 'json', 'data', 'action', 'onSuccess'],
+        props: ['href', 'method', 'json', 'data', 'onSuccess'],
         data() {
             return {
                 loading: true,
