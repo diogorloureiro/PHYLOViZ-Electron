@@ -41,6 +41,17 @@ function leafcount(node) {
 
 function render(graph, conf, onNodeClick) {
     radial(graph.vertices[0])
+
+    graph.vertices.forEach(vertex => {
+        graph.edges.forEach(edge => {
+            const id = vertex.id
+            if (id === edge.source || id === edge.source.id)
+                edge.source = { x: vertex.x, y: vertex.y, id }
+            else if (id === edge.target || id === edge.target.id)
+                edge.target = { x: vertex.x, y: vertex.y, id }
+        })
+    })
+
     renderStaticTree(graph,conf,onNodeClick)
 }
 

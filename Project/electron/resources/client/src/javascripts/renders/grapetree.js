@@ -2,6 +2,8 @@
 
 import renderStaticTree from './treebuild'
 
+
+//Based on https://github.com/achtman-lab/GrapeTree
 function grapetree(nodes, linkScale = 0.3, trials = 10) {
     let maxRadius = 0.0, minWedge = 0.0
     nodes.forEach(node => {
@@ -124,6 +126,17 @@ function toPolar(coord, center = [0, 0]) {
 
 function render(graph, conf, onNodeClick) {
     grapetree(graph.vertices)
+
+    graph.vertices.forEach(vertex => {
+        graph.edges.forEach(edge => {
+            const id = vertex.id
+            if (id === edge.source || id === edge.source.id)
+                edge.source = { x: vertex.x, y: vertex.y, id }
+            else if (id === edge.target || id === edge.target.id)
+                edge.target = { x: vertex.x, y: vertex.y, id }
+        })
+    })
+
     renderStaticTree(graph,conf,onNodeClick)
 }
 

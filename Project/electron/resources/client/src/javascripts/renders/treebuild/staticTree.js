@@ -8,16 +8,6 @@ function renderStaticTree(graph,conf,onNodeClick){
     let links = d3.selectAll('.link')
     if(links)
         links.remove()
-    
-    graph.vertices.forEach(vertex => {
-        graph.edges.forEach(edge => {
-            const id = vertex.id
-            if (id === edge.source || id === edge.source.id)
-                edge.source = { x: vertex.x, y: vertex.y, id }
-            else if (id === edge.target || id === edge.target.id)
-                edge.target = { x: vertex.x, y: vertex.y, id }
-        })
-    })
 
     conf.link = conf.link
         .data(graph.edges.filter(edge => graph.vertices.find(vertex => vertex.id === edge.target.id)))
