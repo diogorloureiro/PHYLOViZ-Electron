@@ -25,7 +25,7 @@
             <p>Select the number of LVs to consider during comparation: </p>
             <div class='form-row align-items-center'>
                 <div class='col-auto'>
-                    <b-form-input v-model='lvs' type='number' min='1' value='3' :max='project.dataset.loci.length'></b-form-input>
+                    <b-form-input v-model='lvs' type='number' min='1' :max='project.dataset.loci.length'></b-form-input>
                 </div>
             </div>
             <br>
@@ -57,7 +57,7 @@
                 project: this.$store.state.project,
                 encodedURI: undefined,
                 selected: 'goeburst',
-                lvs: 3,
+                lvs: Math.min(this.$store.state.project.dataset.loci.length, 3),
                 options: [
                     { value: 'goeburst', text: 'GoeBURST' }
                 ],

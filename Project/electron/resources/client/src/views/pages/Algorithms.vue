@@ -40,7 +40,7 @@
             <p>LVs: </p>
             <div class='form-row align-items-center'>
                 <div class='col-auto'>
-                    <b-form-input v-model='lvs' type='number' min='1' value='3' :max='project.dataset.loci.length'></b-form-input>
+                    <b-form-input v-model='lvs' type='number' min='1' :max='project.dataset.loci.length'></b-form-input>
                 </div>
             </div>
             <hr>
@@ -73,7 +73,7 @@
                     { value: 'grapetree', text: 'GrapeTree Layout' },
                     { value: 'radial', text: 'Radial Static Layout' }
                 ],
-                lvs: 3,
+                lvs: Math.min(this.$store.state.project.dataset.loci.length, 3),
                 json: undefined,
                 inputFile: undefined,
                 file: undefined,
