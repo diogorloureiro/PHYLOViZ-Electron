@@ -8,7 +8,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 
 import App from './views/App.vue'
-import { Navbar, Sidebar, Request } from './views/components'
+import { Navbar, Sidebar, Request } from './views/helpers'
 
 Vue.component('Navbar', Navbar)
 Vue.component('Sidebar', Sidebar)
