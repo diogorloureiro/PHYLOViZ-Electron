@@ -37,9 +37,9 @@ function testRegisterDuplicated(test) {
         })
 }
 
-function testAuthenticate(test) {
+function testLogin(test) {
     test.expect(3)
-    services.authenticate('User', 'Password')
+    services.login('User', 'Password')
         .then(user => {
             test.strictEqual(user._id, 'User')
             test.deepEqual(user.projects, [])
@@ -48,9 +48,9 @@ function testAuthenticate(test) {
         })
 }
 
-function testAuthenticateWrongPassword(test) {
+function testLoginWrongPassword(test) {
     test.expect(2)
-    services.authenticate('User', 'Error')
+    services.login('User', 'Error')
         .catch(err => {
             test.strictEqual(err.message, 'Wrong credentials')
             test.strictEqual(err.status, 401)
@@ -58,9 +58,9 @@ function testAuthenticateWrongPassword(test) {
         })
 }
 
-function testAuthenticateInexistentUser(test) {
+function testLoginInexistentUser(test) {
     test.expect(2)
-    services.authenticate('Error', 'Password')
+    services.login('Error', 'Password')
         .catch(err => {
             test.strictEqual(err.message, 'Wrong credentials')
             test.strictEqual(err.status, 401)
@@ -333,9 +333,9 @@ module.exports = {
     before,
     testRegister,
     testRegisterDuplicated,
-    testAuthenticate,
-    testAuthenticateWrongPassword,
-    testAuthenticateInexistentUser,
+    testLogin,
+    testLoginWrongPassword,
+    testLoginInexistentUser,
     testLoadUser,
     testLoadUserInexistent,
     testCreateProject,

@@ -1,13 +1,17 @@
 'use strict'
 
 const router = require('express').Router()
+const jwt = require('jsonwebtoken')
 const upload = require('multer')()
 const response = require('./response')
 const RequestError = require('../RequestError')
 const services = require('../services/data-manager').users()
 
+const secret = 'raccoonoo attak'
+
 // Authenticate user
-router.post('/login', response(req => services.login(req.body.username, req.body.password)))
+router.post('/login', response(req => services.login(req.body.username, req.body.password)
+	.then(user => ({ token: jwt.sign({ _id: user._id, hash: user.hash }, secret) }))))
 
 // Register user
 router.post('/register', response(req => services.register(req.body.username, req.body.password)))
@@ -17,12 +21,15 @@ router.use((req, res, next) => {
 	const [schema, token] = req.get('Authorization').split(' ')
 	if (schema !== 'Bearer')
 		next(new RequestError('Unsupported authorization schema', 401))
-	services.authenticate(token)
-		.then(user => {
-			req.user = user
-			next()
-		})
-		.catch(err => next(err))
+	new Promise((resolve, reject) => jwt.verify(token, secret, (err, decoded) => err ? reject(err) : resolve(decoded)))
+		.then(({ _id, hash }) => services.loadUser(_id)
+			.then(user => {
+				if (user.hash !== hash)
+					return next(new RequestError('Wrong credentials', 401))
+				req.user = user
+				next()
+			}))
+		.catch(() => next(new RequestError('Wrong credentials', 401)))
 })
 
 // Load user
