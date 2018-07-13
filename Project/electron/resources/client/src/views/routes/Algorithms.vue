@@ -7,29 +7,33 @@
             <p v-show='project.dataset.url'><strong>URL: </strong>{{project.dataset.url}}</p>
             <hr>
             <p><strong>(Optional)</strong> Select the ancillary data:</p>
-            <div class='form-row align-items-center'>
-                <div class='col-auto'>
-                    <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose a file' accept='.csv, .txt, .db'></b-form-file>
+            <form @submit.prevent='upload' class='form-inline'>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose a file' accept='.csv, .txt, .db' required></b-form-file>
+                    </div>
+                    <div class='col-auto'>
+                        <button type='submit' class='btn btn-outline-secondary'>Upload</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
+                    </div>
                 </div>
-                <div class='col-auto'>
-                    <button class='btn btn-outline-secondary' @click='upload'>Upload</button>
-                </div>
-                <div class='col-auto'>
-                    <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
-                </div>
-            </div>
+            </form>
             <br>
-            <div class='form-row align-items-center'>
-                <div class='col-auto'>
-                    <b-form-input v-model='url' type='text' placeholder='Enter a URL'></b-form-input>
+            <form @submit.prevent='load' class='form-inline'>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <b-form-input v-model='url' type='text' placeholder='Enter a URL' required></b-form-input>
+                    </div>
+                    <div class='col-auto'>
+                        <button type='submit' class='btn btn-outline-secondary'>Load</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
+                    </div>
                 </div>
-                <div class='col-auto'>
-                    <button class='btn btn-outline-secondary' @click='load'>Load</button>
-                </div>
-                <div class='col-auto'>
-                    <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
-                </div>
-            </div>
+            </form>
             <hr>
             <p>Select the processing algorithm:</p>
             <b-form-select v-model='selected' :options='options' class='mb-3'></b-form-select>
