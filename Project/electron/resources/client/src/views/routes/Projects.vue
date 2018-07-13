@@ -5,17 +5,19 @@
         <Request v-if='requests.remove' :href='`/projects/${removed}`' method='DELETE' :onSuccess='onRemove' />
         <b-card title='Import project from a file'>
             <b-card-body>
-                <div class='form-row align-items-center'>
-                    <div class='col-auto'>
-                        <b-form-file v-model='file' :state='!!file' placeholder='Choose a file' ></b-form-file>
+                <form @submit.prevent='importProject'>
+                    <div class='form-row align-items-center'>
+                        <div class='col-auto'>
+                            <b-form-file v-model='file' :state='!!file' placeholder='Choose a file' accept='.json' required></b-form-file>
+                        </div>
+                        <div class='col-auto'>
+                            <button type='submit' class='btn btn-outline-success'>Import</button>
+                        </div>
+                        <div class='col-auto'>
+                            <Request v-if='requests.import' href='/projects/import' method='POST' :data='data' :onSuccess='onImport' />
+                        </div>
                     </div>
-                    <div class='col-auto'>
-                        <button class='btn btn-outline-success' @click='this.import'>Import</button>
-                    </div>
-                    <div class='col-auto'>
-                        <Request v-if='requests.import' href='/projects/import' method='POST' :data='data' :onSuccess='onImport' />
-                    </div>
-                </div>
+                </form>
             </b-card-body>
         </b-card>
         <br>
@@ -103,7 +105,7 @@
                 this.projects.forEach(project => project['actions'] = ['remove'])
                 this.totalRows = this.projects.length
             },
-            import() {
+            importProject() {
                 this.data = new FormData()
                 this.data.append('file', this.file)
                 this.requests.import = true

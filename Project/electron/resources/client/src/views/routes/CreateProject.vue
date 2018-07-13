@@ -7,41 +7,47 @@
             <p v-show='!!dataset.url'><strong>URL: </strong>{{dataset.url}}</p>
             <hr>
             <p><strong>(Optional)</strong> Select the ancillary data:</p>
-            <div class='form-row align-items-center'>
-                <div class='col-auto'>
-                    <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose a file' accept='.csv, .txt, .db'></b-form-file>
+            <form @submit.prevent='upload'>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose a file' accept='.csv, .txt, .db' required></b-form-file>
+                    </div>
+                    <div class='col-auto'>
+                        <button type='submit' class='btn btn-outline-secondary'>Upload</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
+                    </div>
                 </div>
-                <div class='col-auto'>
-                    <button class='btn btn-outline-secondary' @click='upload'>Upload</button>
-                </div>
-                <div class='col-auto'>
-                    <Request v-if='requests.upload' href='/ancillary/file' method='POST' :data='file' :onSuccess='onUpload' />
-                </div>
-            </div>
+            </form>
             <br>
-            <div class='form-row align-items-center'>
-                <div class='col-auto'>
-                    <b-form-input v-model='url' type='text' placeholder='Enter a URL'></b-form-input>
+            <form @submit.prevent='load'>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <b-form-input v-model='url' type='text' placeholder='Enter a URL' required></b-form-input>
+                    </div>
+                    <div class='col-auto'>
+                        <button type='submit' class='btn btn-outline-secondary'>Load</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
+                    </div>
                 </div>
-                <div class='col-auto'>
-                    <button class='btn btn-outline-secondary' @click='load'>Load</button>
-                </div>
-                <div class='col-auto'>
-                    <Request v-if='requests.load' :href='`/ancillary/${url}`' :onSuccess='onLoad' />
-                </div>
-            </div>
+            </form>
             <hr>
-            <p>Project Name:</p>
-            <b-form-input v-model='name' type='text' placeholder='Name'></b-form-input>
-            <br>
-            <div class='form-row align-items-center'>
-                <div class='col-auto'>
-                    <button class='btn btn-outline-success' @click='create'>Create</button>
+            <form @submit.prevent='create'>
+                <p>Project Name:</p>
+                <b-form-input v-model='name' type='text' placeholder='Name' required></b-form-input>
+                <br>
+                <div class='form-row align-items-center'>
+                    <div class='col-auto'>
+                        <button type='submit' class='btn btn-outline-success'>Create</button>
+                    </div>
+                    <div class='col-auto'>
+                        <Request v-if='requests.create' href='/projects' method='POST' :json='project' :onSuccess='onCreate' />
+                    </div>
                 </div>
-                <div class='col-auto'>
-                    <Request v-if='requests.create' href='/projects' method='POST' :json='project' :onSuccess='onCreate' />
-                </div>
-            </div>
+            </form>
         </b-card-body>
     </b-card>
 </template>
