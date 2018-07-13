@@ -42,7 +42,7 @@ To run the application execute:
 
 Execute the following command:
 
-##### Take notice that you need to change the arch type to fit your machine! #####
+##### Take notice that you need to change the arch type to fit the machine! #####
 
 `...\Project\electron> npm run build -- --platform=darwin --arch=x64`
 
@@ -53,7 +53,7 @@ And you should end up with a .app.
 
 Execute the following command:
 
-##### Take notice that you need to change the arch type to fit your machine! #####
+##### Take notice that you need to change the arch type to fit the machine! #####
 
 `...\Project\electron> npm run build -- --platform=linux --arch=x64`
 
@@ -64,7 +64,7 @@ And you should end up with a folder and a linux runnable file inside.
 
 Execute the following command:
 
-##### Take notice that you need to change the arch type to fit your machine! #####
+##### Take notice that you need to change the arch type to fit the machine! #####
 
 `...\Project\electron> npm run build -- --platform=win32 --arch=x64`
 
