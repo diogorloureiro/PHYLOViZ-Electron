@@ -105,7 +105,7 @@ function init(db = new PouchDB('database')) {
 			})
 	}
 
-	function shareProject(owner, contributor, _id, name) {
+	function shareProject(owner, _id, contributor, name) {
 		return db.get(_id)
 			.catch(() => { throw new RequestError('Project not found', 404) })
 			.then(project => {
@@ -113,7 +113,7 @@ function init(db = new PouchDB('database')) {
 					throw new RequestError('Only owner can share the project', 401)
 				if (owner._id === contributor || project.contributors.includes(contributor))
 					throw new RequestError('User already has access to the project', 403)
-				return db.get(contributor)
+				return loadUser(contributor)
 					.then(user => {
 						user.shared.push({ _id, name })
 						return db.put(user)

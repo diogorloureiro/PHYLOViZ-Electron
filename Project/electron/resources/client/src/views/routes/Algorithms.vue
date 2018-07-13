@@ -7,7 +7,7 @@
             <p v-show='project.dataset.url'><strong>URL: </strong>{{project.dataset.url}}</p>
             <hr>
             <p><strong>(Optional)</strong> Select the ancillary data:</p>
-            <form @submit.prevent='upload' class='form-inline'>
+            <form @submit.prevent='upload'>
                 <div class='form-row align-items-center'>
                     <div class='col-auto'>
                         <b-form-file v-model='inputFile' :state='!!inputFile' placeholder='Choose a file' accept='.csv, .txt, .db' required></b-form-file>

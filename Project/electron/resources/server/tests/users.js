@@ -201,7 +201,7 @@ function testAddComputation(test) {
 function testShareProject(test) {
     test.expect(5)
     services.loadUser('User')
-        .then(user => services.shareProject(user, 'Contributor', user.projects[0]._id, user.projects[0].name))
+        .then(user => services.shareProject(user, user.projects[0]._id, 'Contributor', user.projects[0].name))
         .then(project => {
             test.strictEqual(project.contributors.length, 1)
             test.strictEqual(project.contributors[0], 'Contributor')
@@ -218,7 +218,7 @@ function testShareProject(test) {
 function testShareProjectOwn(test) {
     test.expect(2)
     services.loadUser('User')
-        .then(user => services.shareProject(user, 'User', user.projects[0]._id, user.projects[0].name))
+        .then(user => services.shareProject(user, user.projects[0]._id, 'User', user.projects[0].name))
         .catch(err => {
             test.strictEqual(err.message, 'User already has access to the project')
             test.strictEqual(err.status, 403)
@@ -229,7 +229,7 @@ function testShareProjectOwn(test) {
 function testShareProjectDuplicated(test) {
     test.expect(2)
     services.loadUser('User')
-        .then(user => services.shareProject(user, 'Contributor', user.projects[0]._id, user.projects[0].name))
+        .then(user => services.shareProject(user, user.projects[0]._id, 'Contributor', user.projects[0].name))
         .catch(err => {
             test.strictEqual(err.message, 'User already has access to the project')
             test.strictEqual(err.status, 403)
@@ -240,7 +240,7 @@ function testShareProjectDuplicated(test) {
 function testShareProjectInexistent(test) {
     test.expect(2)
     services.loadUser('User')
-        .then(user => services.shareProject(user, 'Contributor', 'Error', user.projects[0].name))
+        .then(user => services.shareProject(user, 'Error', 'Contributor', user.projects[0].name))
         .catch(err => {
             test.strictEqual(err.message, 'Project not found')
             test.strictEqual(err.status, 404)
@@ -252,7 +252,7 @@ function testShareProjectUnauthoried(test) {
     test.expect(2)
     services.loadUser('User')
         .then(user => services.loadUser('Contributor')
-            .then(contributor => services.shareProject(contributor, 'User', user.projects[0]._id, user.projects[0].name)))
+            .then(contributor => services.shareProject(contributor, user.projects[0]._id, 'User', user.projects[0].name)))
         .catch(err => {
             test.strictEqual(err.message, 'Only owner can share the project')
             test.strictEqual(err.status, 401)
@@ -263,7 +263,7 @@ function testShareProjectUnauthoried(test) {
 function testDeleteProjectContributor(test) {
     test.expect(2)
     services.loadUser('User')
-        .then(user => services.shareProject(user, 'Contributor', user.projects[1]._id, user.projects[1].name)
+        .then(user => services.shareProject(user, user.projects[1]._id, 'Contributor', user.projects[1].name)
             .then(() => services.loadUser('Contributor'))
             .then(contributor => services.deleteProject(contributor, user.projects[1]._id)
                 .then(() => services.loadProject(contributor, user.projects[1]._id))))

@@ -11,7 +11,7 @@
                 <form @submit.prevent='share' class='form-inline'>
                     <b-form-input v-model='contributor' class='mr-sm-2' type='text' placeholder='Username' required></b-form-input>
                     <button type='submit' class='btn btn-outline-success mr-sm-2'>Share</button>
-                    <Request v-if='requests.share' :href='`/projects/${project._id}/share/${contributor}`' method='POST' :json='shared' :onSuccess='onShare' />
+                    <Request v-if='requests.share' :href='`/projects/${project._id}/share`' method='POST' :json='shared' :onSuccess='onShare' />
                 </form>
             </div>
             <hr>
@@ -99,6 +99,7 @@
             },
             share() {
                 this.shared = {
+                    contributor: this.contributor,
                     name: `${this.project.name} (Shared by ${this.project.owner})`
                 }
                 this.requests.share = true

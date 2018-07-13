@@ -55,6 +55,6 @@ router.put('/projects/:id', authenticate, response(req => services.addComputatio
 router.delete('/projects/:id', authenticate, response(req => services.deleteProject(req.user, req.params.id)))
 
 // Share project
-router.post('/projects/:id/share/:contributor', authenticate, response(req => services.shareProject(req.user, req.params.contributor, req.params.id, req.body.name)))
+router.post('/projects/:id/share', authenticate, response(req => services.shareProject(req.user, req.params.id, req.body.contributor, req.body.name)))
 
 module.exports = router
