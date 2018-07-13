@@ -2,6 +2,7 @@
 
 import * as d3 from 'd3'
 
+import algorithms from './algorithms'
 import renders from './renders'
 
 let link, node, simulation, conf
@@ -71,6 +72,7 @@ function init(algorithm) {
         })
         return data
     }
+    
     // This function is taken from http://bl.ocks.org/jdarling/06019d16cb5fd6795edf
     function randomColor() {
         let golden_ratio_conjugate = 0.618033988749895
@@ -254,7 +256,10 @@ function init(algorithm) {
     }
 
     function render(graph) {
-        return renders[algorithm](graph, conf, node => onNodeClick(node, graph))
+        const init = algorithms[algorithm]
+        if (init)
+            init(graph.vertices)
+        return renders[algorithm === 'forcedirected' ? 'dynamic' : 'fixed'](graph, conf, node => onNodeClick(node, graph))
     }
 
     return {

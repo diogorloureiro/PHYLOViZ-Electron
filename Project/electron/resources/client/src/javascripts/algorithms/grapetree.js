@@ -1,6 +1,10 @@
 'use strict'
 
-function grapetree(nodes, linkScale = 0.3, trials = 10) {
+const linkScale = 0.3
+const trials = 10
+
+// Based on https://github.com/achtman-lab/GrapeTree
+function grapetree(nodes) {
     let maxRadius = 0.0, minWedge = 0.0
     nodes.forEach(node => {
         if (!node.size)
@@ -83,7 +87,8 @@ function convertToCartesian(nodes, minRadius) {
             initialAngle = 0
             wedge = Math.max(0, (Math.PI - node.descendentsAngle) / node.children.length)
             node.polar = [0, 0]
-            node.coordinates = [0, 0]
+            node.x = 0
+            node.y = 0
         }
         const selfRadial = minRadius * Math.sqrt(node.size)
         if (node.children !== []) {
@@ -93,9 +98,9 @@ function convertToCartesian(nodes, minRadius) {
                 const minAngle = node.spacing / child.selfSpan[0]
                 child.polar = [child.distance + selfRadial, initialAngle + child.selfSpan[1] + minAngle + node.polar[1]]
                 initialAngle += (child.selfSpan[1] + minAngle + wedge) * 2
-                child.coordinates = toCartesian(child.polar)
-                child.coordinates[0] += node.coordinates[0]
-                child.coordinates[1] += node.coordinates[1]
+                const [x,y] = toCartesian(child.polar)
+                child.x = x + node.x
+                child.y = y + node.y
             })
         }
         delete node.spacing, delete node.descendentsAngle, delete node.descendentsSpan, delete node.polar

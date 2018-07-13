@@ -1,11 +1,9 @@
 'use strict'
 
-import forcedirected from './forcedirected'
-import grapetree from './grapetree'
-import radial from './radial'
+import dynamic from './dynamic'
+import fixed from './fixed'
 
 export default {
-    forcedirected,
-    grapetree,
-    radial
+    dynamic,
+    fixed
 }

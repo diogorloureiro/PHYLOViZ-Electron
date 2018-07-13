@@ -3,7 +3,8 @@
 const defaultDistanceMultiplier = 100
 const defaultZeroDistanceValue = 10
 
-function radial(root) {
+function radial(nodes) {
+    const root = nodes[0]
     const leaftotal = leafcount(root)
     const list = []
     list.push(root)
@@ -36,3 +37,5 @@ function radial(root) {
 function leafcount(node) {
     return node.children.length === 0 ? 1 : node.children.reduce((acc, curr) => acc + leafcount(curr), 0)
 }
+
+export default radial
