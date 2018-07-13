@@ -6,6 +6,6 @@ const users = require('./users')
 
 module.exports = [
     algorithms,
-    datasets,
-    users
+    users,
+    datasets
 ]

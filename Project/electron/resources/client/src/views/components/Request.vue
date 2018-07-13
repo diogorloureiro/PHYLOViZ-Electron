@@ -7,6 +7,7 @@
 <script>
     import Bluebird from 'bluebird'
     Bluebird.config({ warnings: true, cancellation: true })
+    import config from '../../config'
 
     export default {
         props: ['href', 'method', 'json', 'data', 'onSuccess'],
@@ -41,8 +42,7 @@
                 }
                 const options = {
                     method: this.method || 'GET',
-                    headers: {},
-                    credentials: 'include'
+                    headers: {}
                 }
                 if (this.token)
                     options.headers['Authorization'] = `Bearer ${this.token}`
@@ -51,7 +51,7 @@
                     options.headers['Content-Type'] = 'application/json'
                 } else if (this.data)
                     options.body = this.data
-                this.request = Bluebird.resolve(fetch(`http://localhost:50000${this.href}`, options))
+                this.request = Bluebird.resolve(fetch(`${config.api}${this.href}`, options))
                     .then(res => res.text().then(body => {
                         if (!res.ok)
                             this.error = body

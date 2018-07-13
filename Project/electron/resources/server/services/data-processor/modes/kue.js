@@ -2,6 +2,7 @@
 
 const kue = require('kue')
 const uuid = require('uuid/v4')
+
 const fs = require('../../../fspromises')
 
 function init(processors, comparators, algorithms) {

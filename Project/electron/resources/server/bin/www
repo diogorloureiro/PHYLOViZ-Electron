@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const app = require('../app')
 const http = require('http')
+
+const app = require('../app')
 
 // Get port from environment and store in Express
 const port = normalizePort(process.env.PORT || '50000')

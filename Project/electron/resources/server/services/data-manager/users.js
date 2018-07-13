@@ -3,6 +3,7 @@
 const PouchDB = require('pouchdb')
 const bcrypt = require('bcryptjs')
 const uuid = require('uuid/v4')
+
 const RequestError = require('../../RequestError')
 
 function init(db = new PouchDB('database')) {
@@ -109,7 +110,7 @@ function init(db = new PouchDB('database')) {
 			.catch(() => { throw new RequestError('Project not found', 404) })
 			.then(project => {
 				if (project.owner !== owner._id)
-					throw new RequestError('Project not found', 404)
+					throw new RequestError('Only owner can share the project', 401)
 				if (owner._id === contributor || project.contributors.includes(contributor))
 					throw new RequestError('User already has access to the project', 403)
 				return db.get(contributor)

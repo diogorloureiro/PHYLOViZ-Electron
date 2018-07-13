@@ -1,7 +1,8 @@
 'use strict'
 
-const fs = require('../fspromises')
 const PouchDB = require('pouchdb')
+
+const fs = require('../fspromises')
 let services = require('../services/data-manager/users')
 let db = new PouchDB('./tests/mockdatabase')
 
@@ -253,8 +254,8 @@ function testShareProjectUnauthoried(test) {
         .then(user => services.loadUser('Contributor')
             .then(contributor => services.shareProject(contributor, 'User', user.projects[0]._id, user.projects[0].name)))
         .catch(err => {
-            test.strictEqual(err.message, 'Project not found')
-            test.strictEqual(err.status, 404)
+            test.strictEqual(err.message, 'Only owner can share the project')
+            test.strictEqual(err.status, 401)
             test.done()
         })
 }

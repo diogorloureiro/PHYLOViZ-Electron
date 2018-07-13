@@ -3,12 +3,13 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+
 const routes = require('./routes')
 const RequestError = require('./RequestError')
 
 const app = express()
 
-app.use(cors({ credentials: true, origin: 'http://localhost:60000' }))
+app.use(cors())
 app.use(bodyParser.json({ limit: '50mb' }))
 
 app.use(...routes)
