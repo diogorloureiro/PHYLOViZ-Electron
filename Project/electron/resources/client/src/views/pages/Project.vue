@@ -8,7 +8,7 @@
                 <Request :href='`/projects/${project._id}/export`' :onSuccess='onExport' />
                 <button class='btn btn-outline-danger mr-sm-2' @click='remove'>Delete</button>
                 <Request v-if='requests.remove' :href='`/projects/${project._id}`' method='DELETE' :onSuccess='onRemove' />
-                <form @submit.prevent='share' class='form-inline'>
+                <form v-if='project.owner === this.$store.state.username' @submit.prevent='share' class='form-inline'>
                     <b-form-input v-model='contributor' class='mr-sm-2' type='text' placeholder='Username' required></b-form-input>
                     <button type='submit' class='btn btn-outline-success mr-sm-2'>Share</button>
                     <Request v-if='requests.share' :href='`/projects/${project._id}/share`' method='POST' :json='shared' :onSuccess='onShare' />
