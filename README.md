@@ -77,9 +77,15 @@ To run the tests implemented execute `...\Project\electron\resources\server> npm
 To run the benchmarking execute `...\Project\electron\resources\server> npm run benchmark mode processor comparator algorithm dataset lvs executions`
 
 mode = sequencial/promises/kue
+
 processor = goeburst
+
 comparator = goeburst
+
 algorithm = boruvka/prim/kruskal
+
 dataset = a dataset name from PubMLST for example "spneumoniae"
+
 lvs = an integer  above or equal 0 (for tiebreak rule)
+
 executions = an integer above 0 (number of times the benchmark will run)
