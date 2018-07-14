@@ -3,15 +3,13 @@
 Make sure Node version 8 or above and npm are installed.
 
 **For Windows or Darwin download the installer from:** https://nodejs.org/en/
-
 **For Linux:**
 
 `curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - `
 
 `sudo apt-get install -y nodejs `
 
-
-# After cloning
+# Setup
 
 Open Command Prompt inside the clone repository then execute the following commands:
 
@@ -70,4 +68,18 @@ Execute the following command:
 
 And you should end up with a folder with an .exe file inside.
 
+# Testing
 
+To run the tests implemented execute `...\Project\electron\resources\server> npm test`
+
+# Benchmarking
+
+To run the benchmarking execute `...\Project\electron\resources\server> npm run benchmark mode processor comparator algorithm dataset lvs executions`
+
+mode = sequencial/promises/kue
+processor = goeburst
+comparator = goeburst
+algorithm = boruvka/prim/kruskal
+dataset = a dataset name from PubMLST for example "spneumoniae"
+lvs = an integer  above or equal 0 (for tiebreak rule)
+executions = an integer above 0 (number of times the benchmark will run)
