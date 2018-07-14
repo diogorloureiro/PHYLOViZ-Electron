@@ -70,22 +70,26 @@ And you should end up with a folder with an .exe file inside.
 
 # Testing
 
-To run the tests implemented execute `...\Project\electron\resources\server> npm test`
+To run the tests implemented execute:
+
+`...\Project\electron\resources\server> npm test`
 
 # Benchmarking
 
-To run the benchmarking execute `...\Project\electron\resources\server> npm run benchmark mode processor comparator algorithm dataset lvs executions`
+To run the benchmarking execute:
 
-mode = sequencial/promises/kue
+`...\Project\electron\resources\server> npm run benchmark mode processor comparator algorithm dataset lvs executions`
 
-processor = goeburst
+`mode` = sequencial/promises/kue
 
-comparator = goeburst
+`processor` = goeburst
 
-algorithm = boruvka/prim/kruskal
+`comparator` = goeburst
 
-dataset = a dataset name from PubMLST for example "spneumoniae"
+`algorithm` = boruvka / prim / kruskal
 
-lvs = an integer  above or equal 0 (for tiebreak rule)
+`dataset` = A dataset name from PubMLST for example "spneumoniae"
 
-executions = an integer above 0 (number of times the benchmark will run)
+`lvs` = An integer above or equal to 0 (for tiebreak rule)
+
+`executions` = An integer above 0 (number of times the benchmark will run)
