@@ -1,6 +1,6 @@
 {
 	"name": "phyloviz-electron-client",
-	"version": "0.4.0",
+	"version": "1.0.0",
 	"description": "PHYLOViZ-Electron UI",
 	"scripts": {
 		"dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
