@@ -4,6 +4,7 @@ const [, , local] = process.argv
 
 const electron = require('electron')
 const child_process = require('child_process')
+const path = require('path')
 
 // Module to control application life.
 const app = electron.app
@@ -29,7 +30,7 @@ let mainWindow
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 800, height: 600 })
+    mainWindow = new BrowserWindow({ width: 800, height: 600, icon: path.join(__dirname, 'assets/icons/logo.png') })
     // and load the index.html of the app.
     mainWindow.loadURL('http://localhost:60000')
     if (local) {
