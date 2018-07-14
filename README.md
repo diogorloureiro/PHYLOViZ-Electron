@@ -80,7 +80,7 @@ To run the benchmarking execute:
 
 `...\Project\electron\resources\server> npm run benchmark mode processor comparator algorithm dataset lvs executions`
 
-`mode` = sequencial/promises/kue
+`mode` = sequencial / promises / kue
 
 `processor` = goeburst
 
