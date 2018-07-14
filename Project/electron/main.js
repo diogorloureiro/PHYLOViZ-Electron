@@ -22,7 +22,7 @@ const prefixes = {
 const prefix = prefixes[local || process.platform]
 // Insert apropriate server and client for electron to run
 const client = child_process.execFile('node', ['./resources/client/server'], { cwd: prefix })
-const server = child_process.execFile('node', ['./resources/server/bin/www'], { cwd: prefix })
+const server = child_process.execFile('node', ['--max-old-space-size=2048', './resources/server/bin/www'], { cwd: prefix })
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
